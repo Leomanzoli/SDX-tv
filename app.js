@@ -83,12 +83,16 @@ const rssSources = [
     url: "https://agenciabrasil.ebc.com.br/rss/meio-ambiente/feed.xml",
   },
   {
-    name: "Proteção",
-    url: "https://protecao.com.br/feed/",
+    name: "Notícias – Segurança do Trabalho",
+    url: "https://news.google.com/rss/search?q=%22seguran%C3%A7a+do+trabalho%22+brasil&hl=pt-BR&gl=BR&ceid=BR:pt-419",
+  },
+  {
+    name: "Notícias – Meio Ambiente Brasil",
+    url: "https://news.google.com/rss/search?q=meio+ambiente+brasil&hl=pt-BR&gl=BR&ceid=BR:pt-419",
   },
 ];
 
-const cacheKey = "sdx-tv-news-cache-v1";
+const cacheKey = "sdx-tv-news-cache-v2";
 const statusEl = document.getElementById("news-status");
 const statusTextEl = statusEl.querySelector(".status-text");
 const slideStageEl = document.getElementById("slide-stage");
@@ -155,17 +159,25 @@ function escapeHtml(value) {
   return div.innerHTML;
 }
 
-function classifyCategory(title) {
-  const raw = `${title}`.toLowerCase();
-  if (/warning|alert|fatal|incident|acidente|risco/.test(raw)) {
+function classifyCategory(item) {
+  const text = `${item.title || ""} ${item.summary || ""}`.toLowerCase();
+  const source = (item.source || "").toLowerCase();
+
+  if (/acidente|fatal|alerta|surto|interdi[çc][ãa]o|incident|emerg[êe]ncia/.test(text)) {
     return "safety";
   }
 
-  if (/health|occup|sa[úu]de|disease|worker/.test(raw)) {
+  if (source.includes("meio ambiente")) return "environment";
+  if (/sa[úu]de/.test(source)) return "health";
+  if (/seguran|trabalho|prote[çc]/.test(source)) return "safety";
+
+  if (/seguran[çc]a do trabalho|trabalhador|\bepi\b|\bcipa\b|nr[- ]?\d|ergonom|insalubr/.test(text)) {
+    return "safety";
+  }
+  if (/sa[úu]de|doen[çc]a|pandem|vacin|hospital|m[eé]dic|ocupacional|fisioterap/.test(text)) {
     return "health";
   }
-
-  if (/climate|environment|ambient|esg|res[íi]duo|emission/.test(raw)) {
+  if (/ambient|clima|sustent|res[íi]du|emiss|reciclag|carbon|polui|biodivers|esg|amaz[ôo]n|desmatam/.test(text)) {
     return "environment";
   }
 
@@ -180,20 +192,25 @@ function isCritical(news) {
 function normalizeNews(items, sourceName) {
   return items
     .filter((item) => item.title && item.link)
-    .map((item) => ({
-      title: item.title.trim(),
-      link: item.link.trim(),
-      source: sourceName,
-      summary: item.description?.replace(/<[^>]*>/g, " ").trim() || "Sem resumo disponível.",
-      publishedAt: item.pubDate || item.isoDate || new Date().toISOString(),
-      category: classifyCategory(item.title),
-    }));
+    .map((item) => {
+      const normalized = {
+        title: item.title.trim(),
+        link: item.link.trim(),
+        source: sourceName,
+        summary:
+          item.description?.replace(/<[^>]*>/g, " ").replace(/\s+/g, " ").trim() ||
+          "Sem resumo disponível.",
+        publishedAt: item.pubDate || item.isoDate || new Date().toISOString(),
+      };
+      normalized.category = classifyCategory(normalized);
+      return normalized;
+    });
 }
 
 function allowedHost(url) {
   try {
     const host = new URL(url).hostname;
-    const whitelist = ["ebc.com.br", "protecao.com.br", "gov.br"];
+    const whitelist = ["ebc.com.br", "google.com", "protecao.com.br", "gov.br"];
     return whitelist.some((domain) => host === domain || host.endsWith(`.${domain}`));
   } catch {
     return false;
@@ -352,17 +369,31 @@ function dedupeNews(items) {
 
 function prioritizeNews(items) {
   const critical = [];
-  const normal = [];
+  const buckets = { safety: [], health: [], environment: [] };
 
   for (const item of items) {
     if (isCritical(item)) {
       critical.push(item);
-    } else {
-      normal.push(item);
+      continue;
+    }
+    const cat = item.category || "environment";
+    (buckets[cat] || buckets.environment).push(item);
+  }
+
+  const interleaved = [];
+  const order = ["safety", "environment", "health"];
+  let pushed = true;
+  while (pushed) {
+    pushed = false;
+    for (const cat of order) {
+      if (buckets[cat].length > 0) {
+        interleaved.push(buckets[cat].shift());
+        pushed = true;
+      }
     }
   }
 
-  return [...critical, ...normal];
+  return [...critical, ...interleaved];
 }
 
 function renderSlide(item) {
