@@ -90,10 +90,19 @@ const rssSources = [
 
 const cacheKey = "sdx-tv-news-cache-v1";
 const statusEl = document.getElementById("news-status");
+const statusTextEl = statusEl.querySelector(".status-text");
 const slideStageEl = document.getElementById("slide-stage");
 const slideTitleEl = document.getElementById("slide-title");
 const slideSubtitleEl = document.getElementById("slide-subtitle");
+const slideCounterEl = document.getElementById("slide-counter");
+const slideProgressBarEl = document.getElementById("slide-progress-bar");
 const newsStageEl = document.getElementById("news-stage");
+
+const categoryLabels = {
+  health: "Saúde",
+  safety: "Segurança",
+  environment: "Meio Ambiente",
+};
 
 let slideIndex = 0;
 let newsIndex = 0;
@@ -102,7 +111,11 @@ let activeNewsCard = null;
 let slideTimer = null;
 
 function setStatus(text, type = "pending") {
-  statusEl.textContent = text;
+  if (statusTextEl) {
+    statusTextEl.textContent = text;
+  } else {
+    statusEl.textContent = text;
+  }
   statusEl.classList.remove("ok", "warn", "pending");
   statusEl.classList.add(type);
 }
@@ -125,10 +138,9 @@ function startClock() {
     });
 
     dateEl.textContent = now.toLocaleDateString("pt-BR", {
-      weekday: "short",
+      weekday: "long",
       day: "2-digit",
       month: "long",
-      year: "numeric",
     });
   };
 
@@ -390,6 +402,21 @@ function renderSlide(item) {
   slideSubtitleEl.textContent = item.subtitle;
   slideStageEl.appendChild(node);
 
+  if (slideCounterEl) {
+    const total = slides.length;
+    const position = slideIndex + 1;
+    slideCounterEl.textContent = `${String(position).padStart(2, "0")} / ${String(total).padStart(2, "0")}`;
+  }
+
+  if (slideProgressBarEl) {
+    const duration = config.slideWindowMs[item.type] || 12000;
+    slideProgressBarEl.style.transition = "none";
+    slideProgressBarEl.style.width = "0%";
+    void slideProgressBarEl.offsetWidth;
+    slideProgressBarEl.style.transition = `width ${duration}ms linear`;
+    slideProgressBarEl.style.width = "100%";
+  }
+
   if (old) {
     window.setTimeout(() => {
       if (old.parentNode === slideStageEl) old.remove();
@@ -429,16 +456,19 @@ function formatPublishedAt(value) {
 function renderNewsCard(item) {
   const card = document.createElement("article");
   const isHot = isCritical(item);
-  card.className = `news-card ${item.category || "environment"}${isHot ? " critical" : ""}`;
+  const category = item.category || "environment";
+  card.className = `news-card ${category}${isHot ? " critical" : ""}`;
+
+  const tagLabel = isHot ? "Alerta" : categoryLabels[category] || "Notícia";
 
   card.innerHTML = `
+    <span class="news-tag">${escapeHtml(tagLabel)}</span>
     <h3>${escapeHtml(item.title)}</h3>
     <p>${escapeHtml(item.summary || "Sem resumo.")}</p>
     <div class="meta">
       <span>${escapeHtml(item.source || "Fonte externa")}</span>
       <span>${formatPublishedAt(item.publishedAt)}</span>
     </div>
-    <a class="news-link" href="${escapeHtml(item.link)}" target="_blank" rel="noopener noreferrer">Abrir fonte</a>
   `;
 
   return card;
@@ -477,6 +507,11 @@ function startNewsRotation(newsList) {
 async function bootstrap() {
   startClock();
   startSlides();
+
+  const initialSkeleton = newsStageEl.querySelector(".news-card.skeleton");
+  if (initialSkeleton) {
+    activeNewsCard = initialSkeleton;
+  }
 
   try {
     const news = await loadNews();

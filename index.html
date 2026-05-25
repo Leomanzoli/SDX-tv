@@ -7,7 +7,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;500;700&family=IBM+Plex+Sans:wght@400;500;600&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap"
       rel="stylesheet"
     />
     <link rel="stylesheet" href="styles.css" />
@@ -19,39 +19,57 @@
     <div class="tv-shell">
       <header class="topbar">
         <div class="brand-wrap">
-          <p class="eyebrow">Canal Corporativo Sodexo</p>
-          <h1>SDX TV</h1>
+          <span class="brand-bar" aria-hidden="true"></span>
+          <div class="brand-text">
+            <p class="eyebrow">Canal Corporativo Sodexo</p>
+            <h1>SDX <span class="brand-accent">TV</span></h1>
+          </div>
         </div>
         <div class="status-wrap">
           <p id="clock" class="clock">--:--:--</p>
-          <p id="date" class="date">--</p>
-          <p id="news-status" class="news-status pending">Aguardando atualização...</p>
+          <div class="status-row">
+            <p id="date" class="date">--</p>
+            <span class="status-divider" aria-hidden="true"></span>
+            <span id="news-status" class="news-status pending">
+              <span class="status-dot" aria-hidden="true"></span>
+              <span class="status-text">Aguardando atualização</span>
+            </span>
+          </div>
         </div>
       </header>
 
       <main class="content-grid">
         <section class="hero" aria-label="Slides internos">
           <div id="slide-stage" class="slide-stage fade"></div>
+          <div class="slide-progress" aria-hidden="true">
+            <span id="slide-progress-bar" class="slide-progress-bar"></span>
+          </div>
           <div class="hero-meta">
-            <p id="slide-title" class="slide-title">Carregando conteúdo interno...</p>
-            <p id="slide-subtitle" class="slide-subtitle">Modo TV ativo</p>
+            <div class="meta-text">
+              <p id="slide-title" class="slide-title">Carregando conteúdo interno...</p>
+              <p id="slide-subtitle" class="slide-subtitle">Modo TV ativo</p>
+            </div>
+            <p id="slide-counter" class="slide-counter">--/--</p>
           </div>
         </section>
 
         <aside class="news" aria-label="Notícias externas de SSMA">
           <div class="news-header">
-            <h2>Radar SSMA</h2>
+            <div class="news-title-row">
+              <span class="news-mark" aria-hidden="true"></span>
+              <h2>Radar SSMA</h2>
+            </div>
             <p>Saúde, Segurança e Meio Ambiente</p>
           </div>
           <div id="news-stage" class="news-stage">
-            <article class="news-card skeleton">
+            <article class="news-card skeleton in">
+              <span class="news-tag">Aguarde</span>
               <h3>Buscando fontes oficiais...</h3>
               <p>As notícias aparecerão aqui com atualização automática.</p>
             </article>
           </div>
         </aside>
       </main>
-
     </div>
 
     <script src="app.js"></script>
