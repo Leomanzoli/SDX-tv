@@ -97,3 +97,46 @@ Para compor notícias de Saúde, Segurança e Meio Ambiente:
 - Animações: CSS transitions + Framer Motion (se precisar refinamento).
 - Backend/API aggregator: Node.js (Express/Nest) com cache (Redis opcional).
 - Deploy: modo kiosk na TV (autostart em navegador fullscreen).
+
+## MVP implementado neste repositório
+
+Foi implementado um player web em modo TV com:
+- layout 70/30 (carrossel principal + barra de notícias);
+- transições `fade` e `slide`, além de zoom sutil (Ken Burns) em imagens;
+- ticker contínuo no rodapé;
+- header com data/hora e status de atualização de notícias;
+- consumo de fontes RSS externas de SSMA (via proxy), com:
+  - cache local de 20 minutos;
+  - fallback para cache anterior;
+  - fallback offline em `data/news-fallback.json`.
+
+### Arquivos principais
+- `index.html`
+- `styles.css`
+- `app.js`
+- `data/news-fallback.json`
+
+### Como executar localmente
+
+1. Entre na pasta do projeto:
+
+   ```bash
+   cd /workspaces/SDX-tv
+   ```
+
+2. Suba um servidor HTTP local (necessário para `fetch` dos dados):
+
+   ```bash
+   python3 -m http.server 8080
+   ```
+
+3. Abra no navegador:
+
+   ```
+   http://localhost:8080
+   ```
+
+### Observação sobre Inspeções (PPTX)
+
+As imagens em `assets/Inspeções/` (`1.jpg` até `17.jpg`) foram integradas ao carrossel principal.
+O arquivo `assets/Inspeções/Slides.pptx` pode ser mantido como fonte original de edição.

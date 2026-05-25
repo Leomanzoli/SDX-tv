@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SDX TV | SSMA</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;500;700&family=IBM+Plex+Sans:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="bg-glow bg-glow-left" aria-hidden="true"></div>
+    <div class="bg-glow bg-glow-right" aria-hidden="true"></div>
+
+    <div class="tv-shell">
+      <header class="topbar">
+        <div class="brand-wrap">
+          <p class="eyebrow">Canal Corporativo SSMA</p>
+          <h1>SDX TV</h1>
+        </div>
+        <div class="status-wrap">
+          <p id="clock" class="clock">--:--:--</p>
+          <p id="date" class="date">--</p>
+          <p id="news-status" class="news-status pending">Aguardando atualização...</p>
+        </div>
+      </header>
+
+      <main class="content-grid">
+        <section class="hero" aria-label="Slides internos">
+          <div id="slide-stage" class="slide-stage fade"></div>
+          <div class="hero-meta">
+            <p id="slide-title" class="slide-title">Carregando conteúdo interno...</p>
+            <p id="slide-subtitle" class="slide-subtitle">Modo TV ativo</p>
+          </div>
+        </section>
+
+        <aside class="news" aria-label="Notícias externas de SSMA">
+          <div class="news-header">
+            <h2>Radar SSMA</h2>
+            <p>Saúde, Segurança e Meio Ambiente</p>
+          </div>
+          <div id="news-stage" class="news-stage">
+            <article class="news-card skeleton">
+              <h3>Buscando fontes oficiais...</h3>
+              <p>As notícias aparecerão aqui com atualização automática.</p>
+            </article>
+          </div>
+        </aside>
+      </main>
+
+      <footer class="ticker-wrap" aria-label="Mensagens de rodapé">
+        <div id="ticker-track" class="ticker-track"></div>
+      </footer>
+    </div>
+
+    <script src="app.js"></script>
+  </body>
+</html>
