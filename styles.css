@@ -1,14 +1,14 @@
 :root {
-  --bg-0: #05161a;
-  --bg-1: #0d2e35;
-  --surface: rgba(5, 22, 26, 0.8);
-  --line: rgba(131, 216, 222, 0.26);
-  --text: #e8f5f2;
-  --muted: #b0cdca;
-  --health: #2cc38d;
-  --safety: #f2b449;
-  --environment: #4ab3c4;
-  --critical: #ef5c5c;
+  --bg-0: #06081e;
+  --bg-1: #0d1240;
+  --surface: rgba(6, 8, 30, 0.88);
+  --line: rgba(40, 56, 150, 0.4);
+  --text: #ffffff;
+  --muted: #b0bbd8;
+  --health: #6b9fff;
+  --safety: #ed0000;
+  --environment: #5b6fd4;
+  --critical: #ed0000;
 }
 
 * {
@@ -21,8 +21,8 @@ body {
   color: var(--text);
   font-family: "IBM Plex Sans", sans-serif;
   background:
-    radial-gradient(45vw 60vh at 10% 25%, rgba(44, 195, 141, 0.2), transparent 60%),
-    radial-gradient(38vw 60vh at 84% 78%, rgba(74, 179, 196, 0.2), transparent 65%),
+    radial-gradient(45vw 60vh at 10% 25%, rgba(237, 0, 0, 0.12), transparent 60%),
+    radial-gradient(38vw 60vh at 84% 78%, rgba(40, 56, 150, 0.22), transparent 65%),
     linear-gradient(120deg, var(--bg-0), var(--bg-1));
   overflow: hidden;
 }
@@ -38,7 +38,7 @@ body {
 .bg-glow-left {
   width: 22rem;
   height: 22rem;
-  background: #2cc38d;
+  background: #ed0000;
   top: -8rem;
   left: -6rem;
   animation: floatGlow 12s ease-in-out infinite;
@@ -47,7 +47,7 @@ body {
 .bg-glow-right {
   width: 26rem;
   height: 26rem;
-  background: #4ab3c4;
+  background: #283896;
   bottom: -12rem;
   right: -8rem;
   animation: floatGlow 14s ease-in-out infinite reverse;
@@ -182,8 +182,8 @@ body {
   text-align: center;
   padding: 2rem;
   background:
-    linear-gradient(140deg, rgba(44, 195, 141, 0.2), rgba(74, 179, 196, 0.2)),
-    rgba(3, 14, 17, 0.8);
+    linear-gradient(140deg, rgba(237, 0, 0, 0.15), rgba(40, 56, 150, 0.2)),
+    rgba(3, 4, 18, 0.85);
 }
 
 .slide-message h3 {
@@ -315,7 +315,7 @@ body {
 }
 
 .news-link {
-  color: #c4f6e3;
+  color: #adc5ff;
   text-decoration: none;
   font-weight: 600;
 }

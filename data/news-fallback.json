@@ -1,26 +1,26 @@
 [
   {
-    "title": "WHO urges countries to strengthen pandemic preparedness systems",
-    "source": "WHO",
+    "title": "Fiocruz lança programa de vigilância de doenças respiratórias para trabalhadores",
+    "source": "Agência Brasil",
     "category": "health",
-    "publishedAt": "2026-05-24T10:00:00Z",
-    "summary": "The World Health Organization calls on member states to invest in early-warning surveillance and rapid response capacities to contain emerging infectious disease threats.",
-    "link": "https://www.who.int/news"
+    "publishedAt": "2026-05-24T09:00:00-03:00",
+    "summary": "Instituto busca ampliar o monitoramento de afastamentos por doenças ocupacionais respiratórias em parceria com empresas de médio e grande porte.",
+    "link": "https://agenciabrasil.ebc.com.br/saude"
   },
   {
-    "title": "ILO report: heat stress at work poses growing risk to millions of workers",
-    "source": "ILO",
+    "title": "Ministério do Trabalho reforça fiscalização em obras após série de acidentes",
+    "source": "Agência Brasil",
     "category": "safety",
-    "publishedAt": "2026-05-23T14:00:00Z",
-    "summary": "A new International Labour Organization report finds that rising temperatures are increasing occupational heat-related illness globally, with outdoor and agricultural workers most affected.",
-    "link": "https://www.ilo.org/global/about-the-ilo/newsroom"
+    "publishedAt": "2026-05-24T10:00:00-03:00",
+    "summary": "Auditores fiscais do trabalho intensificam inspeções em canteiros de obras para verificar o uso de EPIs e o cumprimento das normas regulamentadoras.",
+    "link": "https://agenciabrasil.ebc.com.br/trabalho"
   },
   {
-    "title": "UNEP: plastic pollution treaty negotiations advance at fourth session",
-    "source": "UNEP",
+    "title": "Brasil avança em metas de redução de emissões industriais no primeiro semestre",
+    "source": "Agência Brasil",
     "category": "environment",
-    "publishedAt": "2026-05-22T08:00:00Z",
-    "summary": "United Nations Environment Programme reports progress in global negotiations toward a legally binding agreement to end plastic pollution by 2040.",
-    "link": "https://www.unep.org/news-and-stories"
+    "publishedAt": "2026-05-24T11:00:00-03:00",
+    "summary": "Relatório do MMA indica queda de 8% nas emissões do setor industrial em relação ao mesmo período do ano anterior, impulsionada por programas de eficiência energética.",
+    "link": "https://agenciabrasil.ebc.com.br/meio-ambiente"
   }
 ]

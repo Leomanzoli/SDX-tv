@@ -75,16 +75,16 @@ const slides = [
 
 const rssSources = [
   {
-    name: "WHO",
-    url: "https://www.who.int/rss-feeds/news-english.xml",
+    name: "Agência Brasil – Saúde",
+    url: "https://agenciabrasil.ebc.com.br/rss/saude/feed.xml",
   },
   {
-    name: "ILO",
-    url: "https://www.ilo.org/global/about-the-ilo/newsroom/news/WCMS_008009/lang--en/index.htm?output=rss",
+    name: "Agência Brasil – Meio Ambiente",
+    url: "https://agenciabrasil.ebc.com.br/rss/meio-ambiente/feed.xml",
   },
   {
-    name: "UNEP",
-    url: "https://www.unep.org/news-and-stories/rss.xml",
+    name: "Proteção",
+    url: "https://protecao.com.br/feed/",
   },
 ];
 
@@ -181,7 +181,7 @@ function normalizeNews(items, sourceName) {
 function allowedHost(url) {
   try {
     const host = new URL(url).hostname;
-    const whitelist = ["who.int", "ilo.org", "unep.org", "gov.br"];
+    const whitelist = ["ebc.com.br", "protecao.com.br", "gov.br"];
     return whitelist.some((domain) => host === domain || host.endsWith(`.${domain}`));
   } catch {
     return false;
