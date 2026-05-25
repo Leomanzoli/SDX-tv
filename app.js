@@ -203,28 +203,69 @@ function allowedHost(url) {
 }
 
 async function fetchRssViaProxy(source) {
-  const endpoint = `https://api.allorigins.win/raw?url=${encodeURIComponent(source.url)}`;
-  const response = await fetch(endpoint, { headers: { Accept: "application/xml,text/xml" } });
-  if (!response.ok) {
-    throw new Error(`Falha na fonte ${source.name}: ${response.status}`);
+  const errors = [];
+
+  const strategies = [
+    async () => {
+      const endpoint = `https://api.allorigins.win/raw?url=${encodeURIComponent(source.url)}`;
+      const response = await fetch(endpoint, { headers: { Accept: "application/xml,text/xml" } });
+      if (!response.ok) {
+        throw new Error(`AllOrigins ${response.status}`);
+      }
+
+      const xml = await response.text();
+      const doc = new DOMParser().parseFromString(xml, "text/xml");
+      const parserError = doc.querySelector("parsererror");
+      if (parserError) {
+        throw new Error("AllOrigins XML inválido");
+      }
+
+      const items = [...doc.querySelectorAll("item")].slice(0, 10).map((item) => ({
+        title: item.querySelector("title")?.textContent || "",
+        link: item.querySelector("link")?.textContent || "",
+        description: item.querySelector("description")?.textContent || "",
+        pubDate: item.querySelector("pubDate")?.textContent || "",
+        isoDate: item.querySelector("updated")?.textContent || "",
+      }));
+
+      return normalizeNews(items, source.name);
+    },
+    async () => {
+      const endpoint = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(source.url)}`;
+      const response = await fetch(endpoint, { headers: { Accept: "application/json" } });
+      if (!response.ok) {
+        throw new Error(`RSS2JSON ${response.status}`);
+      }
+
+      const payload = await response.json();
+      if (payload.status !== "ok" || !Array.isArray(payload.items)) {
+        throw new Error("RSS2JSON payload inválido");
+      }
+
+      const items = payload.items.slice(0, 10).map((item) => ({
+        title: item.title || "",
+        link: item.link || "",
+        description: item.description || "",
+        pubDate: item.pubDate || "",
+        isoDate: item.pubDate || "",
+      }));
+
+      return normalizeNews(items, source.name);
+    },
+  ];
+
+  for (const strategy of strategies) {
+    try {
+      const result = await strategy();
+      if (result.length > 0) {
+        return result;
+      }
+    } catch (error) {
+      errors.push(String(error));
+    }
   }
 
-  const xml = await response.text();
-  const doc = new DOMParser().parseFromString(xml, "text/xml");
-  const parserError = doc.querySelector("parsererror");
-  if (parserError) {
-    throw new Error(`XML inválido em ${source.name}`);
-  }
-
-  const items = [...doc.querySelectorAll("item")].slice(0, 10).map((item) => ({
-    title: item.querySelector("title")?.textContent || "",
-    link: item.querySelector("link")?.textContent || "",
-    description: item.querySelector("description")?.textContent || "",
-    pubDate: item.querySelector("pubDate")?.textContent || "",
-    isoDate: item.querySelector("updated")?.textContent || "",
-  }));
-
-  return normalizeNews(items, source.name);
+  throw new Error(`Falha na fonte ${source.name}: ${errors.join(" | ")}`);
 }
 
 function saveNewsCache(news) {
