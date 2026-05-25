@@ -1,26 +1,26 @@
 [
   {
-    "title": "Programa de saúde ocupacional reforça rastreio preventivo",
-    "source": "Boletim SSMA Interno",
+    "title": "WHO urges countries to strengthen pandemic preparedness systems",
+    "source": "WHO",
     "category": "health",
-    "publishedAt": "2026-05-24T08:00:00-03:00",
-    "summary": "Nova rotina de monitoramento clínico foi integrada aos exames periódicos para reduzir afastamentos.",
-    "link": "https://www.gov.br"
+    "publishedAt": "2026-05-24T10:00:00Z",
+    "summary": "The World Health Organization calls on member states to invest in early-warning surveillance and rapid response capacities to contain emerging infectious disease threats.",
+    "link": "https://www.who.int/news"
   },
   {
-    "title": "DDS passa a destacar prevenção de incidentes com energia",
-    "source": "Boletim SSMA Interno",
+    "title": "ILO report: heat stress at work poses growing risk to millions of workers",
+    "source": "ILO",
     "category": "safety",
-    "publishedAt": "2026-05-24T09:00:00-03:00",
-    "summary": "Times operacionais receberam roteiro com checagem de bloqueio e etiquetagem antes das intervenções.",
-    "link": "https://www.gov.br/trabalho-e-emprego"
+    "publishedAt": "2026-05-23T14:00:00Z",
+    "summary": "A new International Labour Organization report finds that rising temperatures are increasing occupational heat-related illness globally, with outdoor and agricultural workers most affected.",
+    "link": "https://www.ilo.org/global/about-the-ilo/newsroom"
   },
   {
-    "title": "Campanha ambiental prioriza redução de descartes no pátio",
-    "source": "Boletim SSMA Interno",
+    "title": "UNEP: plastic pollution treaty negotiations advance at fourth session",
+    "source": "UNEP",
     "category": "environment",
-    "publishedAt": "2026-05-24T10:00:00-03:00",
-    "summary": "Setores passaram a medir segregação de resíduos e reaproveitamento para cumprir metas ESG locais.",
-    "link": "https://www.gov.br/mma"
+    "publishedAt": "2026-05-22T08:00:00Z",
+    "summary": "United Nations Environment Programme reports progress in global negotiations toward a legally binding agreement to end plastic pollution by 2040.",
+    "link": "https://www.unep.org/news-and-stories"
   }
 ]

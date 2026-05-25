@@ -72,13 +72,6 @@ const slides = [
   ...inspectionSlides,
 ];
 
-const tickerMessages = [
-  "Use EPI completo antes de qualquer intervenção.",
-  "DDS diário às 08h em todas as células.",
-  "Relate desvios pelo canal SSMA imediatamente.",
-  "Priorize bloqueio e etiquetagem em manutenção.",
-  "Meta ambiental: reduzir descarte misto em 20% no trimestre.",
-];
 
 const rssSources = [
   {
@@ -143,13 +136,6 @@ function startClock() {
   window.setInterval(tick, 1000);
 }
 
-function buildTicker() {
-  const tickerTrack = document.getElementById("ticker-track");
-  const full = [...tickerMessages, ...tickerMessages];
-  tickerTrack.innerHTML = full
-    .map((msg) => `<span class="ticker-item">${escapeHtml(msg)} <strong>•</strong></span>`)
-    .join("");
-}
 
 function escapeHtml(value) {
   const div = document.createElement("div");
@@ -368,9 +354,9 @@ function prioritizeNews(items) {
 }
 
 function renderSlide(item) {
+  const old = slideStageEl.firstElementChild;
   slideStageEl.classList.remove("fade", "slide");
   slideStageEl.classList.add(item.transition || "fade");
-  slideStageEl.innerHTML = "";
 
   let node;
   if (item.type === "image") {
@@ -403,6 +389,12 @@ function renderSlide(item) {
   slideTitleEl.textContent = item.title;
   slideSubtitleEl.textContent = item.subtitle;
   slideStageEl.appendChild(node);
+
+  if (old) {
+    window.setTimeout(() => {
+      if (old.parentNode === slideStageEl) old.remove();
+    }, 820);
+  }
 }
 
 function startSlides() {
@@ -460,13 +452,15 @@ function startNewsRotation(newsList) {
   const rotate = () => {
     const item = newsList[newsIndex % newsList.length];
     const nextCard = renderNewsCard(item);
-    nextCard.classList.add("in");
     newsStageEl.appendChild(nextCard);
+    nextCard.getBoundingClientRect();
+    nextCard.classList.add("in");
 
     if (activeNewsCard) {
-      activeNewsCard.classList.remove("in");
-      activeNewsCard.classList.add("out");
-      window.setTimeout(() => activeNewsCard?.remove(), 620);
+      const leaving = activeNewsCard;
+      leaving.classList.remove("in");
+      leaving.classList.add("out");
+      window.setTimeout(() => leaving.remove(), 620);
     }
 
     activeNewsCard = nextCard;
@@ -482,7 +476,6 @@ function startNewsRotation(newsList) {
 
 async function bootstrap() {
   startClock();
-  buildTicker();
   startSlides();
 
   try {
