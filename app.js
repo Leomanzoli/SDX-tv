@@ -84,7 +84,7 @@ const rssSources = [
   },
   {
     name: "Notícias – Segurança do Trabalho",
-    url: "https://news.google.com/rss/search?q=%22seguran%C3%A7a+do+trabalho%22+brasil&hl=pt-BR&gl=BR&ceid=BR:pt-419",
+    url: "https://news.google.com/rss/search?q=%28%22sa%C3%BAde+ocupacional%22+OR+%22acidente+de+trabalho%22+OR+%22sa%C3%BAde+e+seguran%C3%A7a+do+trabalho%22%29&hl=pt-BR&gl=BR&ceid=BR:pt-419",
   },
   {
     name: "Notícias – Meio Ambiente Brasil",
@@ -92,7 +92,7 @@ const rssSources = [
   },
 ];
 
-const cacheKey = "sdx-tv-news-cache-v2";
+const cacheKey = "sdx-tv-news-cache-v3";
 const statusEl = document.getElementById("news-status");
 const statusTextEl = statusEl.querySelector(".status-text");
 const slideStageEl = document.getElementById("slide-stage");
