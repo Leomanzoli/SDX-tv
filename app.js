@@ -555,6 +555,7 @@ function renderSlide(item, onVideoEnded) {
     // o arquivo está em cache e o evento dispara quase imediatamente).
     node.src = item.src;
     node.load();
+  } else {
     node = document.createElement("div");
     node.className = "slide-message active-slide";
     node.innerHTML = `
