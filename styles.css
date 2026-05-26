@@ -239,7 +239,7 @@ body::before {
 .content-grid {
   flex: 1;
   display: grid;
-  grid-template-columns: minmax(0, 7fr) minmax(0, 3fr);
+  grid-template-columns: minmax(0, 8fr) minmax(0, 2fr);
   gap: 1rem;
   min-height: 0;
 }
@@ -333,12 +333,16 @@ body::before {
   color: var(--text-soft);
 }
 
-/* progress bar between slide and meta */
+/* progress bar overlaid just above hero-meta */
 .slide-progress {
-  position: relative;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
   height: 3px;
   background: rgba(255, 255, 255, 0.06);
   overflow: hidden;
+  z-index: 6;
 }
 
 .slide-progress-bar {
@@ -350,13 +354,17 @@ body::before {
 }
 
 .hero-meta {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 5;
   display: flex;
   justify-content: space-between;
   align-items: center;
   gap: 1.5rem;
-  padding: 1rem 1.4rem;
-  background: linear-gradient(180deg, rgba(3, 5, 22, 0.55), rgba(3, 5, 22, 0.92));
-  border-top: 1px solid var(--line);
+  padding: 1.2rem 1.4rem 1rem;
+  background: linear-gradient(0deg, rgba(3, 5, 22, 0.92) 0%, rgba(3, 5, 22, 0.6) 70%, transparent 100%);
 }
 
 .meta-text {
