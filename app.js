@@ -1,9 +1,13 @@
 const config = {
   slideWindowMs: {
     image: 12000,
-    video: 14000,
+    // Imagens têm tempo fixo. Para vídeos usamos o evento `ended` do <video>,
+    // mas mantemos um teto de segurança caso o stream trave em redes ruins.
+    video: 90000,
     message: 12000,
   },
+  // Tempo máximo aguardando buffer antes de pular para o próximo slide.
+  videoBufferTimeoutMs: 8000,
   newsCardMs: 10000,
   alertPriorityMs: 45000,
   newsCacheMinutes: 20,
@@ -444,7 +448,7 @@ function prioritizeNews(items) {
   return [...critical, ...interleaved];
 }
 
-function renderSlide(item) {
+function renderSlide(item, onVideoEnded) {
   const old = slideStageEl.firstElementChild;
   slideStageEl.classList.remove("fade", "slide");
   slideStageEl.classList.add(item.transition || "fade");
@@ -483,21 +487,54 @@ function renderSlide(item) {
     node.src = item.src;
     node.alt = item.title;
     node.className = "active-slide";
+    // Dica ao navegador para decodificar de forma assíncrona, evitando travas.
+    node.decoding = "async";
+    node.loading = "eager";
     attachMediaErrorFallback(node);
     if (item.kenBurns) {
       node.classList.add("ken-burns");
     }
   } else if (item.type === "video") {
     node = document.createElement("video");
-    node.src = item.src;
+    // `preload="auto"` instrui o navegador a baixar o vídeo o quanto antes,
+    // aproveitando o cache HTTP gerado pelo prefetch do slide anterior.
     node.preload = "auto";
-    node.autoplay = true;
     node.muted = true;
-    node.loop = true;
     node.playsInline = true;
+    node.setAttribute("playsinline", "");
+    // Sem `loop`: deixamos o vídeo terminar e o evento `ended` avança o slide,
+    // garantindo que a peça inteira seja exibida e respeitando a banda.
+    node.loop = false;
     node.className = "active-slide";
+    node.src = item.src;
     attachMediaErrorFallback(node);
-    node.play().catch(() => {});
+
+    // Só revelamos o vídeo quando houver buffer suficiente. Em redes lentas,
+    // se demorar demais, seguimos o loop para não travar a TV.
+    let advanced = false;
+    const advance = () => {
+      if (advanced) return;
+      advanced = true;
+      if (typeof onVideoEnded === "function") onVideoEnded();
+    };
+
+    node.addEventListener("ended", advance, { once: true });
+    node.addEventListener(
+      "error",
+      () => {
+        console.warn("[SDX-TV][VIDEO] Erro de reprodução, avançando", { src: item.src });
+        advance();
+      },
+      { once: true }
+    );
+
+    // Tenta tocar assim que tiver dados suficientes para reprodução contínua.
+    const tryPlay = () => node.play().catch((err) => {
+      console.warn("[SDX-TV][VIDEO] play() rejeitado", { src: item.src, err: String(err) });
+    });
+    node.addEventListener("canplaythrough", tryPlay, { once: true });
+    // Fallback: alguns navegadores demoram para emitir `canplaythrough`.
+    node.addEventListener("canplay", tryPlay, { once: true });
   } else {
     node = document.createElement("div");
     node.className = "slide-message active-slide";
@@ -533,18 +570,62 @@ function renderSlide(item) {
       if (old.parentNode === slideStageEl) old.remove();
     }, 820);
   }
+
+  return node;
+}
+
+// Prefetch leve: dispara o download do próximo vídeo em segundo plano
+// enquanto o slide atual ainda está sendo exibido. Como o navegador
+// armazena em cache HTTP, ao trocar de slide o vídeo já estará disponível.
+let prefetchEl = null;
+function prefetchNextVideo() {
+  const next = slides[(slideIndex) % slides.length];
+  if (!next || next.type !== "video") return;
+
+  if (prefetchEl) {
+    prefetchEl.remove();
+    prefetchEl = null;
+  }
+
+  const v = document.createElement("video");
+  v.src = next.src;
+  v.preload = "auto";
+  v.muted = true;
+  v.playsInline = true;
+  v.style.cssText = "position:fixed;top:-9999px;left:-9999px;width:1px;height:1px;opacity:0;";
+  document.body.appendChild(v);
+  v.load();
+  prefetchEl = v;
 }
 
 function startSlides() {
   const showNext = () => {
     const current = slides[slideIndex];
-    renderSlide(current);
 
-    const duration = config.slideWindowMs[current.type] || 12000;
-    slideIndex = (slideIndex + 1) % slides.length;
+    // Para vídeos, o avanço ocorre por evento `ended`; ainda assim mantemos um
+    // timeout-teto para o caso de rede travar e o vídeo não progredir.
+    let safetyTimer = null;
+    const advance = () => {
+      window.clearTimeout(safetyTimer);
+      window.clearTimeout(slideTimer);
+      slideIndex = (slideIndex + 1) % slides.length;
+      // Pré-aquece o próximo vídeo (se houver) enquanto o atual ainda toca.
+      prefetchNextVideo();
+      showNext();
+    };
 
-    window.clearTimeout(slideTimer);
-    slideTimer = window.setTimeout(showNext, duration);
+    if (current.type === "video") {
+      renderSlide(current, advance);
+      safetyTimer = window.setTimeout(advance, config.slideWindowMs.video);
+      // Mesmo durante um vídeo, prefetcha o próximo da fila.
+      prefetchNextVideo();
+    } else {
+      renderSlide(current);
+      const duration = config.slideWindowMs[current.type] || 12000;
+      slideTimer = window.setTimeout(advance, duration);
+      // Se o próximo slide for vídeo, começa a baixar agora.
+      prefetchNextVideo();
+    }
   };
 
   showNext();
@@ -616,17 +697,9 @@ function startNewsRotation(newsList) {
 }
 
 function preloadVideos() {
-  slides.forEach((slide) => {
-    if (slide.type !== "video") return;
-    const v = document.createElement("video");
-    v.src = slide.src;
-    v.preload = "auto";
-    v.muted = true;
-    v.playsInline = true;
-    v.style.cssText = "position:fixed;top:-9999px;left:-9999px;width:1px;height:1px;";
-    document.body.appendChild(v);
-    v.load();
-  });
+  // Substituído pelo prefetch sob demanda em `prefetchNextVideo()`.
+  // Baixar todos os vídeos no boot saturava a banda e fazia os clipes
+  // travarem ou começarem pela metade em redes de menor qualidade.
 }
 
 async function bootstrap() {
