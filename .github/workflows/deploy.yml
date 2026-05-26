@@ -1,0 +1,40 @@
+name: Deploy para GitHub Pages
+
+on:
+  push:
+    branches: [main]
+
+# Permissões mínimas para publicar no Pages
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Garante que só uma publicação rode por vez
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    steps:
+      - name: Clonar repositório
+        uses: actions/checkout@v4
+
+      # Envia toda a raiz do repo como site estático (index.html + assets/)
+      - name: Configurar Pages
+        uses: actions/configure-pages@v5
+
+      - name: Empacotar artefato
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: .
+
+      - name: Publicar no GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
