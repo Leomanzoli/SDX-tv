@@ -413,11 +413,13 @@ function renderSlide(item) {
   } else if (item.type === "video") {
     node = document.createElement("video");
     node.src = item.src;
+    node.preload = "auto";
     node.autoplay = true;
     node.muted = true;
     node.loop = true;
     node.playsInline = true;
     node.className = "active-slide";
+    node.play().catch(() => {});
   } else {
     node = document.createElement("div");
     node.className = "slide-message active-slide";
@@ -535,8 +537,23 @@ function startNewsRotation(newsList) {
   rotate();
 }
 
+function preloadVideos() {
+  slides.forEach((slide) => {
+    if (slide.type !== "video") return;
+    const v = document.createElement("video");
+    v.src = slide.src;
+    v.preload = "auto";
+    v.muted = true;
+    v.playsInline = true;
+    v.style.cssText = "position:fixed;top:-9999px;left:-9999px;width:1px;height:1px;";
+    document.body.appendChild(v);
+    v.load();
+  });
+}
+
 async function bootstrap() {
   startClock();
+  preloadVideos();
   startSlides();
 
   const initialSkeleton = newsStageEl.querySelector(".news-card.skeleton");
