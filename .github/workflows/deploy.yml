@@ -1,22 +1,19 @@
 name: Publicar no GitHub Pages
 
 on:
-  # Dispara a cada push na branch principal
   push:
     branches: [main]
-  # Permite disparar manualmente pela aba Actions
   workflow_dispatch:
 
-# Permissões mínimas para publicar no Pages via GitHub Actions
 permissions:
   contents: read
   pages: write
   id-token: write
 
-# Garante que só uma publicação rode por vez; grupo único para não colidir com pages-build-deployment
+# Garante que só uma publicação rode por vez
 concurrency:
-  group: sdx-tv-deploy-${{ github.ref }}
-  cancel-in-progress: true
+  group: github-pages
+  cancel-in-progress: false
 
 jobs:
   deploy:
@@ -24,9 +21,8 @@ jobs:
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
-
     steps:
-      # 1. Clona o repositório com histórico mínimo (mais rápido)
+      # 1. Clona o repositório
       - name: Clonar repositório
         uses: actions/checkout@v4
 
@@ -34,13 +30,13 @@ jobs:
       - name: Configurar Pages
         uses: actions/configure-pages@v5
 
-      # 3. Empacota toda a raiz como site estático (index.html + assets/)
+      # 3. Empacota toda a raiz como site estático
       - name: Empacotar artefato estático
         uses: actions/upload-pages-artifact@v3
         with:
           path: .
 
-      # 4. Publica o artefato no GitHub Pages
+      # 4. Publica no GitHub Pages
       - name: Publicar no GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
