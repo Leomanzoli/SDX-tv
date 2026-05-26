@@ -29,6 +29,7 @@
           <p id="clock" class="clock">--:--:--</p>
           <div class="status-row">
             <p id="date" class="date">--</p>
+            <span class="build-version" aria-label="Versão da publicação">build 2026.05.26.2</span>
             <span class="status-divider" aria-hidden="true"></span>
             <span id="news-status" class="news-status pending">
               <span class="status-dot" aria-hidden="true"></span>
@@ -72,6 +73,7 @@
       </main>
     </div>
 
-    <script src="app.js"></script>
+    <!-- Versão no query param para evitar cache antigo do JavaScript -->
+    <script src="app.js?v=20260526-2"></script>
   </body>
 </html>
