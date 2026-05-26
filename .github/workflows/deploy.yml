@@ -13,10 +13,10 @@ permissions:
   pages: write
   id-token: write
 
-# Garante que só uma publicação rode por vez (não cancela a em andamento)
+# Garante que só uma publicação rode por vez; grupo único para não colidir com pages-build-deployment
 concurrency:
-  group: pages
-  cancel-in-progress: false
+  group: sdx-tv-deploy-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   deploy:
