@@ -9,8 +9,8 @@ const config = {
   newsCacheMinutes: 20,
 };
 
-// Gera a sequência 1.jpg..17.jpg para manter a ordem das inspeções no loop.
-const inspectionSlides = Array.from({ length: 17 }, (_, index) => {
+// Gera a sequência 1.jpg..16.jpg para manter a ordem das inspeções no loop.
+const inspectionSlides = Array.from({ length: 16 }, (_, index) => {
   const number = index + 1;
   return {
     type: "image",
@@ -48,24 +48,72 @@ const slides = [
     kenBurns: true,
   },
   {
+    type: "image",
+    title: "Painel N3",
+    subtitle: "Visão consolidada de desempenho",
+    src: "assets/N3/Painel.png",
+    transition: "fade",
+    kenBurns: true,
+  },
+  {
+    type: "image",
+    title: "Painel N3 · Detalhamento",
+    subtitle: "Análise operacional por frente",
+    src: "assets/N3/Painel 2.png",
+    transition: "fade",
+    kenBurns: true,
+  },
+  {
     type: "video",
     title: "Kaizens em Movimento",
     subtitle: "Boas práticas em ação",
-    src: "assets/Kaizens/Video 1.mp4",
+    src: "assets/Kaizens/1.Video 1.mp4",
     transition: "slide",
   },
   {
     type: "video",
     title: "Kaizens · Edição 2",
     subtitle: "Evolução contínua com segurança",
-    src: "assets/Kaizens/Video 2.mp4",
+    src: "assets/Kaizens/2.Video 2.mp4",
     transition: "slide",
   },
   {
     type: "image",
     title: "Resumo Kaizens",
     subtitle: "Resultados e próximos ciclos",
-    src: "assets/Kaizens/Slide.png",
+    src: "assets/Kaizens/0.Slide.png",
+    transition: "fade",
+    kenBurns: true,
+  },
+  // Conteúdos complementares já disponíveis no repositório.
+  {
+    type: "video",
+    title: "Pílulas de Segurança",
+    subtitle: "Princípios de incêndios em correias",
+    src: "assets/Pilulas/Princípios de incêndios em correias_horizontal.mp4",
+    transition: "slide",
+  },
+  {
+    type: "image",
+    title: "Saúde em Foco",
+    subtitle: "Conteúdo de bem-estar ocupacional",
+    src: "assets/Saúde/01.png",
+    transition: "fade",
+    kenBurns: true,
+  },
+  {
+    type: "image",
+    title: "Inspeções · Painel 1",
+    subtitle: "Resumo visual de inspeções",
+    src: "assets/Inspeções/0.Painel 1.png",
+    transition: "fade",
+    kenBurns: true,
+  },
+  {
+    type: "image",
+    title: "Inspeções · Painel 2",
+    subtitle: "Acompanhamento das evidências",
+    src: "assets/Inspeções/0.Painel 2.png",
     transition: "fade",
     kenBurns: true,
   },
@@ -401,12 +449,41 @@ function renderSlide(item) {
   slideStageEl.classList.remove("fade", "slide");
   slideStageEl.classList.add(item.transition || "fade");
 
+  // Em caso de mídia inválida, exibe fallback para não deixar a área principal vazia.
+  const attachMediaErrorFallback = (mediaNode) => {
+    mediaNode.addEventListener(
+      "error",
+      () => {
+        if (mediaNode.parentNode !== slideStageEl) return;
+        mediaNode.remove();
+
+        const fallback = document.createElement("div");
+        fallback.className = "slide-message active-slide";
+        fallback.innerHTML = `
+          <div>
+            <h3>${escapeHtml(item.title || "Mídia indisponível")}</h3>
+            <p>Não foi possível carregar este arquivo. O loop seguirá para o próximo item.</p>
+          </div>
+        `;
+        slideStageEl.appendChild(fallback);
+
+        console.warn("[SDX-TV][SLIDE] Falha ao carregar mídia", {
+          src: item.src,
+          type: item.type,
+          title: item.title,
+        });
+      },
+      { once: true }
+    );
+  };
+
   let node;
   if (item.type === "image") {
     node = document.createElement("img");
     node.src = item.src;
     node.alt = item.title;
     node.className = "active-slide";
+    attachMediaErrorFallback(node);
     if (item.kenBurns) {
       node.classList.add("ken-burns");
     }
@@ -419,6 +496,7 @@ function renderSlide(item) {
     node.loop = true;
     node.playsInline = true;
     node.className = "active-slide";
+    attachMediaErrorFallback(node);
     node.play().catch(() => {});
   } else {
     node = document.createElement("div");
