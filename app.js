@@ -500,42 +500,61 @@ function renderSlide(item, onVideoEnded) {
     // aproveitando o cache HTTP gerado pelo prefetch do slide anterior.
     node.preload = "auto";
     node.muted = true;
+    node.defaultMuted = true;
     node.playsInline = true;
     node.setAttribute("playsinline", "");
+    node.setAttribute("muted", "");
     // Sem `loop`: deixamos o vídeo terminar e o evento `ended` avança o slide,
-    // garantindo que a peça inteira seja exibida e respeitando a banda.
+    // garantindo que a peça inteira seja exibida.
     node.loop = false;
     node.className = "active-slide";
-    node.src = item.src;
     attachMediaErrorFallback(node);
 
-    // Só revelamos o vídeo quando houver buffer suficiente. Em redes lentas,
-    // se demorar demais, seguimos o loop para não travar a TV.
+    // Idempotência: garante que `ended` e `error` não disparem avanço duplicado.
     let advanced = false;
-    const advance = () => {
+    const advance = (reason) => {
       if (advanced) return;
       advanced = true;
+      console.info("[SDX-TV][VIDEO] avanço", { src: item.src, reason });
       if (typeof onVideoEnded === "function") onVideoEnded();
     };
 
-    node.addEventListener("ended", advance, { once: true });
+    node.addEventListener("ended", () => advance("ended"), { once: true });
     node.addEventListener(
       "error",
       () => {
-        console.warn("[SDX-TV][VIDEO] Erro de reprodução, avançando", { src: item.src });
-        advance();
+        console.warn("[SDX-TV][VIDEO] erro de reprodução", { src: item.src });
+        advance("error");
       },
       { once: true }
     );
 
-    // Tenta tocar assim que tiver dados suficientes para reprodução contínua.
-    const tryPlay = () => node.play().catch((err) => {
-      console.warn("[SDX-TV][VIDEO] play() rejeitado", { src: item.src, err: String(err) });
-    });
-    node.addEventListener("canplaythrough", tryPlay, { once: true });
-    // Fallback: alguns navegadores demoram para emitir `canplaythrough`.
+    // Quando os metadados chegarem, expomos a duração real para o orquestrador
+    // calcular um teto de segurança proporcional ao tamanho do clipe, em vez de
+    // um valor fixo que poderia cortar o vídeo em redes lentas.
+    node.addEventListener(
+      "loadedmetadata",
+      () => {
+        node.dataset.duration = String(node.duration || 0);
+        if (typeof item._onMeta === "function") item._onMeta(node.duration);
+      },
+      { once: true }
+    );
+
+    // Tenta tocar assim que o navegador sinalizar buffer suficiente.
+    const tryPlay = () => {
+      node.play().catch((err) => {
+        console.warn("[SDX-TV][VIDEO] play() rejeitado", { src: item.src, err: String(err) });
+      });
+    };
     node.addEventListener("canplay", tryPlay, { once: true });
-  } else {
+    node.addEventListener("canplaythrough", tryPlay, { once: true });
+
+    // Define `src` por último: garante que todos os listeners já estão anexados
+    // antes do navegador começar a emitir eventos do recurso (importante quando
+    // o arquivo está em cache e o evento dispara quase imediatamente).
+    node.src = item.src;
+    node.load();
     node = document.createElement("div");
     node.className = "slide-message active-slide";
     node.innerHTML = `
@@ -602,28 +621,53 @@ function startSlides() {
   const showNext = () => {
     const current = slides[slideIndex];
 
-    // Para vídeos, o avanço ocorre por evento `ended`; ainda assim mantemos um
-    // timeout-teto para o caso de rede travar e o vídeo não progredir.
+    // Guarda de idempotência: garante que `advance` execute apenas uma vez
+    // por slide, independente da origem (timer, evento `ended`, erro).
+    let advanced = false;
     let safetyTimer = null;
     const advance = () => {
+      if (advanced) return;
+      advanced = true;
       window.clearTimeout(safetyTimer);
       window.clearTimeout(slideTimer);
+
+      // Para o vídeo atual antes de remover para evitar que ele continue
+      // baixando/decodificando em background e dispare eventos espúrios.
+      const active = slideStageEl.querySelector("video.active-slide");
+      if (active) {
+        try {
+          active.pause();
+          active.removeAttribute("src");
+          active.load();
+        } catch (_) {}
+      }
+
       slideIndex = (slideIndex + 1) % slides.length;
-      // Pré-aquece o próximo vídeo (se houver) enquanto o atual ainda toca.
       prefetchNextVideo();
       showNext();
     };
 
     if (current.type === "video") {
+      // Quando os metadados chegam, redefine o teto de segurança baseado na
+      // duração real: 2x duração + 15s de folga para buffering em redes ruins.
+      current._onMeta = (duration) => {
+        const ceiling = Math.max(
+          config.slideWindowMs.video,
+          Math.round((duration || 0) * 2000) + 15000
+        );
+        window.clearTimeout(safetyTimer);
+        safetyTimer = window.setTimeout(advance, ceiling);
+      };
+
       renderSlide(current, advance);
+
+      // Teto inicial enquanto os metadados ainda não chegaram.
       safetyTimer = window.setTimeout(advance, config.slideWindowMs.video);
-      // Mesmo durante um vídeo, prefetcha o próximo da fila.
       prefetchNextVideo();
     } else {
       renderSlide(current);
       const duration = config.slideWindowMs[current.type] || 12000;
       slideTimer = window.setTimeout(advance, duration);
-      // Se o próximo slide for vídeo, começa a baixar agora.
       prefetchNextVideo();
     }
   };
