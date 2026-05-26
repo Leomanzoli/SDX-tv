@@ -1,0 +1,46 @@
+name: Publicar no GitHub Pages
+
+on:
+  # Dispara a cada push na branch principal
+  push:
+    branches: [main]
+  # Permite disparar manualmente pela aba Actions
+  workflow_dispatch:
+
+# Permissões mínimas para publicar no Pages via GitHub Actions
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Garante que só uma publicação rode por vez (não cancela a em andamento)
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    steps:
+      # 1. Clona o repositório com histórico mínimo (mais rápido)
+      - name: Clonar repositório
+        uses: actions/checkout@v4
+
+      # 2. Configura o ambiente do GitHub Pages
+      - name: Configurar Pages
+        uses: actions/configure-pages@v5
+
+      # 3. Empacota toda a raiz como site estático (index.html + assets/)
+      - name: Empacotar artefato estático
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: .
+
+      # 4. Publica o artefato no GitHub Pages
+      - name: Publicar no GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
