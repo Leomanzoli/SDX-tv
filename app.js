@@ -26,6 +26,32 @@ const inspectionSlides = Array.from({ length: 17 }, (_, index) => {
   };
 });
 
+// Todas as fotos do treinamento Preaxion exibidas em sequência.
+const preaxionPhotos = [
+  "WhatsApp Image 2026-04-07 at 12.53.33.jpeg",
+  "WhatsApp Image 2026-04-08 at 09.57.26.jpeg",
+  "WhatsApp Image 2026-04-08 at 09.57.27.jpeg",
+  "WhatsApp Image 2026-04-08 at 09.57.28 (3).jpeg",
+  "WhatsApp Image 2026-04-08 at 09.57.28 (4).jpeg",
+  "WhatsApp Image 2026-04-08 at 09.57.28 (7).jpeg",
+  "WhatsApp Image 2026-04-08 at 09.57.28 (8).jpeg",
+  "WhatsApp Image 2026-04-09 at 13.12.44 (1).jpeg",
+  "WhatsApp Image 2026-04-09 at 13.12.56 (1).jpeg",
+  "WhatsApp Image 2026-04-09 at 15.48.39 (47).jpeg",
+  "WhatsApp Image 2026-04-09 at 15.48.39 (51).jpeg",
+  "WhatsApp Image 2026-04-09 at 15.48.41 (2).jpeg",
+  "WhatsApp Image 2026-04-09 at 16.22.42 (3).jpeg",
+  "WhatsApp Image 2026-04-09 at 16.28.48 (9).jpeg",
+];
+const preaxionSlides = preaxionPhotos.map((file, index) => ({
+  type: "image",
+  title: `Preaxion em Ação · ${index + 1}`,
+  subtitle: "Registro do treinamento de campo",
+  src: `assets/Preaxion/${file}`,
+  transition: "fade",
+  kenBurns: true,
+}));
+
 const slides = [
   {
     type: "image",
@@ -112,38 +138,7 @@ const slides = [
     src: "assets/Preaxion/Preaxion.mp4",
     transition: "slide",
   },
-  {
-    type: "image",
-    title: "Preaxion em Ação · 1",
-    subtitle: "Registro do treinamento de campo",
-    src: "assets/Preaxion/WhatsApp Image 2026-04-07 at 12.53.33.jpeg",
-    transition: "fade",
-    kenBurns: true,
-  },
-  {
-    type: "image",
-    title: "Preaxion em Ação · 2",
-    subtitle: "Engajamento das equipes",
-    src: "assets/Preaxion/WhatsApp Image 2026-04-08 at 09.57.26.jpeg",
-    transition: "fade",
-    kenBurns: true,
-  },
-  {
-    type: "image",
-    title: "Preaxion em Ação · 3",
-    subtitle: "Atuação preventiva nas frentes",
-    src: "assets/Preaxion/WhatsApp Image 2026-04-09 at 13.12.44 (1).jpeg",
-    transition: "fade",
-    kenBurns: true,
-  },
-  {
-    type: "image",
-    title: "Preaxion em Ação · 4",
-    subtitle: "Cobertura das ações de segurança",
-    src: "assets/Preaxion/WhatsApp Image 2026-04-09 at 16.22.42 (3).jpeg",
-    transition: "fade",
-    kenBurns: true,
-  },
+  ...preaxionSlides,
   {
     type: "image",
     title: "Saúde em Foco",
