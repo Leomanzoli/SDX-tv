@@ -13,8 +13,8 @@ const config = {
   newsCacheMinutes: 20,
 };
 
-// Gera a sequência 1.jpg..16.jpg para manter a ordem das inspeções no loop.
-const inspectionSlides = Array.from({ length: 16 }, (_, index) => {
+// Gera a sequência 1.jpg..17.jpg para manter a ordem das inspeções no loop.
+const inspectionSlides = Array.from({ length: 17 }, (_, index) => {
   const number = index + 1;
   return {
     type: "image",
@@ -32,6 +32,14 @@ const slides = [
     title: "Panorama CRM",
     subtitle: "Comunicação de rotina operacional",
     src: "assets/CRM/CRM_1.png",
+    transition: "fade",
+    kenBurns: true,
+  },
+  {
+    type: "image",
+    title: "CRM em Campo",
+    subtitle: "Atuação direta na operação",
+    src: "assets/CRM/CRM em Campo.png",
     transition: "fade",
     kenBurns: true,
   },
@@ -96,6 +104,45 @@ const slides = [
     subtitle: "Princípios de incêndios em correias",
     src: "assets/Pilulas/Princípios de incêndios em correias_horizontal.mp4",
     transition: "slide",
+  },
+  {
+    type: "video",
+    title: "Preaxion · Treinamento",
+    subtitle: "Resposta rápida e prevenção",
+    src: "assets/Preaxion/Preaxion.mp4",
+    transition: "slide",
+  },
+  {
+    type: "image",
+    title: "Preaxion em Ação · 1",
+    subtitle: "Registro do treinamento de campo",
+    src: "assets/Preaxion/WhatsApp Image 2026-04-07 at 12.53.33.jpeg",
+    transition: "fade",
+    kenBurns: true,
+  },
+  {
+    type: "image",
+    title: "Preaxion em Ação · 2",
+    subtitle: "Engajamento das equipes",
+    src: "assets/Preaxion/WhatsApp Image 2026-04-08 at 09.57.26.jpeg",
+    transition: "fade",
+    kenBurns: true,
+  },
+  {
+    type: "image",
+    title: "Preaxion em Ação · 3",
+    subtitle: "Atuação preventiva nas frentes",
+    src: "assets/Preaxion/WhatsApp Image 2026-04-09 at 13.12.44 (1).jpeg",
+    transition: "fade",
+    kenBurns: true,
+  },
+  {
+    type: "image",
+    title: "Preaxion em Ação · 4",
+    subtitle: "Cobertura das ações de segurança",
+    src: "assets/Preaxion/WhatsApp Image 2026-04-09 at 16.22.42 (3).jpeg",
+    transition: "fade",
+    kenBurns: true,
   },
   {
     type: "image",
