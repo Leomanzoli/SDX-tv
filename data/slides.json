@@ -29,6 +29,38 @@
     },
     {
       "type": "image",
+      "title": "Inspeções · Slide 10",
+      "subtitle": "Checklist e evidências de campo",
+      "src": "assets/Inspeções/10.jpg",
+      "transition": "fade",
+      "kenBurns": true
+    },
+    {
+      "type": "image",
+      "title": "Inspeções · Slide 11",
+      "subtitle": "Checklist e evidências de campo",
+      "src": "assets/Inspeções/11.jpg",
+      "transition": "fade",
+      "kenBurns": true
+    },
+    {
+      "type": "image",
+      "title": "Inspeções · Slide 12",
+      "subtitle": "Checklist e evidências de campo",
+      "src": "assets/Inspeções/12.jpg",
+      "transition": "fade",
+      "kenBurns": true
+    },
+    {
+      "type": "image",
+      "title": "Inspeções · Slide 14",
+      "subtitle": "Checklist e evidências de campo",
+      "src": "assets/Inspeções/14.jpg",
+      "transition": "fade",
+      "kenBurns": true
+    },
+    {
+      "type": "image",
       "title": "Indicadores N3",
       "subtitle": "Visibilidade em tempo real para equipes",
       "src": "assets/N3/N3_1.png",
@@ -305,41 +337,9 @@
     },
     {
       "type": "image",
-      "title": "Inspeções · Slide 10",
-      "subtitle": "Checklist e evidências de campo",
-      "src": "assets/Inspeções/10.jpg",
-      "transition": "fade",
-      "kenBurns": true
-    },
-    {
-      "type": "image",
-      "title": "Inspeções · Slide 11",
-      "subtitle": "Checklist e evidências de campo",
-      "src": "assets/Inspeções/11.jpg",
-      "transition": "fade",
-      "kenBurns": true
-    },
-    {
-      "type": "image",
-      "title": "Inspeções · Slide 12",
-      "subtitle": "Checklist e evidências de campo",
-      "src": "assets/Inspeções/12.jpg",
-      "transition": "fade",
-      "kenBurns": true
-    },
-    {
-      "type": "image",
       "title": "Inspeções · Slide 13",
       "subtitle": "Checklist e evidências de campo",
       "src": "assets/Inspeções/13.jpg",
-      "transition": "fade",
-      "kenBurns": true
-    },
-    {
-      "type": "image",
-      "title": "Inspeções · Slide 14",
-      "subtitle": "Checklist e evidências de campo",
-      "src": "assets/Inspeções/14.jpg",
       "transition": "fade",
       "kenBurns": true
     },
