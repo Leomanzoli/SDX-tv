@@ -18,23 +18,30 @@ async function listR2ForFolder(folder) {
   const client = getR2Client();
   const bucket = process.env.R2_BUCKET;
   const publicUrl = process.env.R2_PUBLIC_URL;
-  if (!client || !bucket || !publicUrl) return [];
+  if (!client) return { items: [], diag: "R2 client nao inicializado (env vars ausentes)" };
+  if (!bucket) return { items: [], diag: "R2_BUCKET ausente" };
+  if (!publicUrl) return { items: [], diag: "R2_PUBLIC_URL ausente" };
 
   const prefix = `${folder}/`;
-  const { Contents = [] } = await client.send(
-    new ListObjectsV2Command({ Bucket: bucket, Prefix: prefix })
-  );
-  const base = publicUrl.replace(/\/$/, "");
-  return Contents.map((obj) => {
-    const name = obj.Key.slice(prefix.length).replace(/^\d+_/, "");
-    return {
-      kind: "r2",
-      key: obj.Key,
-      name,
-      url: `${base}/${obj.Key}`,
-      size: obj.Size,
-    };
-  });
+  try {
+    const { Contents = [] } = await client.send(
+      new ListObjectsV2Command({ Bucket: bucket, Prefix: prefix })
+    );
+    const base = publicUrl.replace(/\/$/, "");
+    const items = Contents.map((obj) => {
+      const name = obj.Key.slice(prefix.length).replace(/^\d+_/, "");
+      return {
+        kind: "r2",
+        key: obj.Key,
+        name,
+        url: `${base}/${obj.Key}`,
+        size: obj.Size,
+      };
+    });
+    return { items, diag: `R2 OK: ${items.length} objeto(s) com prefix '${prefix}'` };
+  } catch (error) {
+    return { items: [], diag: `R2 erro: ${error.name || ""} ${error.message || error}` };
+  }
 }
 
 module.exports = async (req, res) => {
@@ -50,7 +57,7 @@ module.exports = async (req, res) => {
   if (!folder) return res.status(400).json({ error: "?folder= obrigatorio" });
 
   try {
-    const [repoFiles, r2Files] = await Promise.all([
+    const [repoFiles, r2Result] = await Promise.all([
       listDir(`assets/${folder}`),
       listR2ForFolder(folder),
     ]);
@@ -65,10 +72,10 @@ module.exports = async (req, res) => {
           sha: i.sha,
           size: i.size,
         })),
-      ...r2Files,
+      ...r2Result.items,
     ];
 
-    return res.status(200).json({ files: items });
+    return res.status(200).json({ files: items, r2Diag: r2Result.diag });
   } catch (error) {
     return res.status(500).json({ error: String(error.message || error) });
   }
