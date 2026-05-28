@@ -222,8 +222,8 @@ async function loadFiles(folder) {
     res.files.forEach((f) => {
       const isImg = /\.(png|jpe?g|gif|webp)$/i.test(f.name);
       const isVid = /\.(mp4|webm|mov|m4v)$/i.test(f.name);
-      const src = f.kind === "blob" ? f.url : `/${f.path}`;
-      const badge = f.kind === "blob" ? '<span class="badge">📦 vídeo grande</span>' : "";
+      const src = f.kind === "release" ? f.url : `/${f.path}`;
+      const badge = f.kind === "release" ? '<span class="badge">📦 vídeo grande</span>' : "";
 
       const li = document.createElement("li");
       li.className = "file-item";
@@ -242,7 +242,7 @@ async function loadFiles(folder) {
       li.querySelector(".meta").innerHTML = `${badge} ${formatSize(f.size)}`;
 
       li.querySelector('[data-action="use"]').addEventListener("click", () => {
-        const slideSrc = f.kind === "blob" ? f.url : `assets/${folder}/${f.name}`;
+        const slideSrc = f.kind === "release" ? f.url : `assets/${folder}/${f.name}`;
         const baseTitle = f.name.replace(/\.[^.]+$/, "");
         slidesState.data.slides.push({
           type: isVid ? "video" : "image",
@@ -259,8 +259,8 @@ async function loadFiles(folder) {
       li.querySelector('[data-action="del"]').addEventListener("click", async () => {
         if (!confirm(`Apagar ${f.name}?`)) return;
         try {
-          if (f.kind === "blob") {
-            await api("/api/blob-upload", { method: "DELETE", body: JSON.stringify({ url: f.url }) });
+          if (f.kind === "release") {
+            await api("/api/release-delete", { method: "DELETE", body: JSON.stringify({ assetId: f.id }) });
           } else {
             await api("/api/upload", { method: "DELETE", body: JSON.stringify({ path: f.path }) });
           }
@@ -343,14 +343,22 @@ els.fileInput.addEventListener("change", async (e) => {
 });
 
 async function uploadLargeFile(folder, file) {
-  const { upload } = await import("https://esm.sh/@vercel/blob@2.4.0/client");
   const safeFolder = String(folder).replace(/[^A-Za-z0-9._-]+/g, "_");
   const safeName = String(file.name).replace(/[^A-Za-z0-9._-]+/g, "_");
-  await upload(`${safeFolder}/${safeName}`, file, {
-    access: "public",
-    handleUploadUrl: "/api/blob-upload",
-    clientPayload: JSON.stringify({ folder, token: token() }),
-  });
+  const res = await fetch(
+    `/api/edge-upload?folder=${encodeURIComponent(safeFolder)}&filename=${encodeURIComponent(safeName)}`,
+    {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${token()}`,
+        "Content-Type": file.type || "application/octet-stream",
+      },
+      body: file,
+    }
+  );
+  if (res.status === 401) { logout(); throw new Error("Sessão expirada."); }
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(data.error || `Erro ${res.status}`);
 }
 
 function fileToBase64(file) {

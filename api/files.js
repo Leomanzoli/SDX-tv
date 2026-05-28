@@ -1,21 +1,28 @@
 const { requireAuth } = require("./_lib/auth");
-const { listDir } = require("./_lib/github");
-const { list } = require("@vercel/blob");
+const { listDir, getRepoConfig } = require("./_lib/github");
 
-async function listBlobsForFolder(folder) {
-  if (!process.env.BLOB_READ_WRITE_TOKEN) return [];
-  const prefix = `${folder}/`;
-  const { blobs } = await list({
-    prefix,
-    token: process.env.BLOB_READ_WRITE_TOKEN,
-  });
-  return blobs.map((b) => ({
-    kind: "blob",
-    name: b.pathname.slice(prefix.length).replace(/-[A-Za-z0-9]{10,}(\.[^.]+)?$/, "$1"),
-    url: b.url,
-    size: b.size,
-    pathname: b.pathname,
-  }));
+const TAG = "media-bucket";
+const SEP = "--";
+
+async function listReleaseAssetsForFolder(folder) {
+  const { owner, repo, octokit } = getRepoConfig();
+  try {
+    const { data: release } = await octokit.repos.getReleaseByTag({ owner, repo, tag: TAG });
+    const { data: assets } = await octokit.repos.listReleaseAssets({ owner, repo, release_id: release.id, per_page: 100 });
+    const prefix = folder + SEP;
+    return assets
+      .filter((a) => a.name.startsWith(prefix))
+      .map((a) => ({
+        kind: "release",
+        id: a.id,
+        name: a.name.slice(prefix.length).replace(/^\d+_/, ""),
+        url: a.browser_download_url,
+        size: a.size,
+      }));
+  } catch (error) {
+    if (error.status === 404) return [];
+    throw error;
+  }
 }
 
 module.exports = async (req, res) => {
@@ -31,22 +38,16 @@ module.exports = async (req, res) => {
   if (!folder) return res.status(400).json({ error: "?folder= obrigatorio" });
 
   try {
-    const [repoFiles, blobFiles] = await Promise.all([
+    const [repoFiles, releaseFiles] = await Promise.all([
       listDir(`assets/${folder}`),
-      listBlobsForFolder(folder),
+      listReleaseAssetsForFolder(folder),
     ]);
 
     const items = [
       ...repoFiles
         .filter((i) => i.type === "file" && i.name !== ".gitkeep")
-        .map((i) => ({
-          kind: "repo",
-          name: i.name,
-          path: i.path,
-          sha: i.sha,
-          size: i.size,
-        })),
-      ...blobFiles,
+        .map((i) => ({ kind: "repo", name: i.name, path: i.path, sha: i.sha, size: i.size })),
+      ...releaseFiles,
     ];
 
     return res.status(200).json({ files: items });
