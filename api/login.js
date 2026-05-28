@@ -38,7 +38,7 @@ module.exports = async (req, res) => {
   }
   const ok = await bcrypt.compare(password, h);
   if (!ok) {
-    return res.status(401).json({ error: `DIAG: senha incorreta (hash len=${h.length}, inicio='${h.slice(0, 7)}')` });
+    return res.status(401).json({ error: `DIAG: senha incorreta (hash len=${h.length}, inicio='${h.slice(0, 7)}', fim='${h.slice(-7)}')` });
   }
 
   const token = sign({ u: user.u });
