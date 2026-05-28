@@ -120,8 +120,16 @@ function renderSlides() {
     const li = document.createElement("li");
     li.className = "slide-item";
     li.dataset.index = String(index);
+    const isVid = slide.type === "video";
+    const src = slide.src && /^https?:\/\//i.test(slide.src) ? slide.src : `../${slide.src || ""}`;
+    const thumb = !slide.src
+      ? '<div class="thumb empty"></div>'
+      : isVid
+        ? `<video class="thumb" src="${src}" muted preload="metadata"></video>`
+        : `<img class="thumb" loading="lazy" src="${src}" />`;
     li.innerHTML = `
       <span class="handle">⋮⋮</span>
+      ${thumb}
       <div class="info">
         <div class="title"></div>
         <div class="meta"></div>

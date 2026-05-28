@@ -86,6 +86,8 @@ main { padding: 20px; max-width: 1200px; margin: 0 auto; }
 .slide-item .meta { font-size: 12px; color: #8b949e; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .slide-item .actions, .file-item .actions { display: flex; gap: 6px; }
 .file-item img, .file-item video { width: 60px; height: 60px; object-fit: cover; border-radius: 4px; background: #0d1117; }
+.slide-item .thumb { width: 96px; height: 64px; object-fit: cover; border-radius: 4px; background: #0d1117; flex-shrink: 0; }
+.slide-item .thumb.empty { border: 1px dashed #30363d; }
 .file-item .info { flex: 1; min-width: 0; }
 .file-item .name { word-break: break-all; font-weight: 600; }
 .file-item .meta { font-size: 12px; color: #8b949e; margin-top: 2px; }
