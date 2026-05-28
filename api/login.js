@@ -32,9 +32,13 @@ module.exports = async (req, res) => {
     return res.status(401).json({ error: `DIAG: usuario '${username}' nao encontrado. Cadastrados: ${users.map((u) => u.u).join(", ")}` });
   }
 
-  const ok = await bcrypt.compare(password, user.hash || "");
+  const h = user.hash || "";
+  if (!/^\$2[aby]\$/.test(h)) {
+    return res.status(401).json({ error: `DIAG: hash invalido (len=${h.length}, inicio='${h.slice(0, 7)}'). Vercel comeu os $ do hash bcrypt.` });
+  }
+  const ok = await bcrypt.compare(password, h);
   if (!ok) {
-    return res.status(401).json({ error: "DIAG: senha incorreta para esse usuario" });
+    return res.status(401).json({ error: `DIAG: senha incorreta (hash len=${h.length}, inicio='${h.slice(0, 7)}')` });
   }
 
   const token = sign({ u: user.u });
