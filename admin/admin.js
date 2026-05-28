@@ -214,8 +214,8 @@ async function loadFiles(folder) {
     res.files.forEach((f) => {
       const isImg = /\.(png|jpe?g|gif|webp)$/i.test(f.name);
       const isVid = /\.(mp4|webm|mov|m4v)$/i.test(f.name);
-      const src = f.kind === "release" ? f.url : `../${f.path}`;
-      const badge = f.kind === "release" ? '<span class="badge">📦 vídeo grande</span>' : "";
+      const src = f.kind === "blob" ? f.url : `../${f.path}`;
+      const badge = f.kind === "blob" ? '<span class="badge">📦 vídeo grande</span>' : "";
 
       const li = document.createElement("li");
       li.className = "file-item";
@@ -234,7 +234,7 @@ async function loadFiles(folder) {
       li.querySelector(".meta").innerHTML = `${badge} ${formatSize(f.size)}`;
 
       li.querySelector('[data-action="use"]').addEventListener("click", () => {
-        const slideSrc = f.kind === "release" ? f.url : `assets/${folder}/${f.name}`;
+        const slideSrc = f.kind === "blob" ? f.url : `assets/${folder}/${f.name}`;
         const baseTitle = f.name.replace(/\.[^.]+$/, "");
         slidesState.data.slides.push({
           type: isVid ? "video" : "image",
@@ -251,8 +251,8 @@ async function loadFiles(folder) {
       li.querySelector('[data-action="del"]').addEventListener("click", async () => {
         if (!confirm(`Apagar ${f.name}?`)) return;
         try {
-          if (f.kind === "release") {
-            await api("/api/release-upload", { method: "DELETE", body: JSON.stringify({ assetId: f.id }) });
+          if (f.kind === "blob") {
+            await api("/api/blob-upload", { method: "DELETE", body: JSON.stringify({ url: f.url }) });
           } else {
             await api("/api/upload", { method: "DELETE", body: JSON.stringify({ path: f.path }) });
           }
@@ -335,22 +335,12 @@ els.fileInput.addEventListener("change", async (e) => {
 });
 
 async function uploadLargeFile(folder, file) {
-  const init = await api("/api/release-upload", {
-    method: "POST",
-    body: JSON.stringify({ folder, filename: file.name }),
+  const { upload } = await import("https://esm.sh/@vercel/blob@0.27.3/client");
+  await upload(`${folder}/${file.name}`, file, {
+    access: "public",
+    handleUploadUrl: "/api/blob-upload",
+    clientPayload: JSON.stringify({ folder, token: token() }),
   });
-  const uploadRes = await fetch(init.uploadUrl, {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${init.githubToken}`,
-      "Content-Type": file.type || "application/octet-stream",
-    },
-    body: file,
-  });
-  if (!uploadRes.ok) {
-    const text = await uploadRes.text();
-    throw new Error(`GitHub Releases ${uploadRes.status}: ${text.slice(0, 200)}`);
-  }
 }
 
 function fileToBase64(file) {

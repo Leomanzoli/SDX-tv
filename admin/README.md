@@ -89,11 +89,20 @@ Depois monte o valor da variável (em **uma linha só**, sem quebras):
 [{"u":"maria","hash":"$2a$10$abc..."},{"u":"joao","hash":"$2a$10$def..."}]
 ```
 
-## 3. Deploy
+## 3. Conectar Vercel Blob (storage de vídeos)
+
+1. No projeto da Vercel, abra a aba **Storage** → **Create Database** → **Blob**.
+2. Dê um nome (ex: `sdx-media`) e confirme.
+3. Na tela do store, clique em **Connect Project** → selecione o `SDX-tv` → ambiente **Production** (e Preview/Development se quiser testar).
+4. A Vercel cria automaticamente a env var `BLOB_READ_WRITE_TOKEN` no projeto. Não precisa copiar/colar nada.
+
+Limite do Hobby: 1 GB de storage + 10 GB de bandwidth/mês — suficiente pra dezenas de vídeos curtos.
+
+## 4. Deploy
 
 Clique em **Deploy**. Em ~1 minuto a Vercel mostra a URL `https://SEU-PROJETO.vercel.app`. O painel está em `/admin`.
 
-## 4. Compartilhar com a equipe
+## 5. Compartilhar com a equipe
 
 Envie para as 2-3 pessoas:
 - O link `https://SEU-PROJETO.vercel.app/admin`
@@ -103,7 +112,7 @@ Envie para as 2-3 pessoas:
 ## Onde os arquivos vão parar
 
 - **Imagens e arquivos pequenos** (`≤3,5 MB`): commit em `assets/<pasta>/` no repositório. GitHub Pages serve direto.
-- **Vídeos e arquivos grandes** (`>3,5 MB`): viram assets de um Release com tag `media-bucket`. Aparecem em https://github.com/Leomanzoli/SDX-tv/releases . A URL do download vai automaticamente para `data/slides.json`. O repo principal continua leve.
+- **Vídeos e arquivos grandes** (`>3,5 MB`): vão para o **Vercel Blob** (storage da própria Vercel). A URL pública é gravada em `data/slides.json`. O repo principal continua leve.
 - **Edições de slides** (ordem, títulos, ticker): commit em `data/slides.json`.
 
 Tudo gera commits com a mensagem `admin(usuário): ...`, então o histórico fica auditável.
@@ -114,6 +123,7 @@ Tudo gera commits com a mensagem `admin(usuário): ...`, então o histórico fic
 |---|---|---|
 | "Sessão expirada" | Passou 12h | Logar de novo |
 | Login não aceita | Hash bcrypt errado | Regerar com `bcryptjs.hashSync('senha', 10)` |
-| Upload trava em vídeo grande | Conexão lenta | Tentar de novo — upload é direto pro GitHub |
+| Upload trava em vídeo grande | Conexão lenta | Tentar de novo — upload é direto pro Vercel Blob |
 | TV não atualizou | Pages ainda reconstruindo | Esperar mais 1 min, depois F5 |
 | "GITHUB_TOKEN ausente" | Variável não configurada na Vercel | Adicionar e fazer Redeploy |
+| Upload de vídeo falha com "Não autenticado" | Blob store não conectado ao projeto | Storage → Blob → Connect Project; depois Redeploy |
