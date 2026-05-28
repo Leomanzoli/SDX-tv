@@ -4,8 +4,7 @@
   "outputDirectory": ".",
   "cleanUrls": true,
   "functions": {
-    "api/upload.js": { "maxDuration": 30 },
-    "api/edge-upload.mjs": { "runtime": "edge" }
+    "api/upload.js": { "maxDuration": 30 }
   },
   "rewrites": [
     { "source": "/admin", "destination": "/admin/index.html" }
