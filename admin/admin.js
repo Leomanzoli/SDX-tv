@@ -350,7 +350,6 @@ async function uploadLargeFile(folder, file) {
     access: "public",
     handleUploadUrl: "/api/blob-upload",
     clientPayload: JSON.stringify({ folder, token: token() }),
-    multipart: true,
   });
 }
 
