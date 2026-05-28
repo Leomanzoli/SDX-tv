@@ -12,6 +12,45 @@
   },
   "slides": [
     {
+      "type": "video",
+      "title": "Sexta segura",
+      "subtitle": "Especial PreAxion Direito de Recusa",
+      "src": "https://pub-09e280637aa54bbf998fe2bdd4d25ade.r2.dev/Sexta segura/1779989230689_download.mp4",
+      "transition": "slide"
+    },
+    {
+      "type": "image",
+      "title": "Sexta segura",
+      "subtitle": "Especial PreAxion Direito de Recusa",
+      "src": "assets/Sexta segura/WhatsApp Image 2026-05-28 at 09.25.00 (1).jpeg",
+      "transition": "fade",
+      "kenBurns": true
+    },
+    {
+      "type": "image",
+      "title": "Sexta segura",
+      "subtitle": "Especial PreAxion Direito de Recusa",
+      "src": "assets/Sexta segura/WhatsApp Image 2026-05-28 at 09.25.00 (2).jpeg",
+      "transition": "fade",
+      "kenBurns": true
+    },
+    {
+      "type": "image",
+      "title": "Sexta segura",
+      "subtitle": "Especial PreAxion Direito de Recusa",
+      "src": "assets/Sexta segura/WhatsApp Image 2026-05-28 at 09.25.00.jpeg",
+      "transition": "fade",
+      "kenBurns": true
+    },
+    {
+      "type": "image",
+      "title": "Sexta segura",
+      "subtitle": "Especial PreAxion Direito de Recusa",
+      "src": "assets/Sexta segura/WhatsApp Image 2026-05-28 at 09.24.58 (2).jpeg",
+      "transition": "fade",
+      "kenBurns": true
+    },
+    {
       "type": "image",
       "title": "Panorama CRM",
       "subtitle": "Comunicação de rotina operacional",
@@ -364,45 +403,6 @@
       "title": "Inspeções",
       "subtitle": "Presença em campo",
       "src": "assets/Inspeções/17.jpg",
-      "transition": "fade",
-      "kenBurns": true
-    },
-    {
-      "type": "video",
-      "title": "Sexta segura",
-      "subtitle": "Especial PreAxion Direito de Recusa",
-      "src": "https://pub-09e280637aa54bbf998fe2bdd4d25ade.r2.dev/Sexta segura/1779989230689_download.mp4",
-      "transition": "slide"
-    },
-    {
-      "type": "image",
-      "title": "Sexta segura",
-      "subtitle": "Especial PreAxion Direito de Recusa",
-      "src": "assets/Sexta segura/WhatsApp Image 2026-05-28 at 09.24.58 (2).jpeg",
-      "transition": "fade",
-      "kenBurns": true
-    },
-    {
-      "type": "image",
-      "title": "Sexta segura",
-      "subtitle": "Especial PreAxion Direito de Recusa",
-      "src": "assets/Sexta segura/WhatsApp Image 2026-05-28 at 09.25.00 (1).jpeg",
-      "transition": "fade",
-      "kenBurns": true
-    },
-    {
-      "type": "image",
-      "title": "Sexta segura",
-      "subtitle": "Especial PreAxion Direito de Recusa",
-      "src": "assets/Sexta segura/WhatsApp Image 2026-05-28 at 09.25.00 (2).jpeg",
-      "transition": "fade",
-      "kenBurns": true
-    },
-    {
-      "type": "image",
-      "title": "Sexta segura",
-      "subtitle": "Especial PreAxion Direito de Recusa",
-      "src": "assets/Sexta segura/WhatsApp Image 2026-05-28 at 09.25.00.jpeg",
       "transition": "fade",
       "kenBurns": true
     }
