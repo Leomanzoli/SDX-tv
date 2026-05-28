@@ -212,21 +212,50 @@ async function loadFiles(folder) {
     const res = await api(`/api/files?folder=${encodeURIComponent(folder)}`);
     els.filesList.innerHTML = "";
     res.files.forEach((f) => {
+      const isImg = /\.(png|jpe?g|gif|webp)$/i.test(f.name);
+      const isVid = /\.(mp4|webm|mov|m4v)$/i.test(f.name);
+      const src = f.kind === "release" ? f.url : `../${f.path}`;
+      const badge = f.kind === "release" ? '<span class="badge">📦 vídeo grande</span>' : "";
+
       const li = document.createElement("li");
       li.className = "file-item";
-      const isImg = /\.(png|jpe?g|gif|webp)$/i.test(f.name);
-      const isVid = /\.(mp4|webm|mov)$/i.test(f.name);
-      const rawUrl = `https://raw.githubusercontent.com/${(window.GITHUB_REPO || "Leomanzoli/SDX-tv")}/main/${f.path}`;
       li.innerHTML = `
-        ${isImg ? `<img loading="lazy" src="../${f.path}" />` : isVid ? `<video src="../${f.path}"></video>` : '<div style="width:60px"></div>'}
-        <div class="name"></div>
-        <div class="actions"><button class="danger" data-action="del">Apagar</button></div>
+        ${isImg ? `<img loading="lazy" src="${src}" />` : isVid ? `<video src="${src}" muted></video>` : '<div style="width:60px"></div>'}
+        <div class="info">
+          <div class="name"></div>
+          <div class="meta"></div>
+        </div>
+        <div class="actions">
+          <button data-action="use" class="primary">+ Usar nos slides</button>
+          <button data-action="del" class="danger">Apagar</button>
+        </div>
       `;
       li.querySelector(".name").textContent = f.name;
+      li.querySelector(".meta").innerHTML = `${badge} ${formatSize(f.size)}`;
+
+      li.querySelector('[data-action="use"]').addEventListener("click", () => {
+        const slideSrc = f.kind === "release" ? f.url : `assets/${folder}/${f.name}`;
+        const baseTitle = f.name.replace(/\.[^.]+$/, "");
+        slidesState.data.slides.push({
+          type: isVid ? "video" : "image",
+          title: baseTitle,
+          subtitle: folder,
+          src: slideSrc,
+          transition: isVid ? "slide" : "fade",
+          ...(isVid ? {} : { kenBurns: true }),
+        });
+        renderSlides();
+        setStatus(els.mediaStatus, `'${f.name}' adicionado aos slides. Vá em 'Slides' e clique em Salvar e publicar.`, "ok");
+      });
+
       li.querySelector('[data-action="del"]').addEventListener("click", async () => {
-        if (!confirm(`Apagar ${f.path}?`)) return;
+        if (!confirm(`Apagar ${f.name}?`)) return;
         try {
-          await api("/api/upload", { method: "DELETE", body: JSON.stringify({ path: f.path }) });
+          if (f.kind === "release") {
+            await api("/api/release-upload", { method: "DELETE", body: JSON.stringify({ assetId: f.id }) });
+          } else {
+            await api("/api/upload", { method: "DELETE", body: JSON.stringify({ path: f.path }) });
+          }
           await loadFiles(folder);
           setStatus(els.mediaStatus, "Apagado ✓", "ok");
         } catch (error) {
@@ -239,6 +268,12 @@ async function loadFiles(folder) {
   } catch (error) {
     setStatus(els.mediaStatus, error.message, "error");
   }
+}
+
+function formatSize(bytes) {
+  if (!bytes) return "";
+  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(0)} KB`;
+  return `${(bytes / 1024 / 1024).toFixed(1)} MB`;
 }
 
 els.folderSelect.addEventListener("change", (e) => loadFiles(e.target.value));
@@ -268,6 +303,8 @@ els.delFolder.addEventListener("click", async () => {
   }
 });
 
+const SMALL_FILE_LIMIT = 3.5 * 1024 * 1024; // ate 3.5 MB vai para o repo via Vercel function
+
 els.fileInput.addEventListener("change", async (e) => {
   const folder = els.folderSelect.value;
   if (!folder) {
@@ -276,13 +313,18 @@ els.fileInput.addEventListener("change", async (e) => {
   }
   const files = [...e.target.files];
   for (const file of files) {
-    setStatus(els.mediaStatus, `Enviando ${file.name}...`, "");
+    const mb = (file.size / 1024 / 1024).toFixed(1);
+    setStatus(els.mediaStatus, `Enviando ${file.name} (${mb} MB)...`, "");
     try {
-      const base64 = await fileToBase64(file);
-      await api("/api/upload", {
-        method: "POST",
-        body: JSON.stringify({ folder, filename: file.name, contentBase64: base64 }),
-      });
+      if (file.size <= SMALL_FILE_LIMIT) {
+        const base64 = await fileToBase64(file);
+        await api("/api/upload", {
+          method: "POST",
+          body: JSON.stringify({ folder, filename: file.name, contentBase64: base64 }),
+        });
+      } else {
+        await uploadLargeFile(folder, file);
+      }
       setStatus(els.mediaStatus, `${file.name} publicado ✓`, "ok");
     } catch (error) {
       setStatus(els.mediaStatus, `${file.name}: ${error.message}`, "error");
@@ -291,6 +333,25 @@ els.fileInput.addEventListener("change", async (e) => {
   els.fileInput.value = "";
   await loadFiles(folder);
 });
+
+async function uploadLargeFile(folder, file) {
+  const init = await api("/api/release-upload", {
+    method: "POST",
+    body: JSON.stringify({ folder, filename: file.name }),
+  });
+  const uploadRes = await fetch(init.uploadUrl, {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${init.githubToken}`,
+      "Content-Type": file.type || "application/octet-stream",
+    },
+    body: file,
+  });
+  if (!uploadRes.ok) {
+    const text = await uploadRes.text();
+    throw new Error(`GitHub Releases ${uploadRes.status}: ${text.slice(0, 200)}`);
+  }
+}
 
 function fileToBase64(file) {
   return new Promise((resolve, reject) => {
