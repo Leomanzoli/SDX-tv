@@ -11,50 +11,362 @@
     "newsCacheMinutes": 20
   },
   "slides": [
-    { "type": "image", "title": "Panorama CRM", "subtitle": "Comunicação de rotina operacional", "src": "assets/CRM/CRM_1.png", "transition": "fade", "kenBurns": true },
-    { "type": "image", "title": "CRM em Campo", "subtitle": "Atuação direta na operação", "src": "assets/CRM/CRM em Campo.png", "transition": "fade", "kenBurns": true },
-    { "type": "image", "title": "Indicadores N3", "subtitle": "Visibilidade em tempo real para equipes", "src": "assets/N3/N3_1.png", "transition": "fade", "kenBurns": true },
-    { "type": "image", "title": "Indicadores N3 · Continuação", "subtitle": "Acompanhamento diário com foco em prevenção", "src": "assets/N3/N3_2.png", "transition": "fade", "kenBurns": true },
-    { "type": "image", "title": "Painel N3", "subtitle": "Visão consolidada de desempenho", "src": "assets/N3/Painel.png", "transition": "fade", "kenBurns": true },
-    { "type": "image", "title": "Painel N3 · Detalhamento", "subtitle": "Análise operacional por frente", "src": "assets/N3/Painel 2.png", "transition": "fade", "kenBurns": true },
-    { "type": "video", "title": "Kaizens em Movimento", "subtitle": "Boas práticas em ação", "src": "assets/Kaizens/1.Video 1.mp4", "transition": "slide" },
-    { "type": "video", "title": "Kaizens · Edição 2", "subtitle": "Evolução contínua com segurança", "src": "assets/Kaizens/2.Video 2.mp4", "transition": "slide" },
-    { "type": "image", "title": "Resumo Kaizens", "subtitle": "Resultados e próximos ciclos", "src": "assets/Kaizens/0.Slide.png", "transition": "fade", "kenBurns": true },
-    { "type": "video", "title": "Pílulas de Segurança", "subtitle": "Princípios de incêndios em correias", "src": "assets/Pilulas/Princípios de incêndios em correias_horizontal.mp4", "transition": "slide" },
-    { "type": "video", "title": "Preaxion · Treinamento", "subtitle": "Resposta rápida e prevenção", "src": "assets/Preaxion/Preaxion.mp4", "transition": "slide" },
-    { "type": "image", "title": "Preaxion em Ação · 1", "subtitle": "Registro do treinamento de campo", "src": "assets/Preaxion/WhatsApp Image 2026-04-07 at 12.53.33.jpeg", "transition": "fade", "kenBurns": true },
-    { "type": "image", "title": "Preaxion em Ação · 2", "subtitle": "Registro do treinamento de campo", "src": "assets/Preaxion/WhatsApp Image 2026-04-08 at 09.57.26.jpeg", "transition": "fade", "kenBurns": true },
-    { "type": "image", "title": "Preaxion em Ação · 3", "subtitle": "Registro do treinamento de campo", "src": "assets/Preaxion/WhatsApp Image 2026-04-08 at 09.57.27.jpeg", "transition": "fade", "kenBurns": true },
-    { "type": "image", "title": "Preaxion em Ação · 4", "subtitle": "Registro do treinamento de campo", "src": "assets/Preaxion/WhatsApp Image 2026-04-08 at 09.57.28 (3).jpeg", "transition": "fade", "kenBurns": true },
-    { "type": "image", "title": "Preaxion em Ação · 5", "subtitle": "Registro do treinamento de campo", "src": "assets/Preaxion/WhatsApp Image 2026-04-08 at 09.57.28 (4).jpeg", "transition": "fade", "kenBurns": true },
-    { "type": "image", "title": "Preaxion em Ação · 6", "subtitle": "Registro do treinamento de campo", "src": "assets/Preaxion/WhatsApp Image 2026-04-08 at 09.57.28 (7).jpeg", "transition": "fade", "kenBurns": true },
-    { "type": "image", "title": "Preaxion em Ação · 7", "subtitle": "Registro do treinamento de campo", "src": "assets/Preaxion/WhatsApp Image 2026-04-08 at 09.57.28 (8).jpeg", "transition": "fade", "kenBurns": true },
-    { "type": "image", "title": "Preaxion em Ação · 8", "subtitle": "Registro do treinamento de campo", "src": "assets/Preaxion/WhatsApp Image 2026-04-09 at 13.12.44 (1).jpeg", "transition": "fade", "kenBurns": true },
-    { "type": "image", "title": "Preaxion em Ação · 9", "subtitle": "Registro do treinamento de campo", "src": "assets/Preaxion/WhatsApp Image 2026-04-09 at 13.12.56 (1).jpeg", "transition": "fade", "kenBurns": true },
-    { "type": "image", "title": "Preaxion em Ação · 10", "subtitle": "Registro do treinamento de campo", "src": "assets/Preaxion/WhatsApp Image 2026-04-09 at 15.48.39 (47).jpeg", "transition": "fade", "kenBurns": true },
-    { "type": "image", "title": "Preaxion em Ação · 11", "subtitle": "Registro do treinamento de campo", "src": "assets/Preaxion/WhatsApp Image 2026-04-09 at 15.48.39 (51).jpeg", "transition": "fade", "kenBurns": true },
-    { "type": "image", "title": "Preaxion em Ação · 12", "subtitle": "Registro do treinamento de campo", "src": "assets/Preaxion/WhatsApp Image 2026-04-09 at 15.48.41 (2).jpeg", "transition": "fade", "kenBurns": true },
-    { "type": "image", "title": "Preaxion em Ação · 13", "subtitle": "Registro do treinamento de campo", "src": "assets/Preaxion/WhatsApp Image 2026-04-09 at 16.22.42 (3).jpeg", "transition": "fade", "kenBurns": true },
-    { "type": "image", "title": "Preaxion em Ação · 14", "subtitle": "Registro do treinamento de campo", "src": "assets/Preaxion/WhatsApp Image 2026-04-09 at 16.28.48 (9).jpeg", "transition": "fade", "kenBurns": true },
-    { "type": "image", "title": "Saúde em Foco", "subtitle": "Conteúdo de bem-estar ocupacional", "src": "assets/Saúde/01.png", "transition": "fade", "kenBurns": true },
-    { "type": "image", "title": "Inspeções · Painel 1", "subtitle": "Resumo visual de inspeções", "src": "assets/Inspeções/0.Painel 1.png", "transition": "fade", "kenBurns": true },
-    { "type": "image", "title": "Inspeções · Painel 2", "subtitle": "Acompanhamento das evidências", "src": "assets/Inspeções/0.Painel 2.png", "transition": "fade", "kenBurns": true },
-    { "type": "image", "title": "Inspeções · Slide 1", "subtitle": "Checklist e evidências de campo", "src": "assets/Inspeções/1.jpg", "transition": "fade", "kenBurns": true },
-    { "type": "image", "title": "Inspeções · Slide 2", "subtitle": "Checklist e evidências de campo", "src": "assets/Inspeções/2.jpg", "transition": "fade", "kenBurns": true },
-    { "type": "image", "title": "Inspeções · Slide 3", "subtitle": "Checklist e evidências de campo", "src": "assets/Inspeções/3.jpg", "transition": "fade", "kenBurns": true },
-    { "type": "image", "title": "Inspeções · Slide 4", "subtitle": "Checklist e evidências de campo", "src": "assets/Inspeções/4.jpg", "transition": "fade", "kenBurns": true },
-    { "type": "image", "title": "Inspeções · Slide 5", "subtitle": "Checklist e evidências de campo", "src": "assets/Inspeções/5.jpg", "transition": "fade", "kenBurns": true },
-    { "type": "image", "title": "Inspeções · Slide 6", "subtitle": "Checklist e evidências de campo", "src": "assets/Inspeções/6.jpg", "transition": "fade", "kenBurns": true },
-    { "type": "image", "title": "Inspeções · Slide 7", "subtitle": "Checklist e evidências de campo", "src": "assets/Inspeções/7.jpg", "transition": "fade", "kenBurns": true },
-    { "type": "image", "title": "Inspeções · Slide 8", "subtitle": "Checklist e evidências de campo", "src": "assets/Inspeções/8.jpg", "transition": "fade", "kenBurns": true },
-    { "type": "image", "title": "Inspeções · Slide 9", "subtitle": "Checklist e evidências de campo", "src": "assets/Inspeções/9.jpg", "transition": "fade", "kenBurns": true },
-    { "type": "image", "title": "Inspeções · Slide 10", "subtitle": "Checklist e evidências de campo", "src": "assets/Inspeções/10.jpg", "transition": "fade", "kenBurns": true },
-    { "type": "image", "title": "Inspeções · Slide 11", "subtitle": "Checklist e evidências de campo", "src": "assets/Inspeções/11.jpg", "transition": "fade", "kenBurns": true },
-    { "type": "image", "title": "Inspeções · Slide 12", "subtitle": "Checklist e evidências de campo", "src": "assets/Inspeções/12.jpg", "transition": "fade", "kenBurns": true },
-    { "type": "image", "title": "Inspeções · Slide 13", "subtitle": "Checklist e evidências de campo", "src": "assets/Inspeções/13.jpg", "transition": "fade", "kenBurns": true },
-    { "type": "image", "title": "Inspeções · Slide 14", "subtitle": "Checklist e evidências de campo", "src": "assets/Inspeções/14.jpg", "transition": "fade", "kenBurns": true },
-    { "type": "image", "title": "Inspeções · Slide 15", "subtitle": "Checklist e evidências de campo", "src": "assets/Inspeções/15.jpg", "transition": "fade", "kenBurns": true },
-    { "type": "image", "title": "Inspeções · Slide 16", "subtitle": "Checklist e evidências de campo", "src": "assets/Inspeções/16.jpg", "transition": "fade", "kenBurns": true },
-    { "type": "image", "title": "Inspeções · Slide 17", "subtitle": "Checklist e evidências de campo", "src": "assets/Inspeções/17.jpg", "transition": "fade", "kenBurns": true }
-  ]
+    {
+      "type": "image",
+      "title": "Panorama CRM",
+      "subtitle": "Comunicação de rotina operacional",
+      "src": "assets/CRM/CRM_1.png",
+      "transition": "fade",
+      "kenBurns": true
+    },
+    {
+      "type": "image",
+      "title": "CRM em Campo",
+      "subtitle": "Atuação direta na operação",
+      "src": "assets/CRM/CRM em Campo.png",
+      "transition": "fade",
+      "kenBurns": true
+    },
+    {
+      "type": "image",
+      "title": "Indicadores N3",
+      "subtitle": "Visibilidade em tempo real para equipes",
+      "src": "assets/N3/N3_1.png",
+      "transition": "fade",
+      "kenBurns": true
+    },
+    {
+      "type": "image",
+      "title": "Indicadores N3 · Continuação",
+      "subtitle": "Acompanhamento diário com foco em prevenção",
+      "src": "assets/N3/N3_2.png",
+      "transition": "fade",
+      "kenBurns": true
+    },
+    {
+      "type": "image",
+      "title": "Painel N3",
+      "subtitle": "Visão consolidada de desempenho",
+      "src": "assets/N3/Painel.png",
+      "transition": "fade",
+      "kenBurns": true
+    },
+    {
+      "type": "image",
+      "title": "Painel N3 · Detalhamento",
+      "subtitle": "Análise operacional por frente",
+      "src": "assets/N3/Painel 2.png",
+      "transition": "fade",
+      "kenBurns": true
+    },
+    {
+      "type": "image",
+      "title": "Kaizen - Meia cana no píer de Carvão",
+      "subtitle": "Instalação de meia cana para facilitar o processo de amarração",
+      "src": "assets/Kaizens/0.Slide.png",
+      "transition": "fade",
+      "kenBurns": true
+    },
+    {
+      "type": "video",
+      "title": "Kaizen - Meia cana no píer de Carvão",
+      "subtitle": "Amarração sem uso da meia cana",
+      "src": "assets/Kaizens/1.Video 1.mp4",
+      "transition": "slide"
+    },
+    {
+      "type": "video",
+      "title": "Kaizen - Meia cana no píer de Carvão",
+      "subtitle": "Amarração com uso da meia cana",
+      "src": "assets/Kaizens/2.Video 2.mp4",
+      "transition": "slide"
+    },
+    {
+      "type": "video",
+      "title": "Pílulas de Segurança",
+      "subtitle": "Princípios de incêndios em correias",
+      "src": "assets/Pilulas/Princípios de incêndios em correias_horizontal.mp4",
+      "transition": "slide"
+    },
+    {
+      "type": "video",
+      "title": "Preaxion · Treinamento",
+      "subtitle": "Resposta rápida e prevenção",
+      "src": "assets/Preaxion/Preaxion.mp4",
+      "transition": "slide"
+    },
+    {
+      "type": "image",
+      "title": "Preaxion em Ação · 1",
+      "subtitle": "Registro do treinamento de campo",
+      "src": "assets/Preaxion/WhatsApp Image 2026-04-07 at 12.53.33.jpeg",
+      "transition": "fade",
+      "kenBurns": true
+    },
+    {
+      "type": "image",
+      "title": "Preaxion em Ação · 2",
+      "subtitle": "Registro do treinamento de campo",
+      "src": "assets/Preaxion/WhatsApp Image 2026-04-08 at 09.57.26.jpeg",
+      "transition": "fade",
+      "kenBurns": true
+    },
+    {
+      "type": "image",
+      "title": "Preaxion em Ação · 3",
+      "subtitle": "Registro do treinamento de campo",
+      "src": "assets/Preaxion/WhatsApp Image 2026-04-08 at 09.57.27.jpeg",
+      "transition": "fade",
+      "kenBurns": true
+    },
+    {
+      "type": "image",
+      "title": "Preaxion em Ação · 4",
+      "subtitle": "Registro do treinamento de campo",
+      "src": "assets/Preaxion/WhatsApp Image 2026-04-08 at 09.57.28 (3).jpeg",
+      "transition": "fade",
+      "kenBurns": true
+    },
+    {
+      "type": "image",
+      "title": "Preaxion em Ação · 5",
+      "subtitle": "Registro do treinamento de campo",
+      "src": "assets/Preaxion/WhatsApp Image 2026-04-08 at 09.57.28 (4).jpeg",
+      "transition": "fade",
+      "kenBurns": true
+    },
+    {
+      "type": "image",
+      "title": "Preaxion em Ação · 6",
+      "subtitle": "Registro do treinamento de campo",
+      "src": "assets/Preaxion/WhatsApp Image 2026-04-08 at 09.57.28 (7).jpeg",
+      "transition": "fade",
+      "kenBurns": true
+    },
+    {
+      "type": "image",
+      "title": "Preaxion em Ação · 7",
+      "subtitle": "Registro do treinamento de campo",
+      "src": "assets/Preaxion/WhatsApp Image 2026-04-08 at 09.57.28 (8).jpeg",
+      "transition": "fade",
+      "kenBurns": true
+    },
+    {
+      "type": "image",
+      "title": "Preaxion em Ação · 8",
+      "subtitle": "Registro do treinamento de campo",
+      "src": "assets/Preaxion/WhatsApp Image 2026-04-09 at 13.12.44 (1).jpeg",
+      "transition": "fade",
+      "kenBurns": true
+    },
+    {
+      "type": "image",
+      "title": "Preaxion em Ação · 9",
+      "subtitle": "Registro do treinamento de campo",
+      "src": "assets/Preaxion/WhatsApp Image 2026-04-09 at 13.12.56 (1).jpeg",
+      "transition": "fade",
+      "kenBurns": true
+    },
+    {
+      "type": "image",
+      "title": "Preaxion em Ação · 10",
+      "subtitle": "Registro do treinamento de campo",
+      "src": "assets/Preaxion/WhatsApp Image 2026-04-09 at 15.48.39 (47).jpeg",
+      "transition": "fade",
+      "kenBurns": true
+    },
+    {
+      "type": "image",
+      "title": "Preaxion em Ação · 11",
+      "subtitle": "Registro do treinamento de campo",
+      "src": "assets/Preaxion/WhatsApp Image 2026-04-09 at 15.48.39 (51).jpeg",
+      "transition": "fade",
+      "kenBurns": true
+    },
+    {
+      "type": "image",
+      "title": "Preaxion em Ação · 12",
+      "subtitle": "Registro do treinamento de campo",
+      "src": "assets/Preaxion/WhatsApp Image 2026-04-09 at 15.48.41 (2).jpeg",
+      "transition": "fade",
+      "kenBurns": true
+    },
+    {
+      "type": "image",
+      "title": "Preaxion em Ação · 13",
+      "subtitle": "Registro do treinamento de campo",
+      "src": "assets/Preaxion/WhatsApp Image 2026-04-09 at 16.22.42 (3).jpeg",
+      "transition": "fade",
+      "kenBurns": true
+    },
+    {
+      "type": "image",
+      "title": "Preaxion em Ação · 14",
+      "subtitle": "Registro do treinamento de campo",
+      "src": "assets/Preaxion/WhatsApp Image 2026-04-09 at 16.28.48 (9).jpeg",
+      "transition": "fade",
+      "kenBurns": true
+    },
+    {
+      "type": "image",
+      "title": "Saúde em Foco",
+      "subtitle": "Conteúdo de bem-estar ocupacional",
+      "src": "assets/Saúde/01.png",
+      "transition": "fade",
+      "kenBurns": true
+    },
+    {
+      "type": "image",
+      "title": "Inspeções · Painel 1",
+      "subtitle": "Resumo visual de inspeções",
+      "src": "assets/Inspeções/0.Painel 1.png",
+      "transition": "fade",
+      "kenBurns": true
+    },
+    {
+      "type": "image",
+      "title": "Inspeções · Painel 2",
+      "subtitle": "Acompanhamento das evidências",
+      "src": "assets/Inspeções/0.Painel 2.png",
+      "transition": "fade",
+      "kenBurns": true
+    },
+    {
+      "type": "image",
+      "title": "Inspeções · Slide 1",
+      "subtitle": "Checklist e evidências de campo",
+      "src": "assets/Inspeções/1.jpg",
+      "transition": "fade",
+      "kenBurns": true
+    },
+    {
+      "type": "image",
+      "title": "Inspeções · Slide 2",
+      "subtitle": "Checklist e evidências de campo",
+      "src": "assets/Inspeções/2.jpg",
+      "transition": "fade",
+      "kenBurns": true
+    },
+    {
+      "type": "image",
+      "title": "Inspeções · Slide 3",
+      "subtitle": "Checklist e evidências de campo",
+      "src": "assets/Inspeções/3.jpg",
+      "transition": "fade",
+      "kenBurns": true
+    },
+    {
+      "type": "image",
+      "title": "Inspeções · Slide 4",
+      "subtitle": "Checklist e evidências de campo",
+      "src": "assets/Inspeções/4.jpg",
+      "transition": "fade",
+      "kenBurns": true
+    },
+    {
+      "type": "image",
+      "title": "Inspeções · Slide 5",
+      "subtitle": "Checklist e evidências de campo",
+      "src": "assets/Inspeções/5.jpg",
+      "transition": "fade",
+      "kenBurns": true
+    },
+    {
+      "type": "image",
+      "title": "Inspeções · Slide 6",
+      "subtitle": "Checklist e evidências de campo",
+      "src": "assets/Inspeções/6.jpg",
+      "transition": "fade",
+      "kenBurns": true
+    },
+    {
+      "type": "image",
+      "title": "Inspeções · Slide 7",
+      "subtitle": "Checklist e evidências de campo",
+      "src": "assets/Inspeções/7.jpg",
+      "transition": "fade",
+      "kenBurns": true
+    },
+    {
+      "type": "image",
+      "title": "Inspeções · Slide 8",
+      "subtitle": "Checklist e evidências de campo",
+      "src": "assets/Inspeções/8.jpg",
+      "transition": "fade",
+      "kenBurns": true
+    },
+    {
+      "type": "image",
+      "title": "Inspeções · Slide 9",
+      "subtitle": "Checklist e evidências de campo",
+      "src": "assets/Inspeções/9.jpg",
+      "transition": "fade",
+      "kenBurns": true
+    },
+    {
+      "type": "image",
+      "title": "Inspeções · Slide 10",
+      "subtitle": "Checklist e evidências de campo",
+      "src": "assets/Inspeções/10.jpg",
+      "transition": "fade",
+      "kenBurns": true
+    },
+    {
+      "type": "image",
+      "title": "Inspeções · Slide 11",
+      "subtitle": "Checklist e evidências de campo",
+      "src": "assets/Inspeções/11.jpg",
+      "transition": "fade",
+      "kenBurns": true
+    },
+    {
+      "type": "image",
+      "title": "Inspeções · Slide 12",
+      "subtitle": "Checklist e evidências de campo",
+      "src": "assets/Inspeções/12.jpg",
+      "transition": "fade",
+      "kenBurns": true
+    },
+    {
+      "type": "image",
+      "title": "Inspeções · Slide 13",
+      "subtitle": "Checklist e evidências de campo",
+      "src": "assets/Inspeções/13.jpg",
+      "transition": "fade",
+      "kenBurns": true
+    },
+    {
+      "type": "image",
+      "title": "Inspeções · Slide 14",
+      "subtitle": "Checklist e evidências de campo",
+      "src": "assets/Inspeções/14.jpg",
+      "transition": "fade",
+      "kenBurns": true
+    },
+    {
+      "type": "image",
+      "title": "Inspeções · Slide 15",
+      "subtitle": "Checklist e evidências de campo",
+      "src": "assets/Inspeções/15.jpg",
+      "transition": "fade",
+      "kenBurns": true
+    },
+    {
+      "type": "image",
+      "title": "Inspeções · Slide 16",
+      "subtitle": "Checklist e evidências de campo",
+      "src": "assets/Inspeções/16.jpg",
+      "transition": "fade",
+      "kenBurns": true
+    },
+    {
+      "type": "image",
+      "title": "Inspeções · Slide 17",
+      "subtitle": "Checklist e evidências de campo",
+      "src": "assets/Inspeções/17.jpg",
+      "transition": "fade",
+      "kenBurns": true
+    }
+  ],
+  "ticker": []
 }
