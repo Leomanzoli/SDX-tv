@@ -1,0 +1,14 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "buildCommand": null,
+  "outputDirectory": ".",
+  "cleanUrls": true,
+  "functions": {
+    "api/upload.js": {
+      "maxDuration": 30
+    }
+  },
+  "rewrites": [
+    { "source": "/admin", "destination": "/admin/index.html" }
+  ]
+}

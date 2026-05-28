@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SDX-tv · Painel Admin</title>
+  <link rel="stylesheet" href="admin.css" />
+  <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.2/Sortable.min.js" defer></script>
+  <script src="admin.js" defer></script>
+</head>
+<body>
+  <div id="login-view" class="view">
+    <form id="login-form" class="card">
+      <h1>SDX-tv · Painel</h1>
+      <label>Usuário<input name="username" autocomplete="username" required /></label>
+      <label>Senha<input name="password" type="password" autocomplete="current-password" required /></label>
+      <button type="submit">Entrar</button>
+      <p id="login-error" class="error" hidden></p>
+    </form>
+  </div>
+
+  <div id="app-view" class="view" hidden>
+    <header class="topbar">
+      <strong>SDX-tv · Admin</strong>
+      <nav>
+        <button data-tab="slides" class="active">Slides</button>
+        <button data-tab="media">Pastas &amp; Mídia</button>
+        <button data-tab="ticker">Textos</button>
+      </nav>
+      <span id="user-label"></span>
+      <button id="logout">Sair</button>
+    </header>
+
+    <main>
+      <section id="tab-slides" class="tab active">
+        <div class="toolbar">
+          <button id="add-slide">+ Adicionar slide</button>
+          <button id="save-slides" class="primary">Salvar e publicar</button>
+          <span id="slides-status" class="hint"></span>
+        </div>
+        <ul id="slides-list" class="slides-list"></ul>
+      </section>
+
+      <section id="tab-media" class="tab">
+        <div class="toolbar">
+          <select id="folder-select"></select>
+          <button id="new-folder">+ Nova pasta</button>
+          <button id="del-folder" class="danger">Apagar pasta</button>
+          <label class="upload-btn">
+            <input id="file-input" type="file" multiple hidden />
+            <span>Upload de arquivos</span>
+          </label>
+          <span id="media-status" class="hint"></span>
+        </div>
+        <ul id="files-list" class="files-list"></ul>
+      </section>
+
+      <section id="tab-ticker" class="tab">
+        <p class="hint">Mensagens auxiliares exibidas no painel (campo livre para uso futuro do ticker).</p>
+        <textarea id="ticker-text" rows="10" placeholder="Uma mensagem por linha"></textarea>
+        <button id="save-ticker" class="primary">Salvar e publicar</button>
+        <span id="ticker-status" class="hint"></span>
+      </section>
+    </main>
+  </div>
+
+  <dialog id="slide-editor">
+    <form method="dialog">
+      <h3>Editar slide</h3>
+      <label>Tipo
+        <select name="type">
+          <option value="image">Imagem</option>
+          <option value="video">Vídeo</option>
+        </select>
+      </label>
+      <label>Título<input name="title" required /></label>
+      <label>Subtítulo<input name="subtitle" /></label>
+      <label>Arquivo (caminho relativo, ex: assets/CRM/foto.png)<input name="src" required /></label>
+      <label>Transição
+        <select name="transition">
+          <option value="fade">fade</option>
+          <option value="slide">slide</option>
+        </select>
+      </label>
+      <label><input type="checkbox" name="kenBurns" /> Efeito Ken Burns</label>
+      <div class="actions">
+        <button value="cancel">Cancelar</button>
+        <button value="save" class="primary">Aplicar</button>
+      </div>
+    </form>
+  </dialog>
+</body>
+</html>

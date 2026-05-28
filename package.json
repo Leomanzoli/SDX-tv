@@ -1,0 +1,11 @@
+{
+  "name": "sdx-tv-admin",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Painel admin do SDX-tv: login + edição de slides + commit automático via GitHub API",
+  "dependencies": {
+    "@octokit/rest": "^21.0.0",
+    "bcryptjs": "^2.4.3",
+    "jsonwebtoken": "^9.0.2"
+  }
+}

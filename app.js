@@ -1,33 +1,26 @@
-const config = {
-  slideWindowMs: {
-    image: 12000,
-    // Imagens têm tempo fixo. Para vídeos usamos o evento `ended` do <video>,
-    // mas mantemos um teto de segurança caso o stream trave em redes ruins.
-    video: 90000,
-    message: 12000,
-  },
-  // Tempo máximo aguardando buffer antes de pular para o próximo slide.
+// Valores padrão usados antes do data/slides.json carregar. Sobrescritos no bootstrap().
+const defaultConfig = {
+  slideWindowMs: { image: 12000, video: 90000, message: 12000 },
   videoBufferTimeoutMs: 8000,
   newsCardMs: 10000,
   alertPriorityMs: 45000,
   newsCacheMinutes: 20,
 };
+let config = { ...defaultConfig };
 
-// Gera a sequência 1.jpg..17.jpg para manter a ordem das inspeções no loop.
-const inspectionSlides = Array.from({ length: 17 }, (_, index) => {
-  const number = index + 1;
-  return {
-    type: "image",
-    title: `Inspeções · Slide ${number}`,
-    subtitle: "Checklist e evidências de campo",
-    src: `assets/Inspeções/${number}.jpg`,
-    transition: "fade",
-    kenBurns: true,
-  };
-});
+// Carregado dinamicamente de data/slides.json (gerenciável pelo painel /admin).
+let slides = [];
 
-// Todas as fotos do treinamento Preaxion exibidas em sequência.
-const preaxionPhotos = [
+// Geradores reaproveitados pelo fallback, caso data/slides.json não carregue.
+const inspectionSlidesFallback = Array.from({ length: 17 }, (_, index) => ({
+  type: "image",
+  title: `Inspeções · Slide ${index + 1}`,
+  subtitle: "Checklist e evidências de campo",
+  src: `assets/Inspeções/${index + 1}.jpg`,
+  transition: "fade",
+  kenBurns: true,
+}));
+const preaxionSlidesFallback = [
   "WhatsApp Image 2026-04-07 at 12.53.33.jpeg",
   "WhatsApp Image 2026-04-08 at 09.57.26.jpeg",
   "WhatsApp Image 2026-04-08 at 09.57.27.jpeg",
@@ -42,8 +35,7 @@ const preaxionPhotos = [
   "WhatsApp Image 2026-04-09 at 15.48.41 (2).jpeg",
   "WhatsApp Image 2026-04-09 at 16.22.42 (3).jpeg",
   "WhatsApp Image 2026-04-09 at 16.28.48 (9).jpeg",
-];
-const preaxionSlides = preaxionPhotos.map((file, index) => ({
+].map((file, index) => ({
   type: "image",
   title: `Preaxion em Ação · ${index + 1}`,
   subtitle: "Registro do treinamento de campo",
@@ -52,7 +44,7 @@ const preaxionSlides = preaxionPhotos.map((file, index) => ({
   kenBurns: true,
 }));
 
-const slides = [
+const FALLBACK_SLIDES = [
   {
     type: "image",
     title: "Panorama CRM",
@@ -138,7 +130,7 @@ const slides = [
     src: "assets/Preaxion/Preaxion.mp4",
     transition: "slide",
   },
-  ...preaxionSlides,
+  ...preaxionSlidesFallback,
   {
     type: "image",
     title: "Saúde em Foco",
@@ -163,7 +155,7 @@ const slides = [
     transition: "fade",
     kenBurns: true,
   },
-  ...inspectionSlides,
+  ...inspectionSlidesFallback,
 ];
 
 
@@ -789,7 +781,34 @@ function preloadVideos() {
   // travarem ou começarem pela metade em redes de menor qualidade.
 }
 
+async function loadSlideConfig() {
+  try {
+    const response = await fetch(`data/slides.json?ts=${Date.now()}`);
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+    const payload = await response.json();
+    if (Array.isArray(payload.slides) && payload.slides.length > 0) {
+      slides = payload.slides;
+    } else {
+      slides = FALLBACK_SLIDES;
+    }
+    if (payload.config) {
+      config = {
+        ...defaultConfig,
+        ...payload.config,
+        slideWindowMs: {
+          ...defaultConfig.slideWindowMs,
+          ...(payload.config.slideWindowMs || {}),
+        },
+      };
+    }
+  } catch (error) {
+    console.warn("[SDX-TV][SLIDES] Falha ao carregar data/slides.json, usando fallback", error);
+    slides = FALLBACK_SLIDES;
+  }
+}
+
 async function bootstrap() {
+  await loadSlideConfig();
   startClock();
   preloadVideos();
   startSlides();
