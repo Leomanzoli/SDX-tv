@@ -10,6 +10,10 @@ function sanitize(name) {
 }
 
 module.exports = async (req, res) => {
+  if (!process.env.BLOB_READ_WRITE_TOKEN) {
+    return res.status(500).json({ error: "BLOB_READ_WRITE_TOKEN ausente. Conecte a Blob store ao projeto e faca Redeploy." });
+  }
+
   if (req.method === "DELETE") {
     const user = requireAuth(req, res);
     if (!user) return;

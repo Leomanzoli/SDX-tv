@@ -344,7 +344,9 @@ els.fileInput.addEventListener("change", async (e) => {
 
 async function uploadLargeFile(folder, file) {
   const { upload } = await import("https://esm.sh/@vercel/blob@2.4.0/client");
-  await upload(`${folder}/${file.name}`, file, {
+  const safeFolder = String(folder).replace(/[^A-Za-z0-9._-]+/g, "_");
+  const safeName = String(file.name).replace(/[^A-Za-z0-9._-]+/g, "_");
+  await upload(`${safeFolder}/${safeName}`, file, {
     access: "public",
     handleUploadUrl: "/api/blob-upload",
     clientPayload: JSON.stringify({ folder, token: token() }),
