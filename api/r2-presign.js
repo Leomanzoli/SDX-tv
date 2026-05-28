@@ -42,7 +42,8 @@ module.exports = async (req, res) => {
       if (!folder || !filename) {
         return res.status(400).json({ error: "folder e filename obrigatorios" });
       }
-      const key = `${sanitize(folder)}/${Date.now()}_${sanitize(filename)}`;
+      const safeFolder = String(folder).replace(/^\/+|\/+$/g, "").replace(/\//g, "_");
+      const key = `${safeFolder}/${Date.now()}_${sanitize(filename)}`;
       const cmd = new PutObjectCommand({
         Bucket: bucket,
         Key: key,
