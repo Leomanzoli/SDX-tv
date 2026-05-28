@@ -4,7 +4,7 @@
   "private": true,
   "description": "Painel admin do SDX-tv: login + edição de slides + commit automático via GitHub API",
   "dependencies": {
-    "@octokit/rest": "^21.0.0",
+    "@octokit/rest": "^19.0.13",
     "bcryptjs": "^2.4.3",
     "jsonwebtoken": "^9.0.2"
   }
