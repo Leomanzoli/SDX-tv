@@ -222,8 +222,8 @@ async function loadFiles(folder) {
     res.files.forEach((f) => {
       const isImg = /\.(png|jpe?g|gif|webp)$/i.test(f.name);
       const isVid = /\.(mp4|webm|mov|m4v)$/i.test(f.name);
-      const src = f.kind === "release" ? f.url : `/${f.path}`;
-      const badge = f.kind === "release" ? '<span class="badge">📦 vídeo grande</span>' : "";
+      const src = f.kind === "r2" ? f.url : `/${f.path}`;
+      const badge = f.kind === "r2" ? '<span class="badge">📦 vídeo grande</span>' : "";
 
       const li = document.createElement("li");
       li.className = "file-item";
@@ -242,7 +242,7 @@ async function loadFiles(folder) {
       li.querySelector(".meta").innerHTML = `${badge} ${formatSize(f.size)}`;
 
       li.querySelector('[data-action="use"]').addEventListener("click", () => {
-        const slideSrc = f.kind === "release" ? f.url : `assets/${folder}/${f.name}`;
+        const slideSrc = f.kind === "r2" ? f.url : `assets/${folder}/${f.name}`;
         const baseTitle = f.name.replace(/\.[^.]+$/, "");
         slidesState.data.slides.push({
           type: isVid ? "video" : "image",
@@ -259,8 +259,8 @@ async function loadFiles(folder) {
       li.querySelector('[data-action="del"]').addEventListener("click", async () => {
         if (!confirm(`Apagar ${f.name}?`)) return;
         try {
-          if (f.kind === "release") {
-            await api("/api/release-delete", { method: "DELETE", body: JSON.stringify({ assetId: f.id }) });
+          if (f.kind === "r2") {
+            await api("/api/r2-presign", { method: "DELETE", body: JSON.stringify({ key: f.key }) });
           } else {
             await api("/api/upload", { method: "DELETE", body: JSON.stringify({ path: f.path }) });
           }
@@ -343,22 +343,19 @@ els.fileInput.addEventListener("change", async (e) => {
 });
 
 async function uploadLargeFile(folder, file) {
-  const safeFolder = String(folder).replace(/[^A-Za-z0-9._-]+/g, "_");
-  const safeName = String(file.name).replace(/[^A-Za-z0-9._-]+/g, "_");
-  const res = await fetch(
-    `/api/edge-upload?folder=${encodeURIComponent(safeFolder)}&filename=${encodeURIComponent(safeName)}`,
-    {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${token()}`,
-        "Content-Type": file.type || "application/octet-stream",
-      },
-      body: file,
-    }
-  );
-  if (res.status === 401) { logout(); throw new Error("Sessão expirada."); }
-  const data = await res.json().catch(() => ({}));
-  if (!res.ok) throw new Error(data.error || `Erro ${res.status}`);
+  const presign = await api("/api/r2-presign", {
+    method: "POST",
+    body: JSON.stringify({ folder, filename: file.name, contentType: file.type }),
+  });
+  const uploadRes = await fetch(presign.uploadUrl, {
+    method: "PUT",
+    headers: { "Content-Type": file.type || "application/octet-stream" },
+    body: file,
+  });
+  if (!uploadRes.ok) {
+    const text = await uploadRes.text();
+    throw new Error(`R2 ${uploadRes.status}: ${text.slice(0, 200)}`);
+  }
 }
 
 function fileToBase64(file) {
