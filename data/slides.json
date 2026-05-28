@@ -366,6 +366,38 @@
       "src": "assets/Inspeções/17.jpg",
       "transition": "fade",
       "kenBurns": true
+    },
+    {
+      "type": "image",
+      "title": "Sexta segura",
+      "subtitle": "Especial PreAxion Direito de Recusa",
+      "src": "assets/Sexta segura/WhatsApp Image 2026-05-28 at 09.24.58 (2).jpeg",
+      "transition": "fade",
+      "kenBurns": true
+    },
+    {
+      "type": "image",
+      "title": "Sexta segura",
+      "subtitle": "Especial PreAxion Direito de Recusa",
+      "src": "assets/Sexta segura/WhatsApp Image 2026-05-28 at 09.25.00 (1).jpeg",
+      "transition": "fade",
+      "kenBurns": true
+    },
+    {
+      "type": "image",
+      "title": "Sexta segura",
+      "subtitle": "Especial PreAxion Direito de Recusa",
+      "src": "assets/Sexta segura/WhatsApp Image 2026-05-28 at 09.25.00 (2).jpeg",
+      "transition": "fade",
+      "kenBurns": true
+    },
+    {
+      "type": "image",
+      "title": "Sexta segura",
+      "subtitle": "Especial PreAxion Direito de Recusa",
+      "src": "assets/Sexta segura/WhatsApp Image 2026-05-28 at 09.25.00.jpeg",
+      "transition": "fade",
+      "kenBurns": true
     }
   ],
   "ticker": []
