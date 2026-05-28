@@ -5,7 +5,7 @@
   "cleanUrls": true,
   "functions": {
     "api/upload.js": { "maxDuration": 30 },
-    "api/edge-upload.js": { "runtime": "edge" }
+    "api/edge-upload.mjs": { "runtime": "edge" }
   },
   "rewrites": [
     { "source": "/admin", "destination": "/admin/index.html" }
