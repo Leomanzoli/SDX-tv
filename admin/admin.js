@@ -121,7 +121,7 @@ function renderSlides() {
     li.className = "slide-item";
     li.dataset.index = String(index);
     const isVid = slide.type === "video";
-    const src = slide.src && /^https?:\/\//i.test(slide.src) ? slide.src : `../${slide.src || ""}`;
+    const src = slide.src && /^https?:\/\//i.test(slide.src) ? slide.src : `/${slide.src || ""}`;
     const thumb = !slide.src
       ? '<div class="thumb empty"></div>'
       : isVid
@@ -222,7 +222,7 @@ async function loadFiles(folder) {
     res.files.forEach((f) => {
       const isImg = /\.(png|jpe?g|gif|webp)$/i.test(f.name);
       const isVid = /\.(mp4|webm|mov|m4v)$/i.test(f.name);
-      const src = f.kind === "blob" ? f.url : `../${f.path}`;
+      const src = f.kind === "blob" ? f.url : `/${f.path}`;
       const badge = f.kind === "blob" ? '<span class="badge">📦 vídeo grande</span>' : "";
 
       const li = document.createElement("li");
@@ -343,11 +343,12 @@ els.fileInput.addEventListener("change", async (e) => {
 });
 
 async function uploadLargeFile(folder, file) {
-  const { upload } = await import("https://esm.sh/@vercel/blob@0.27.3/client");
+  const { upload } = await import("https://esm.sh/@vercel/blob@2.4.0/client");
   await upload(`${folder}/${file.name}`, file, {
     access: "public",
     handleUploadUrl: "/api/blob-upload",
     clientPayload: JSON.stringify({ folder, token: token() }),
+    multipart: true,
   });
 }
 
