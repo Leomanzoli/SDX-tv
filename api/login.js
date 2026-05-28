@@ -24,14 +24,17 @@ module.exports = async (req, res) => {
   }
 
   const users = getUsers();
+  if (users.length === 0) {
+    return res.status(401).json({ error: "DIAG: ADMIN_USERS vazio ou JSON invalido" });
+  }
   const user = users.find((u) => u.u === username);
   if (!user) {
-    return res.status(401).json({ error: "Credenciais inválidas" });
+    return res.status(401).json({ error: `DIAG: usuario '${username}' nao encontrado. Cadastrados: ${users.map((u) => u.u).join(", ")}` });
   }
 
   const ok = await bcrypt.compare(password, user.hash || "");
   if (!ok) {
-    return res.status(401).json({ error: "Credenciais inválidas" });
+    return res.status(401).json({ error: "DIAG: senha incorreta para esse usuario" });
   }
 
   const token = sign({ u: user.u });
