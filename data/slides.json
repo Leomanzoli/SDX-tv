@@ -12,6 +12,30 @@
   },
   "slides": [
     {
+      "type": "image",
+      "title": "Saúde em Foco",
+      "subtitle": "Conteúdo de bem-estar ocupacional",
+      "src": "assets/Saúde/01.png",
+      "transition": "fade",
+      "kenBurns": true
+    },
+    {
+      "type": "image",
+      "title": "Junho Vermelho",
+      "subtitle": "Campanha de Doação de Sangue",
+      "src": "assets/Saúde/1.jpg",
+      "transition": "fade",
+      "kenBurns": true
+    },
+    {
+      "type": "image",
+      "title": "Junho Vermelho",
+      "subtitle": "Campanha de Doação de Sangue",
+      "src": "assets/Saúde/2.jpg",
+      "transition": "fade",
+      "kenBurns": true
+    },
+    {
       "type": "video",
       "title": "Sexta segura",
       "subtitle": "Especial PreAxion Direito de Recusa",
@@ -275,30 +299,6 @@
       "title": "Preaxion em Ação",
       "subtitle": "Início do campanha",
       "src": "assets/Preaxion/WhatsApp Image 2026-04-09 at 16.28.48 (9).jpeg",
-      "transition": "fade",
-      "kenBurns": true
-    },
-    {
-      "type": "image",
-      "title": "Saúde em Foco",
-      "subtitle": "Conteúdo de bem-estar ocupacional",
-      "src": "assets/Saúde/01.png",
-      "transition": "fade",
-      "kenBurns": true
-    },
-    {
-      "type": "image",
-      "title": "Junho Vermelho",
-      "subtitle": "Campanha de Doação de Sangue",
-      "src": "assets/Saúde/1.jpg",
-      "transition": "fade",
-      "kenBurns": true
-    },
-    {
-      "type": "image",
-      "title": "Junho Vermelho",
-      "subtitle": "Campanha de Doação de Sangue",
-      "src": "assets/Saúde/2.jpg",
       "transition": "fade",
       "kenBurns": true
     },
