@@ -132,6 +132,10 @@ main { padding: 20px; max-width: 1200px; margin: 0 auto; }
   background: #161b22;
   border: 1px solid #1f6feb;
   border-radius: 8px;
+  position: sticky;
+  top: 8px;
+  z-index: 10;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.4);
 }
 .bulk-bar .bulk-move { display: inline-flex; align-items: center; gap: 6px; flex-direction: row; font-size: 13px; color: #adbac7; }
 .bulk-bar .bulk-move input { width: 70px; padding: 5px 8px; }
