@@ -156,6 +156,14 @@
     },
     {
       "type": "image",
+      "title": "Kaizens",
+      "subtitle": "Troféus de 1º e 3º lugar em 2025",
+      "src": "assets/Kaizens/Imagem1.png",
+      "transition": "fade",
+      "kenBurns": true
+    },
+    {
+      "type": "image",
       "title": "Kaizen - Meia cana no píer de Carvão",
       "subtitle": "Instalação de meia cana para facilitar o processo de amarração",
       "src": "assets/Kaizens/0.Slide.png",
@@ -322,6 +330,14 @@
       "type": "image",
       "title": "Inspeções",
       "subtitle": "Presença em campo",
+      "src": "assets/Inspeções/16.jpg",
+      "transition": "fade",
+      "kenBurns": true
+    },
+    {
+      "type": "image",
+      "title": "Inspeções",
+      "subtitle": "Presença em campo",
       "src": "assets/Inspeções/1.jpg",
       "transition": "fade",
       "kenBurns": true
@@ -403,14 +419,6 @@
       "title": "Inspeções",
       "subtitle": "Presença em campo",
       "src": "assets/Inspeções/15.jpg",
-      "transition": "fade",
-      "kenBurns": true
-    },
-    {
-      "type": "image",
-      "title": "Inspeções",
-      "subtitle": "Presença em campo",
-      "src": "assets/Inspeções/16.jpg",
       "transition": "fade",
       "kenBurns": true
     },
