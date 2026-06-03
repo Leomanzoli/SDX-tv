@@ -36,7 +36,25 @@
         <div class="toolbar">
           <button id="add-slide">+ Adicionar slide</button>
           <button id="save-slides" class="primary">Salvar e publicar</button>
+          <span class="layout-toggle" role="group" aria-label="Layout">
+            <button id="layout-list" class="active" type="button">Lista</button>
+            <button id="layout-grid" type="button">Grid</button>
+          </span>
           <span id="slides-status" class="hint"></span>
+        </div>
+        <div id="bulk-bar" class="bulk-bar" hidden>
+          <span id="bulk-count" class="hint"></span>
+          <button data-bulk="top" type="button">⏫ Topo</button>
+          <button data-bulk="up" type="button">▲ Subir</button>
+          <button data-bulk="down" type="button">▼ Descer</button>
+          <button data-bulk="bottom" type="button">⏬ Fundo</button>
+          <label class="bulk-move">
+            Mover para
+            <input id="bulk-pos" type="number" min="1" />
+            <button data-bulk="move-to" type="button">Aplicar</button>
+          </label>
+          <button data-bulk="clear" type="button">Limpar</button>
+          <button data-bulk="delete" class="danger" type="button">Apagar</button>
         </div>
         <ul id="slides-list" class="slides-list"></ul>
       </section>
@@ -76,6 +94,7 @@
       <label>Título<input name="title" required /></label>
       <label>Subtítulo<input name="subtitle" /></label>
       <label>Arquivo (caminho relativo, ex: assets/CRM/foto.png)<input name="src" required /></label>
+      <label>Posição<input name="position" type="number" min="1" /></label>
       <label>Transição
         <select name="transition">
           <option value="fade">fade</option>

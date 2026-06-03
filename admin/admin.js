@@ -14,6 +14,11 @@ const els = {
   slidesStatus: document.getElementById("slides-status"),
   addSlide: document.getElementById("add-slide"),
   saveSlides: document.getElementById("save-slides"),
+  layoutList: document.getElementById("layout-list"),
+  layoutGrid: document.getElementById("layout-grid"),
+  bulkBar: document.getElementById("bulk-bar"),
+  bulkCount: document.getElementById("bulk-count"),
+  bulkPos: document.getElementById("bulk-pos"),
   folderSelect: document.getElementById("folder-select"),
   newFolder: document.getElementById("new-folder"),
   delFolder: document.getElementById("del-folder"),
@@ -27,6 +32,10 @@ const els = {
 };
 
 let slidesState = { sha: null, data: { config: {}, slides: [], ticker: [] } };
+const LAYOUT_KEY = "sdxtv-slides-layout";
+let slidesLayout = localStorage.getItem(LAYOUT_KEY) === "grid" ? "grid" : "list";
+let selectedIndexes = new Set();
+let lastClickedIndex = null;
 
 function token() { return localStorage.getItem(TOKEN_KEY); }
 function authHeader() { return { Authorization: `Bearer ${token()}` }; }
@@ -100,12 +109,62 @@ els.tabs.forEach((btn) => {
   });
 });
 
+function moveSlide(from, to) {
+  const slides = slidesState.data.slides;
+  if (from < 0 || from >= slides.length) return;
+  to = Math.max(0, Math.min(slides.length - 1, to));
+  if (from === to) return;
+  const [item] = slides.splice(from, 1);
+  slides.splice(to, 0, item);
+}
+
+function moveMany(indices, target) {
+  const slides = slidesState.data.slides;
+  const sorted = [...indices].sort((a, b) => a - b);
+  const items = sorted.map((i) => slides[i]);
+  for (let i = sorted.length - 1; i >= 0; i--) slides.splice(sorted[i], 1);
+  const adjusted = Math.max(0, Math.min(slides.length, target));
+  slides.splice(adjusted, 0, ...items);
+  selectedIndexes = new Set(items.map((_, i) => adjusted + i));
+}
+
+function clearSelection() {
+  selectedIndexes.clear();
+  lastClickedIndex = null;
+}
+
+function applyLayout() {
+  els.slidesList.classList.toggle("slides-list--grid", slidesLayout === "grid");
+  els.slidesList.classList.toggle("slides-list--list", slidesLayout === "list");
+  els.layoutList.classList.toggle("active", slidesLayout === "list");
+  els.layoutGrid.classList.toggle("active", slidesLayout === "grid");
+}
+
+function updateBulkBar() {
+  const n = selectedIndexes.size;
+  els.bulkBar.hidden = n === 0;
+  els.bulkCount.textContent = n > 0 ? `${n} selecionado${n > 1 ? "s" : ""}` : "";
+  if (els.bulkPos) els.bulkPos.max = String(slidesState.data.slides.length);
+}
+
+function toggleSelect(index, event) {
+  if (event && event.shiftKey && lastClickedIndex !== null) {
+    const [a, b] = [lastClickedIndex, index].sort((x, y) => x - y);
+    for (let i = a; i <= b; i++) selectedIndexes.add(i);
+  } else {
+    if (selectedIndexes.has(index)) selectedIndexes.delete(index);
+    else selectedIndexes.add(index);
+    lastClickedIndex = index;
+  }
+}
+
 // ---------- Slides ----------
 async function loadSlides() {
   try {
     const result = await api("/api/slides");
     slidesState = result;
     slidesState.data.ticker = slidesState.data.ticker || [];
+    clearSelection();
     renderSlides();
     els.tickerText.value = (slidesState.data.ticker || []).join("\n");
     setStatus(els.slidesStatus, `Carregado (${slidesState.data.slides.length} slides)`, "ok");
@@ -116,10 +175,13 @@ async function loadSlides() {
 
 function renderSlides() {
   els.slidesList.innerHTML = "";
+  applyLayout();
+  const total = slidesState.data.slides.length;
   slidesState.data.slides.forEach((slide, index) => {
     const li = document.createElement("li");
     li.className = "slide-item";
     li.dataset.index = String(index);
+    if (selectedIndexes.has(index)) li.classList.add("selected");
     const isVid = slide.type === "video";
     const src = slide.src && /^https?:\/\//i.test(slide.src) ? slide.src : `/${slide.src || ""}`;
     const thumb = !slide.src
@@ -128,7 +190,9 @@ function renderSlides() {
         ? `<video class="thumb" src="${src}" muted preload="metadata"></video>`
         : `<img class="thumb" loading="lazy" src="${src}" />`;
     li.innerHTML = `
-      <span class="handle">⋮⋮</span>
+      <input type="checkbox" class="select" ${selectedIndexes.has(index) ? "checked" : ""} title="Selecionar" />
+      <input type="number" class="pos-input" min="1" max="${total}" value="${index + 1}" title="Posição" />
+      <span class="handle" title="Arrastar">⋮⋮</span>
       ${thumb}
       <div class="info">
         <div class="title"></div>
@@ -141,21 +205,49 @@ function renderSlides() {
     `;
     li.querySelector(".title").textContent = `${slide.type === "video" ? "🎬" : "🖼"} ${slide.title || "(sem título)"}`;
     li.querySelector(".meta").textContent = slide.src;
+    const checkbox = li.querySelector(".select");
+    checkbox.addEventListener("click", (e) => e.stopPropagation());
+    checkbox.addEventListener("change", (e) => {
+      toggleSelect(index, e);
+      renderSlides();
+      updateBulkBar();
+    });
+    const posInput = li.querySelector(".pos-input");
+    posInput.addEventListener("click", (e) => e.stopPropagation());
+    const commitPos = () => {
+      const n = parseInt(posInput.value, 10);
+      if (!Number.isFinite(n) || n < 1 || n > total) {
+        posInput.value = String(index + 1);
+        return;
+      }
+      const target = n - 1;
+      if (target === index) return;
+      moveSlide(index, target);
+      clearSelection();
+      renderSlides();
+      updateBulkBar();
+    };
+    posInput.addEventListener("change", commitPos);
+    posInput.addEventListener("keydown", (e) => { if (e.key === "Enter") { e.preventDefault(); commitPos(); } });
     li.querySelector('[data-action="edit"]').addEventListener("click", () => openEditor(index));
     li.querySelector('[data-action="delete"]').addEventListener("click", () => {
       if (!confirm(`Apagar slide "${slide.title}"?`)) return;
       slidesState.data.slides.splice(index, 1);
+      clearSelection();
       renderSlides();
+      updateBulkBar();
     });
     els.slidesList.appendChild(li);
   });
+  updateBulkBar();
   if (window.Sortable) {
     Sortable.create(els.slidesList, {
       handle: ".handle",
       animation: 150,
       onEnd: (evt) => {
-        const moved = slidesState.data.slides.splice(evt.oldIndex, 1)[0];
-        slidesState.data.slides.splice(evt.newIndex, 0, moved);
+        if (evt.oldIndex === evt.newIndex) return;
+        moveSlide(evt.oldIndex, evt.newIndex);
+        clearSelection();
         renderSlides();
       },
     });
@@ -171,6 +263,13 @@ function openEditor(index) {
   form.src.value = slide.src || "";
   form.transition.value = slide.transition || "fade";
   form.kenBurns.checked = !!slide.kenBurns;
+  const total = slidesState.data.slides.length;
+  const currentPos = index >= 0 ? index + 1 : total + 1;
+  if (form.position) {
+    form.position.value = String(currentPos);
+    form.position.max = String(index >= 0 ? total : total + 1);
+    form.position.min = "1";
+  }
   els.editor.returnValue = "cancel";
   els.editor.showModal();
   els.editor.onclose = () => {
@@ -183,12 +282,62 @@ function openEditor(index) {
       transition: form.transition.value,
     };
     if (updated.type === "image" && form.kenBurns.checked) updated.kenBurns = true;
-    if (index >= 0) slidesState.data.slides[index] = updated;
-    else slidesState.data.slides.push(updated);
+    let newIndex;
+    if (index >= 0) {
+      slidesState.data.slides[index] = updated;
+      newIndex = index;
+    } else {
+      slidesState.data.slides.push(updated);
+      newIndex = slidesState.data.slides.length - 1;
+    }
+    const desired = parseInt(form.position?.value, 10);
+    if (Number.isFinite(desired)) {
+      const target = Math.max(1, Math.min(slidesState.data.slides.length, desired)) - 1;
+      moveSlide(newIndex, target);
+    }
+    clearSelection();
     renderSlides();
   };
 }
 els.addSlide.addEventListener("click", () => openEditor(-1));
+
+els.layoutList.addEventListener("click", () => {
+  slidesLayout = "list";
+  localStorage.setItem(LAYOUT_KEY, "list");
+  applyLayout();
+});
+els.layoutGrid.addEventListener("click", () => {
+  slidesLayout = "grid";
+  localStorage.setItem(LAYOUT_KEY, "grid");
+  applyLayout();
+});
+
+els.bulkBar.addEventListener("click", (e) => {
+  const btn = e.target.closest("button[data-bulk]");
+  if (!btn) return;
+  const action = btn.dataset.bulk;
+  const indices = [...selectedIndexes].sort((a, b) => a - b);
+  if (indices.length === 0) return;
+  const total = slidesState.data.slides.length;
+  if (action === "clear") { clearSelection(); renderSlides(); return; }
+  if (action === "delete") {
+    if (!confirm(`Apagar ${indices.length} slide(s)?`)) return;
+    for (let i = indices.length - 1; i >= 0; i--) slidesState.data.slides.splice(indices[i], 1);
+    clearSelection(); renderSlides(); return;
+  }
+  let target;
+  if (action === "top") target = 0;
+  else if (action === "bottom") target = total - indices.length;
+  else if (action === "up") target = Math.max(0, indices[0] - 1);
+  else if (action === "down") target = Math.min(total - indices.length, indices[0] + 1);
+  else if (action === "move-to") {
+    const n = parseInt(els.bulkPos.value, 10);
+    if (!Number.isFinite(n) || n < 1 || n > total) return;
+    target = Math.min(total - indices.length, n - 1);
+  } else return;
+  moveMany(indices, target);
+  renderSlides();
+});
 
 els.saveSlides.addEventListener("click", async () => {
   setStatus(els.slidesStatus, "Publicando...", "");
