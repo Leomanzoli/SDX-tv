@@ -178,13 +178,6 @@
     },
     {
       "type": "video",
-      "title": "Pílulas de Segurança",
-      "subtitle": "Princípios de incêndios em correias",
-      "src": "assets/Pilulas/Princípios de incêndios em correias_horizontal.mp4",
-      "transition": "slide"
-    },
-    {
-      "type": "video",
       "title": "Preaxion · Treinamento",
       "subtitle": "Resposta rápida e prevenção",
       "src": "assets/Preaxion/Preaxion.mp4",
@@ -301,6 +294,13 @@
       "src": "assets/Preaxion/WhatsApp Image 2026-04-09 at 16.28.48 (9).jpeg",
       "transition": "fade",
       "kenBurns": true
+    },
+    {
+      "type": "video",
+      "title": "Pílulas de Segurança",
+      "subtitle": "Princípios de incêndios em correias",
+      "src": "assets/Pilulas/Princípios de incêndios em correias_horizontal.mp4",
+      "transition": "slide"
     },
     {
       "type": "image",
