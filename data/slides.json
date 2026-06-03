@@ -76,8 +76,8 @@
     },
     {
       "type": "image",
-      "title": "Panorama CRM",
-      "subtitle": "Comunicação de rotina operacional",
+      "title": "CRM em Campo",
+      "subtitle": "",
       "src": "assets/CRM/CRM_1.png",
       "transition": "fade",
       "kenBurns": true
