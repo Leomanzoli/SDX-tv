@@ -36,6 +36,7 @@ const LAYOUT_KEY = "sdxtv-slides-layout";
 let slidesLayout = localStorage.getItem(LAYOUT_KEY) === "grid" ? "grid" : "list";
 let selectedIndexes = new Set();
 let lastClickedIndex = null;
+let slidesSortable = null;
 
 function token() { return localStorage.getItem(TOKEN_KEY); }
 function authHeader() { return { Authorization: `Bearer ${token()}` }; }
@@ -214,7 +215,9 @@ function renderSlides() {
     });
     const posInput = li.querySelector(".pos-input");
     posInput.addEventListener("click", (e) => e.stopPropagation());
+    let posCommitted = false;
     const commitPos = () => {
+      if (posCommitted) return;
       const n = parseInt(posInput.value, 10);
       if (!Number.isFinite(n) || n < 1 || n > total) {
         posInput.value = String(index + 1);
@@ -222,13 +225,14 @@ function renderSlides() {
       }
       const target = n - 1;
       if (target === index) return;
+      posCommitted = true;
       moveSlide(index, target);
       clearSelection();
       renderSlides();
       updateBulkBar();
     };
     posInput.addEventListener("change", commitPos);
-    posInput.addEventListener("keydown", (e) => { if (e.key === "Enter") { e.preventDefault(); commitPos(); } });
+    posInput.addEventListener("keydown", (e) => { if (e.key === "Enter") { e.preventDefault(); posInput.blur(); } });
     li.querySelector('[data-action="edit"]').addEventListener("click", () => openEditor(index));
     li.querySelector('[data-action="delete"]').addEventListener("click", () => {
       if (!confirm(`Apagar slide "${slide.title}"?`)) return;
@@ -241,7 +245,8 @@ function renderSlides() {
   });
   updateBulkBar();
   if (window.Sortable) {
-    Sortable.create(els.slidesList, {
+    if (slidesSortable) slidesSortable.destroy();
+    slidesSortable = Sortable.create(els.slidesList, {
       handle: ".handle",
       animation: 150,
       onEnd: (evt) => {
