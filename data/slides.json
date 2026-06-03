@@ -36,6 +36,22 @@
       "kenBurns": true
     },
     {
+      "type": "image",
+      "title": "Vacina - Gripe",
+      "subtitle": "Saúde",
+      "src": "assets/Saúde/WhatsApp Image 2026-06-03 at 11.33.56.jpeg",
+      "transition": "fade",
+      "kenBurns": true
+    },
+    {
+      "type": "image",
+      "title": "Planfleto Importância da Vacina",
+      "subtitle": "Saúde",
+      "src": "assets/Saúde/Planfleto Importância da Vacina.jpg",
+      "transition": "fade",
+      "kenBurns": true
+    },
+    {
       "type": "video",
       "title": "Sexta segura",
       "subtitle": "Especial PreAxion Direito de Recusa",
