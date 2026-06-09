@@ -21,6 +21,14 @@
     },
     {
       "type": "image",
+      "title": "WhatsApp Image 2026-06-09 at 07.58.26",
+      "subtitle": "Saúde",
+      "src": "assets/Saúde/WhatsApp Image 2026-06-09 at 07.58.26.jpeg",
+      "transition": "fade",
+      "kenBurns": true
+    },
+    {
+      "type": "image",
       "title": "Junho Vermelho",
       "subtitle": "Campanha de Doação de Sangue",
       "src": "assets/Saúde/1.jpg",
