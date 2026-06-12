@@ -13,6 +13,38 @@
   "slides": [
     {
       "type": "image",
+      "title": "SEXTA SEGURA",
+      "subtitle": "Álcool e Drogas",
+      "src": "assets/Sexta segura/WhatsApp Image 2026-06-12 at 07.46.01 (1).jpeg",
+      "transition": "fade",
+      "kenBurns": true
+    },
+    {
+      "type": "image",
+      "title": "SEXTA SEGURA",
+      "subtitle": "Álcool e Drogas",
+      "src": "assets/Sexta segura/WhatsApp Image 2026-06-12 at 07.46.01.jpeg",
+      "transition": "fade",
+      "kenBurns": true
+    },
+    {
+      "type": "image",
+      "title": "SEXTA SEGURA",
+      "subtitle": "Álcool e Drogas",
+      "src": "assets/Sexta segura/WhatsApp Image 2026-06-12 at 11.08.12 (1).jpeg",
+      "transition": "fade",
+      "kenBurns": true
+    },
+    {
+      "type": "image",
+      "title": "SEXTA SEGURA",
+      "subtitle": "Álcool e Drogas",
+      "src": "assets/Sexta segura/WhatsApp Image 2026-06-12 at 11.08.12.jpeg",
+      "transition": "fade",
+      "kenBurns": true
+    },
+    {
+      "type": "image",
       "title": "Saúde em Foco",
       "subtitle": "Conteúdo de bem-estar ocupacional",
       "src": "assets/Saúde/01.png",
@@ -21,7 +53,7 @@
     },
     {
       "type": "image",
-      "title": "WhatsApp Image 2026-06-09 at 07.58.26",
+      "title": "Exames Periódicos Fiquem Alerta",
       "subtitle": "Saúde",
       "src": "assets/Saúde/WhatsApp Image 2026-06-09 at 07.58.26.jpeg",
       "transition": "fade",
@@ -56,45 +88,6 @@
       "title": "Planfleto Importância da Vacina",
       "subtitle": "Saúde",
       "src": "assets/Saúde/Planfleto Importância da Vacina.jpg",
-      "transition": "fade",
-      "kenBurns": true
-    },
-    {
-      "type": "video",
-      "title": "Sexta segura",
-      "subtitle": "Especial PreAxion Direito de Recusa",
-      "src": "https://pub-09e280637aa54bbf998fe2bdd4d25ade.r2.dev/Sexta segura/1779989230689_download.mp4",
-      "transition": "slide"
-    },
-    {
-      "type": "image",
-      "title": "Sexta segura",
-      "subtitle": "Especial PreAxion Direito de Recusa",
-      "src": "assets/Sexta segura/WhatsApp Image 2026-05-28 at 09.25.00 (1).jpeg",
-      "transition": "fade",
-      "kenBurns": true
-    },
-    {
-      "type": "image",
-      "title": "Sexta segura",
-      "subtitle": "Especial PreAxion Direito de Recusa",
-      "src": "assets/Sexta segura/WhatsApp Image 2026-05-28 at 09.25.00 (2).jpeg",
-      "transition": "fade",
-      "kenBurns": true
-    },
-    {
-      "type": "image",
-      "title": "Sexta segura",
-      "subtitle": "Especial PreAxion Direito de Recusa",
-      "src": "assets/Sexta segura/WhatsApp Image 2026-05-28 at 09.25.00.jpeg",
-      "transition": "fade",
-      "kenBurns": true
-    },
-    {
-      "type": "image",
-      "title": "Sexta segura",
-      "subtitle": "Especial PreAxion Direito de Recusa",
-      "src": "assets/Sexta segura/WhatsApp Image 2026-05-28 at 09.24.58 (2).jpeg",
       "transition": "fade",
       "kenBurns": true
     },
