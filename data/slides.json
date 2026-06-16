@@ -22,15 +22,15 @@
     {
       "type": "image",
       "title": "CAMPANHA DIA MUNDIAL DO MEIO AMBIENTE",
-      "subtitle": "Campanha",
+      "subtitle": "Campanha dia 01",
       "src": "assets/Campanhas/dia mundial MA colag.jpeg",
       "transition": "fade",
       "kenBurns": true
     },
     {
       "type": "image",
-      "title": "dia mundial MA colag 2",
-      "subtitle": "Campanhas",
+      "title": "CAMPANHA DIA MUNDIAL DO MEIO AMBIENTE",
+      "subtitle": "Campanha dia 02",
       "src": "assets/Campanhas/dia mundial MA colag 2.jpeg",
       "transition": "fade",
       "kenBurns": true
