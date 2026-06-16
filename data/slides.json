@@ -21,6 +21,14 @@
     },
     {
       "type": "image",
+      "title": "CAMPANHA DIA MUNDIAL DO MEIO AMBIENTE",
+      "subtitle": "Campanha",
+      "src": "assets/Campanhas/dia mundial MA colag.jpeg",
+      "transition": "fade",
+      "kenBurns": true
+    },
+    {
+      "type": "image",
       "title": "SEXTA SEGURA",
       "subtitle": "Álcool e Drogas",
       "src": "assets/Sexta segura/WhatsApp Image 2026-06-12 at 07.46.01 (1).jpeg",
