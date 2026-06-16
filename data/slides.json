@@ -29,14 +29,6 @@
     },
     {
       "type": "image",
-      "title": "dia mundial MA colag 2",
-      "subtitle": "Campanhas",
-      "src": "assets/Campanhas/dia mundial MA colag 2.jpeg",
-      "transition": "fade",
-      "kenBurns": true
-    },
-    {
-      "type": "image",
       "title": "SEXTA SEGURA",
       "subtitle": "Álcool e Drogas",
       "src": "assets/Sexta segura/WhatsApp Image 2026-06-12 at 07.46.01 (1).jpeg",
