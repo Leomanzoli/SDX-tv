@@ -13,6 +13,117 @@
   "slides": [
     {
       "type": "image",
+      "title": "RH",
+      "subtitle": "",
+      "src": "assets/RH/Slide0.JPG",
+      "transition": "fade",
+      "kenBurns": true
+    },
+    {
+      "type": "image",
+      "title": "RH",
+      "subtitle": "",
+      "src": "assets/RH/Slide1.JPG",
+      "transition": "fade",
+      "kenBurns": true
+    },
+    {
+      "type": "image",
+      "title": "RH",
+      "subtitle": "",
+      "src": "assets/RH/Slide2.JPG",
+      "transition": "fade",
+      "kenBurns": true
+    },
+    {
+      "type": "image",
+      "title": "RH",
+      "subtitle": "",
+      "src": "assets/RH/Slide3.JPG",
+      "transition": "fade",
+      "kenBurns": true
+    },
+    {
+      "type": "image",
+      "title": "RH",
+      "subtitle": "",
+      "src": "assets/RH/Slide4.JPG",
+      "transition": "fade",
+      "kenBurns": true
+    },
+    {
+      "type": "image",
+      "title": "RH",
+      "subtitle": "",
+      "src": "assets/RH/Slide5.JPG",
+      "transition": "fade",
+      "kenBurns": true
+    },
+    {
+      "type": "image",
+      "title": "RH",
+      "subtitle": "",
+      "src": "assets/RH/Slide6.JPG",
+      "transition": "fade",
+      "kenBurns": true
+    },
+    {
+      "type": "video",
+      "title": "RH",
+      "subtitle": "",
+      "src": "https://pub-09e280637aa54bbf998fe2bdd4d25ade.r2.dev/RH/1782228396557_M_dia1.mp4",
+      "transition": "slide"
+    },
+    {
+      "type": "image",
+      "title": "RH",
+      "subtitle": "",
+      "src": "assets/RH/Slide8.JPG",
+      "transition": "fade",
+      "kenBurns": true
+    },
+    {
+      "type": "image",
+      "title": "RH",
+      "subtitle": "",
+      "src": "assets/RH/Slide9.JPG",
+      "transition": "fade",
+      "kenBurns": true
+    },
+    {
+      "type": "image",
+      "title": "RH",
+      "subtitle": "",
+      "src": "assets/RH/Slide10.JPG",
+      "transition": "fade",
+      "kenBurns": true
+    },
+    {
+      "type": "image",
+      "title": "RH",
+      "subtitle": "",
+      "src": "assets/RH/Slide11.JPG",
+      "transition": "fade",
+      "kenBurns": true
+    },
+    {
+      "type": "image",
+      "title": "RH",
+      "subtitle": "",
+      "src": "assets/RH/Slide12.JPG",
+      "transition": "fade",
+      "kenBurns": true
+    },
+    {
+      "type": "image",
+      "title": "RH",
+      "subtitle": "",
+      "src": "assets/RH/Slide13.JPG",
+      "transition": "fade",
+      "kenBurns": true
+    },
+    {
+      "type": "image",
       "title": "MEIO AMBIENTE",
       "subtitle": "Dia do Meio Ambiente",
       "src": "assets/Campanhas/Dia do meio ambiente.jpg",
