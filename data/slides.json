@@ -68,13 +68,6 @@
       "kenBurns": true
     },
     {
-      "type": "video",
-      "title": "RH",
-      "subtitle": "",
-      "src": "https://pub-09e280637aa54bbf998fe2bdd4d25ade.r2.dev/RH/1782228396557_M_dia1.mp4",
-      "transition": "slide"
-    },
-    {
       "type": "image",
       "title": "RH",
       "subtitle": "",
