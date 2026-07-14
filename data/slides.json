@@ -117,14 +117,6 @@
     },
     {
       "type": "image",
-      "title": "MEIO AMBIENTE",
-      "subtitle": "Dia do Meio Ambiente",
-      "src": "assets/Campanhas/Dia do meio ambiente.jpg",
-      "transition": "fade",
-      "kenBurns": true
-    },
-    {
-      "type": "image",
       "title": "CAMPANHA DIA MUNDIAL DO MEIO AMBIENTE",
       "subtitle": "Campanha dia 01",
       "src": "assets/Campanhas/dia mundial MA colag.jpeg",
