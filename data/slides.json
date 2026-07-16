@@ -20,6 +20,13 @@
       "kenBurns": true
     },
     {
+      "type": "video",
+      "title": "Julho Amarelo",
+      "subtitle": "",
+      "src": "\"C:\\Users\\Karol.Oliveira\\OneDrive - SODEXO\\Área de Trabalho\\CAMPANHAS\\Julho Amarelo Vídeo.mp4\"",
+      "transition": "slide"
+    },
+    {
       "type": "image",
       "title": "RH",
       "subtitle": "",
@@ -550,13 +557,6 @@
       "src": "assets/Inspeções/17.jpg",
       "transition": "fade",
       "kenBurns": true
-    },
-    {
-      "type": "video",
-      "title": "Julho Amarelo",
-      "subtitle": "",
-      "src": "\"C:\\Users\\Karol.Oliveira\\OneDrive - SODEXO\\Área de Trabalho\\CAMPANHAS\\Julho Amarelo Vídeo.mp4\"",
-      "transition": "fade"
     }
   ],
   "ticker": []
