@@ -181,22 +181,6 @@
     },
     {
       "type": "image",
-      "title": "Junho Vermelho",
-      "subtitle": "Campanha de Doação de Sangue",
-      "src": "assets/Saúde/1.jpg",
-      "transition": "fade",
-      "kenBurns": true
-    },
-    {
-      "type": "image",
-      "title": "Junho Vermelho",
-      "subtitle": "Campanha de Doação de Sangue",
-      "src": "assets/Saúde/2.jpg",
-      "transition": "fade",
-      "kenBurns": true
-    },
-    {
-      "type": "image",
       "title": "Vacina - Gripe",
       "subtitle": "Saúde",
       "src": "assets/Saúde/WhatsApp Image 2026-06-03 at 11.33.56.jpeg",
@@ -566,6 +550,13 @@
       "src": "assets/Inspeções/17.jpg",
       "transition": "fade",
       "kenBurns": true
+    },
+    {
+      "type": "video",
+      "title": "Julho Amarelo",
+      "subtitle": "",
+      "src": "\"C:\\Users\\Karol.Oliveira\\OneDrive - SODEXO\\Área de Trabalho\\CAMPANHAS\\Julho Amarelo Vídeo.mp4\"",
+      "transition": "fade"
     }
   ],
   "ticker": []
