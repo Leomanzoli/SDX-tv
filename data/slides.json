@@ -20,14 +20,6 @@
       "kenBurns": true
     },
     {
-      "type": "image",
-      "title": "Julho  Amarelo",
-      "subtitle": "",
-      "src": "Julho Amarelo imagem",
-      "transition": "fade",
-      "kenBurns": true
-    },
-    {
       "type": "video",
       "title": "Julho Amarelo",
       "subtitle": "",
@@ -47,6 +39,14 @@
       "title": "RH",
       "subtitle": "",
       "src": "assets/RH/Slide2.JPG",
+      "transition": "fade",
+      "kenBurns": true
+    },
+    {
+      "type": "image",
+      "title": "Julho  Amarelo",
+      "subtitle": "",
+      "src": "Julho Amarelo imagem",
       "transition": "fade",
       "kenBurns": true
     },
