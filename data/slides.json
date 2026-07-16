@@ -180,14 +180,6 @@
       "kenBurns": true
     },
     {
-      "type": "image",
-      "title": "Vacina - Gripe",
-      "subtitle": "Saúde",
-      "src": "assets/Saúde/WhatsApp Image 2026-06-03 at 11.33.56.jpeg",
-      "transition": "fade",
-      "kenBurns": true
-    },
-    {
       "type": "video",
       "title": "Julho Amarelo",
       "subtitle": "",
@@ -199,6 +191,14 @@
       "title": "Julho  Amarelo",
       "subtitle": "",
       "src": "Julho Amarelo imagem",
+      "transition": "fade",
+      "kenBurns": true
+    },
+    {
+      "type": "image",
+      "title": "Vacina - Gripe",
+      "subtitle": "Saúde",
+      "src": "assets/Saúde/WhatsApp Image 2026-06-03 at 11.33.56.jpeg",
       "transition": "fade",
       "kenBurns": true
     },
