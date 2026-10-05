@@ -13,9 +13,25 @@
   "slides": [
     {
       "type": "image",
-      "title": "RH",
-      "subtitle": "",
-      "src": "assets/RH/Slide0.JPG",
+      "title": "Pilula - Outubro Rosa 4",
+      "subtitle": "Saúde",
+      "src": "assets/Saúde/Pilula - Outubro Rosa 4.png",
+      "transition": "fade",
+      "kenBurns": true
+    },
+    {
+      "type": "image",
+      "title": "Pilula - Outubro Rosa 6",
+      "subtitle": "Saúde",
+      "src": "assets/Saúde/Pilula - Outubro Rosa 6.png",
+      "transition": "fade",
+      "kenBurns": true
+    },
+    {
+      "type": "image",
+      "title": "Pilula - Outubro Rosa 5",
+      "subtitle": "Saúde",
+      "src": "assets/Saúde/Pilula - Outubro Rosa 5.png",
       "transition": "fade",
       "kenBurns": true
     },
@@ -24,6 +40,14 @@
       "title": "RH",
       "subtitle": "",
       "src": "assets/RH/Slide1.JPG",
+      "transition": "fade",
+      "kenBurns": true
+    },
+    {
+      "type": "image",
+      "title": "RH",
+      "subtitle": "",
+      "src": "assets/RH/Slide0.JPG",
       "transition": "fade",
       "kenBurns": true
     },
