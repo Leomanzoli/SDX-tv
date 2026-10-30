@@ -338,6 +338,14 @@
       "src": "assets/Campanhas/whatsapp-image-2026-10-28-at-19-28-55.jpeg",
       "transition": "fade",
       "kenBurns": true
+    },
+    {
+      "type": "image",
+      "title": "📣 Equipe em ação",
+      "subtitle": "🌿 Roçada Mecanizada",
+      "src": "assets/Campanhas/whatsapp-image-2026-10-08-at-10-30-30.jpeg",
+      "transition": "fade",
+      "kenBurns": true
     }
   ],
   "ticker": []
