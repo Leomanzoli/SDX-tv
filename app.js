@@ -2,6 +2,11 @@
 const defaultConfig = {
   slideWindowMs: { image: 12000, video: 90000, message: 12000 },
   videoBufferTimeoutMs: 8000,
+  imageLoadTimeoutMs: 10000,
+  fetchTimeoutMs: 10000,
+  slidesRefreshMinutes: 5,
+  dailyReloadHour: 3,
+  maxConsecutiveMediaErrors: 8,
   newsCardMs: 10000,
   alertPriorityMs: 45000,
   newsCacheMinutes: 20,
@@ -12,29 +17,21 @@ let config = { ...defaultConfig };
 let slides = [];
 
 // Geradores reaproveitados pelo fallback, caso data/slides.json não carregue.
-const inspectionSlidesFallback = Array.from({ length: 17 }, (_, index) => ({
-  type: "image",
-  title: `Inspeções · Slide ${index + 1}`,
-  subtitle: "Checklist e evidências de campo",
-  src: `assets/Inspeções/${index + 1}.jpg`,
-  transition: "fade",
-  kenBurns: true,
-}));
 const preaxionSlidesFallback = [
-  "WhatsApp Image 2026-04-07 at 12.53.33.jpeg",
-  "WhatsApp Image 2026-04-08 at 09.57.26.jpeg",
-  "WhatsApp Image 2026-04-08 at 09.57.27.jpeg",
-  "WhatsApp Image 2026-04-08 at 09.57.28 (3).jpeg",
-  "WhatsApp Image 2026-04-08 at 09.57.28 (4).jpeg",
-  "WhatsApp Image 2026-04-08 at 09.57.28 (7).jpeg",
-  "WhatsApp Image 2026-04-08 at 09.57.28 (8).jpeg",
-  "WhatsApp Image 2026-04-09 at 13.12.44 (1).jpeg",
-  "WhatsApp Image 2026-04-09 at 13.12.56 (1).jpeg",
-  "WhatsApp Image 2026-04-09 at 15.48.39 (47).jpeg",
-  "WhatsApp Image 2026-04-09 at 15.48.39 (51).jpeg",
-  "WhatsApp Image 2026-04-09 at 15.48.41 (2).jpeg",
-  "WhatsApp Image 2026-04-09 at 16.22.42 (3).jpeg",
-  "WhatsApp Image 2026-04-09 at 16.28.48 (9).jpeg",
+  "whatsapp-image-2026-04-07-at-12-53-33.jpg",
+  "whatsapp-image-2026-04-08-at-09-57-26.jpg",
+  "whatsapp-image-2026-04-08-at-09-57-27.jpg",
+  "whatsapp-image-2026-04-08-at-09-57-28-3.jpg",
+  "whatsapp-image-2026-04-08-at-09-57-28-4.jpg",
+  "whatsapp-image-2026-04-08-at-09-57-28-7.jpg",
+  "whatsapp-image-2026-04-08-at-09-57-28-8.jpg",
+  "whatsapp-image-2026-04-09-at-13-12-44-1.jpg",
+  "whatsapp-image-2026-04-09-at-13-12-56-1.jpg",
+  "whatsapp-image-2026-04-09-at-15-48-39-47.jpg",
+  "whatsapp-image-2026-04-09-at-15-48-39-51.jpg",
+  "whatsapp-image-2026-04-09-at-15-48-41-2.jpg",
+  "whatsapp-image-2026-04-09-at-16-22-42-3.jpg",
+  "whatsapp-image-2026-04-09-at-16-28-48-9.jpg",
 ].map((file, index) => ({
   type: "image",
   title: `Preaxion em Ação · ${index + 1}`,
@@ -49,7 +46,7 @@ const FALLBACK_SLIDES = [
     type: "image",
     title: "Panorama CRM",
     subtitle: "Comunicação de rotina operacional",
-    src: "assets/CRM/CRM_1.png",
+    src: "assets/CRM/crm-1.jpg",
     transition: "fade",
     kenBurns: true,
   },
@@ -57,7 +54,7 @@ const FALLBACK_SLIDES = [
     type: "image",
     title: "CRM em Campo",
     subtitle: "Atuação direta na operação",
-    src: "assets/CRM/CRM em Campo.png",
+    src: "assets/CRM/crm-em-campo.jpg",
     transition: "fade",
     kenBurns: true,
   },
@@ -65,7 +62,7 @@ const FALLBACK_SLIDES = [
     type: "image",
     title: "Indicadores N3",
     subtitle: "Visibilidade em tempo real para equipes",
-    src: "assets/N3/N3_1.png",
+    src: "assets/N3/n3-1.jpg",
     transition: "fade",
     kenBurns: true,
   },
@@ -73,7 +70,7 @@ const FALLBACK_SLIDES = [
     type: "image",
     title: "Indicadores N3 · Continuação",
     subtitle: "Acompanhamento diário com foco em prevenção",
-    src: "assets/N3/N3_2.png",
+    src: "assets/N3/n3-2.jpg",
     transition: "fade",
     kenBurns: true,
   },
@@ -81,7 +78,7 @@ const FALLBACK_SLIDES = [
     type: "image",
     title: "Painel N3",
     subtitle: "Visão consolidada de desempenho",
-    src: "assets/N3/Painel.png",
+    src: "assets/N3/painel.jpg",
     transition: "fade",
     kenBurns: true,
   },
@@ -89,29 +86,7 @@ const FALLBACK_SLIDES = [
     type: "image",
     title: "Painel N3 · Detalhamento",
     subtitle: "Análise operacional por frente",
-    src: "assets/N3/Painel 2.png",
-    transition: "fade",
-    kenBurns: true,
-  },
-  {
-    type: "video",
-    title: "Kaizens em Movimento",
-    subtitle: "Boas práticas em ação",
-    src: "assets/Kaizens/1.Video 1.mp4",
-    transition: "slide",
-  },
-  {
-    type: "video",
-    title: "Kaizens · Edição 2",
-    subtitle: "Evolução contínua com segurança",
-    src: "assets/Kaizens/2.Video 2.mp4",
-    transition: "slide",
-  },
-  {
-    type: "image",
-    title: "Resumo Kaizens",
-    subtitle: "Resultados e próximos ciclos",
-    src: "assets/Kaizens/0.Slide.png",
+    src: "assets/N3/painel-2.jpg",
     transition: "fade",
     kenBurns: true,
   },
@@ -120,14 +95,14 @@ const FALLBACK_SLIDES = [
     type: "video",
     title: "Pílulas de Segurança",
     subtitle: "Princípios de incêndios em correias",
-    src: "assets/Pilulas/Princípios de incêndios em correias_horizontal.mp4",
+    src: "assets/Pilulas/principios-de-incendios-em-correias-horizontal.mp4",
     transition: "slide",
   },
   {
     type: "video",
     title: "Preaxion · Treinamento",
     subtitle: "Resposta rápida e prevenção",
-    src: "assets/Preaxion/Preaxion.mp4",
+    src: "assets/Preaxion/preaxion.mp4",
     transition: "slide",
   },
   ...preaxionSlidesFallback,
@@ -135,27 +110,10 @@ const FALLBACK_SLIDES = [
     type: "image",
     title: "Saúde em Foco",
     subtitle: "Conteúdo de bem-estar ocupacional",
-    src: "assets/Saúde/01.png",
+    src: "assets/Saúde/01.jpg",
     transition: "fade",
     kenBurns: true,
   },
-  {
-    type: "image",
-    title: "Inspeções · Painel 1",
-    subtitle: "Resumo visual de inspeções",
-    src: "assets/Inspeções/0.Painel 1.png",
-    transition: "fade",
-    kenBurns: true,
-  },
-  {
-    type: "image",
-    title: "Inspeções · Painel 2",
-    subtitle: "Acompanhamento das evidências",
-    src: "assets/Inspeções/0.Painel 2.png",
-    transition: "fade",
-    kenBurns: true,
-  },
-  ...inspectionSlidesFallback,
 ];
 
 
@@ -199,6 +157,62 @@ let newsIndex = 0;
 let newsRotationTimer = null;
 let activeNewsCard = null;
 let slideTimer = null;
+let consecutiveMediaErrors = 0;
+let slidesEtag = null;
+
+const MEDIA_EXT = /\.(png|jpe?g|gif|webp|avif|bmp|svg|mp4|webm|mov|m4v|ogv)(\?.*)?$/i;
+const VIDEO_EXT = /\.(mp4|webm|mov|m4v|ogv)(\?.*)?$/i;
+
+// TVs (Tizen/webOS/etc.) ou ?lite=1 recebem a variante sem efeitos pesados.
+const isTvLite = (() => {
+  try {
+    if (new URLSearchParams(location.search).get("lite") === "1") return true;
+  } catch (_) {}
+  return /Tizen|Web0S|webOS|SMART-TV|SmartTV|NetCast|BRAVIA|HbbTV|AFTT|AFTM|Silk|Roku|Philips|VIDAA|Hisense/i.test(
+    navigator.userAgent
+  );
+})();
+if (isTvLite) document.body.classList.add("tv-lite");
+
+// Encoda só caminhos relativos; URLs absolutas vêm prontas do R2/admin.
+function normalizeSrc(src) {
+  if (typeof src !== "string") return "";
+  const trimmed = src.trim();
+  if (!trimmed) return "";
+  if (/^https?:\/\//i.test(trimmed)) return trimmed;
+  if (/^[a-z]:\\/i.test(trimmed) || trimmed.startsWith('"')) return "";
+  if (/%[0-9a-f]{2}/i.test(trimmed)) return trimmed;
+  return encodeURI(trimmed.replace(/^\.?\//, ""));
+}
+
+function isPlayableSlide(item) {
+  if (!item || typeof item !== "object") return false;
+  if (item.type === "message") return true;
+  const src = normalizeSrc(item.src);
+  if (!src || !MEDIA_EXT.test(src)) return false;
+  if (item.type === "video" && !VIDEO_EXT.test(src)) return false;
+  if (item.type === "image" && VIDEO_EXT.test(src)) return false;
+  return true;
+}
+
+function sanitizeSlides(list) {
+  const valid = [];
+  for (const item of list) {
+    if (isPlayableSlide(item)) {
+      valid.push({ ...item, src: item.type === "message" ? item.src : normalizeSrc(item.src) });
+    } else {
+      console.warn("[SDX-TV][SLIDES] Slide ignorado por src inválido", { title: item?.title, src: item?.src });
+    }
+  }
+  return valid;
+}
+
+function fetchWithTimeout(url, options = {}, timeoutMs = config.fetchTimeoutMs) {
+  if (typeof AbortController === "undefined") return fetch(url, options);
+  const controller = new AbortController();
+  const timer = window.setTimeout(() => controller.abort(), timeoutMs);
+  return fetch(url, { ...options, signal: controller.signal }).finally(() => window.clearTimeout(timer));
+}
 
 function setStatus(text, type = "pending") {
   if (statusTextEl) {
@@ -309,7 +323,7 @@ async function fetchRssViaProxy(source) {
   const strategies = [
     async () => {
       const endpoint = `https://api.allorigins.win/raw?url=${encodeURIComponent(source.url)}`;
-      const response = await fetch(endpoint, { headers: { Accept: "application/xml,text/xml" } });
+      const response = await fetchWithTimeout(endpoint, { headers: { Accept: "application/xml,text/xml" } });
       if (!response.ok) {
         throw new Error(`AllOrigins ${response.status}`);
       }
@@ -333,7 +347,7 @@ async function fetchRssViaProxy(source) {
     },
     async () => {
       const endpoint = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(source.url)}`;
-      const response = await fetch(endpoint, { headers: { Accept: "application/json" } });
+      const response = await fetchWithTimeout(endpoint, { headers: { Accept: "application/json" } });
       if (!response.ok) {
         throw new Error(`RSS2JSON ${response.status}`);
       }
@@ -398,12 +412,37 @@ function readNewsCache(maxAgeMinutes) {
 }
 
 async function readFallbackNews() {
-  const response = await fetch("data/news-fallback.json");
+  const response = await fetchWithTimeout("data/news-fallback.json");
   if (!response.ok) {
     throw new Error("Fallback indisponível");
   }
 
   return response.json();
+}
+
+// Notícias pré-agregadas pelo servidor: /api/news (Vercel) ou data/news.json (gerado pelo
+// GitHub Actions). Elimina a dependência de proxies públicos instáveis.
+async function fetchAggregatedNews(url) {
+  const response = await fetchWithTimeout(url, { cache: "no-store" });
+  if (!response.ok) throw new Error(`HTTP ${response.status}`);
+  const payload = await response.json();
+  if (!Array.isArray(payload.items) || payload.items.length === 0) throw new Error("payload vazio");
+  const bySource = new Map();
+  for (const item of payload.items) {
+    const name = item.source || "Fonte externa";
+    if (!bySource.has(name)) bySource.set(name, []);
+    bySource.get(name).push(item);
+  }
+  const items = [...bySource.entries()].flatMap(([name, list]) => normalizeNews(list, name));
+  return { items, fetchedAt: payload.fetchedAt ? new Date(payload.fetchedAt) : null };
+}
+
+function describeAge(date) {
+  if (!date || Number.isNaN(date.getTime())) return "";
+  const minutes = Math.round((Date.now() - date.getTime()) / 60000);
+  if (minutes < 60) return `há ${Math.max(1, minutes)} min`;
+  const hours = Math.round(minutes / 60);
+  return hours < 48 ? `há ${hours} h` : `há ${Math.round(hours / 24)} d`;
 }
 
 async function loadNews() {
@@ -413,6 +452,25 @@ async function loadNews() {
   const fromCache = readNewsCache(config.newsCacheMinutes);
   if (fromCache.length > 0) {
     logNewsUpdate("Cache válido encontrado", { count: fromCache.length });
+  }
+
+  for (const url of ["api/news", `data/news.json?ts=${Date.now()}`]) {
+    try {
+      const { items, fetchedAt } = await fetchAggregatedNews(url);
+      const unique = dedupeNews(items.filter((item) => allowedHost(item.link))).slice(0, 30);
+      if (unique.length === 0) continue;
+      saveNewsCache(unique);
+      const ageMs = fetchedAt ? Date.now() - fetchedAt.getTime() : 0;
+      const stale = ageMs > 6 * 3600000;
+      setStatus(
+        stale ? `Notícias atualizadas ${describeAge(fetchedAt)}` : `Fontes online (${unique.length} itens)`,
+        stale ? "warn" : "ok"
+      );
+      logNewsUpdate("Atualização via servidor concluída", { url, count: unique.length, fetchedAt });
+      return prioritizeNews(unique);
+    } catch (error) {
+      logNewsUpdate("Fonte agregada indisponível", { url, error: String(error) });
+    }
   }
 
   const sourceResults = await Promise.allSettled(rssSources.map(fetchRssViaProxy));
@@ -425,7 +483,7 @@ async function loadNews() {
     const unique = dedupeNews(aggregated).slice(0, 30);
     saveNewsCache(unique);
     setStatus(`Fontes online (${unique.length} itens)`, "ok");
-    logNewsUpdate("Atualização via RSS concluída", { count: unique.length });
+    logNewsUpdate("Atualização via proxy RSS concluída", { count: unique.length });
     return prioritizeNews(unique);
   }
 
@@ -482,7 +540,57 @@ function prioritizeNews(items) {
   return [...critical, ...interleaved];
 }
 
-function renderSlide(item, onVideoEnded) {
+// Remove nós antigos do palco, liberando mídia (src vazio força o browser a soltar buffers).
+function releaseMediaNode(node) {
+  if (!node) return;
+  try {
+    if (node.tagName === "VIDEO") {
+      node.pause();
+      node.removeAttribute("src");
+      node.load();
+    } else if (node.tagName === "IMG") {
+      node.removeAttribute("src");
+    }
+  } catch (_) {}
+  node.remove();
+}
+
+function pruneStage(keep) {
+  const children = [...slideStageEl.children];
+  for (const child of children) {
+    if (child !== keep) releaseMediaNode(child);
+  }
+}
+
+// Baixa e decodifica a imagem fora da tela; resolve com o <img> pronto ou rejeita no timeout/erro.
+function preloadImage(src, timeoutMs) {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    let settled = false;
+    const finish = (fn, value) => {
+      if (settled) return;
+      settled = true;
+      window.clearTimeout(timer);
+      fn(value);
+    };
+    const timer = window.setTimeout(() => {
+      img.src = "";
+      finish(reject, new Error(`timeout ${timeoutMs}ms`));
+    }, timeoutMs);
+    img.decoding = "async";
+    img.onload = () => {
+      if (typeof img.decode === "function") {
+        img.decode().then(() => finish(resolve, img)).catch(() => finish(resolve, img));
+      } else {
+        finish(resolve, img);
+      }
+    };
+    img.onerror = () => finish(reject, new Error("load error"));
+    img.src = src;
+  });
+}
+
+function renderSlide(item, onVideoEnded, preloadedImg) {
   const old = slideStageEl.firstElementChild;
   slideStageEl.classList.remove("fade", "slide");
   slideStageEl.classList.add(item.transition || "fade");
@@ -517,15 +625,15 @@ function renderSlide(item, onVideoEnded) {
 
   let node;
   if (item.type === "image") {
-    node = document.createElement("img");
-    node.src = item.src;
+    // Reaproveita o <img> já decodificado pelo preload; cria um novo só como último recurso.
+    node = preloadedImg || document.createElement("img");
     node.alt = item.title;
     node.className = "active-slide";
-    // Dica ao navegador para decodificar de forma assíncrona, evitando travas.
     node.decoding = "async";
     node.loading = "eager";
     attachMediaErrorFallback(node);
-    if (item.kenBurns) {
+    if (!preloadedImg) node.src = item.src;
+    if (item.kenBurns && !isTvLite) {
       node.classList.add("ken-burns");
     }
   } else if (item.type === "video") {
@@ -613,55 +721,80 @@ function renderSlide(item, onVideoEnded) {
   if (slideProgressBarEl) {
     const duration = config.slideWindowMs[item.type] || 12000;
     slideProgressBarEl.style.transition = "none";
-    slideProgressBarEl.style.width = "0%";
+    slideProgressBarEl.style.transform = "scaleX(0)";
     void slideProgressBarEl.offsetWidth;
-    slideProgressBarEl.style.transition = `width ${duration}ms linear`;
-    slideProgressBarEl.style.width = "100%";
+    slideProgressBarEl.style.transition = `transform ${duration}ms linear`;
+    slideProgressBarEl.style.transform = "scaleX(1)";
   }
 
   if (old) {
-    window.setTimeout(() => {
-      if (old.parentNode === slideStageEl) old.remove();
-    }, 820);
+    window.setTimeout(() => pruneStage(node), 820);
   }
 
   return node;
 }
 
-// Prefetch leve: dispara o download do próximo vídeo em segundo plano
-// enquanto o slide atual ainda está sendo exibido. Como o navegador
-// armazena em cache HTTP, ao trocar de slide o vídeo já estará disponível.
+// Prefetch do PRÓXIMO item enquanto o atual está em exibição. Imagens entram no
+// cache HTTP via Image(); vídeos usam um <video> oculto com preload=auto.
 let prefetchEl = null;
-function prefetchNextVideo() {
-  const next = slides[(slideIndex) % slides.length];
-  if (!next || next.type !== "video") return;
+let prefetchImg = null;
+function prefetchNext() {
+  if (slides.length < 2) return;
+  const next = slides[(slideIndex + 1) % slides.length];
+  if (!next) return;
 
   if (prefetchEl) {
-    prefetchEl.remove();
+    releaseMediaNode(prefetchEl);
     prefetchEl = null;
   }
+  if (prefetchImg) {
+    prefetchImg.src = "";
+    prefetchImg = null;
+  }
 
+  if (next.type === "image") {
+    const img = new Image();
+    img.decoding = "async";
+    img.src = next.src;
+    prefetchImg = img;
+    return;
+  }
+
+  if (next.type !== "video") return;
   const v = document.createElement("video");
-  v.src = next.src;
   v.preload = "auto";
   v.muted = true;
   v.playsInline = true;
   v.style.cssText = "position:fixed;top:-9999px;left:-9999px;width:1px;height:1px;opacity:0;";
+  v.src = next.src;
   document.body.appendChild(v);
   v.load();
   prefetchEl = v;
 }
 
+function registerMediaError(item, reason) {
+  consecutiveMediaErrors += 1;
+  console.warn("[SDX-TV][SLIDE] Falha de mídia", { src: item.src, type: item.type, reason, consecutiveMediaErrors });
+  if (consecutiveMediaErrors >= config.maxConsecutiveMediaErrors) {
+    console.error("[SDX-TV][WATCHDOG] Muitas falhas consecutivas, recarregando página");
+    location.reload();
+  }
+}
+
 function startSlides() {
-  const showNext = () => {
+  let generation = 0;
+
+  const showNext = async () => {
+    const myGeneration = ++generation;
     const current = slides[slideIndex];
+    if (!current) return;
 
     // Guarda de idempotência: garante que `advance` execute apenas uma vez
     // por slide, independente da origem (timer, evento `ended`, erro).
     let advanced = false;
     let safetyTimer = null;
     const advance = () => {
-      if (advanced) return;
+      if (advanced || myGeneration !== generation) return;
       advanced = true;
       window.clearTimeout(safetyTimer);
       window.clearTimeout(slideTimer);
@@ -678,7 +811,6 @@ function startSlides() {
       }
 
       slideIndex = (slideIndex + 1) % slides.length;
-      prefetchNextVideo();
       showNext();
     };
 
@@ -694,17 +826,40 @@ function startSlides() {
         safetyTimer = window.setTimeout(advance, ceiling);
       };
 
-      renderSlide(current, advance);
+      const node = renderSlide(current, advance);
+      node.addEventListener("playing", () => { consecutiveMediaErrors = 0; }, { once: true });
+      node.addEventListener("error", () => registerMediaError(current, "video error"), { once: true });
 
       // Teto inicial enquanto os metadados ainda não chegaram.
       safetyTimer = window.setTimeout(advance, config.slideWindowMs.video);
-      prefetchNextVideo();
-    } else {
-      renderSlide(current);
-      const duration = config.slideWindowMs[current.type] || 12000;
-      slideTimer = window.setTimeout(advance, duration);
-      prefetchNextVideo();
+      prefetchNext();
+      return;
     }
+
+    if (current.type === "image") {
+      // O timer só começa depois que a imagem está decodificada: nada de quadro preto.
+      let img = null;
+      try {
+        img = await preloadImage(current.src, config.imageLoadTimeoutMs);
+      } catch (error) {
+        if (myGeneration !== generation) return;
+        registerMediaError(current, String(error.message || error));
+        slideIndex = (slideIndex + 1) % slides.length;
+        showNext();
+        return;
+      }
+      if (myGeneration !== generation) return;
+      consecutiveMediaErrors = 0;
+      renderSlide(current, undefined, img);
+      slideTimer = window.setTimeout(advance, config.slideWindowMs.image || 12000);
+      prefetchNext();
+      return;
+    }
+
+    renderSlide(current);
+    const duration = config.slideWindowMs[current.type] || 12000;
+    slideTimer = window.setTimeout(advance, duration);
+    prefetchNext();
   };
 
   showNext();
@@ -775,22 +930,13 @@ function startNewsRotation(newsList) {
   rotate();
 }
 
-function preloadVideos() {
-  // Substituído pelo prefetch sob demanda em `prefetchNextVideo()`.
-  // Baixar todos os vídeos no boot saturava a banda e fazia os clipes
-  // travarem ou começarem pela metade em redes de menor qualidade.
-}
-
 async function loadSlideConfig() {
   try {
-    const response = await fetch(`data/slides.json?ts=${Date.now()}`);
+    const response = await fetchWithTimeout(`data/slides.json?ts=${Date.now()}`, { cache: "no-store" });
     if (!response.ok) throw new Error(`HTTP ${response.status}`);
-    const payload = await response.json();
-    if (Array.isArray(payload.slides) && payload.slides.length > 0) {
-      slides = payload.slides;
-    } else {
-      slides = FALLBACK_SLIDES;
-    }
+    const text = await response.text();
+    slidesEtag = text;
+    const payload = JSON.parse(text);
     if (payload.config) {
       config = {
         ...defaultConfig,
@@ -801,17 +947,88 @@ async function loadSlideConfig() {
         },
       };
     }
+    const cleaned = Array.isArray(payload.slides) ? sanitizeSlides(payload.slides) : [];
+    slides = cleaned.length > 0 ? cleaned : sanitizeSlides(FALLBACK_SLIDES);
   } catch (error) {
     console.warn("[SDX-TV][SLIDES] Falha ao carregar data/slides.json, usando fallback", error);
-    slides = FALLBACK_SLIDES;
+    slides = sanitizeSlides(FALLBACK_SLIDES);
+  }
+}
+
+// Watchdog: recarrega quando o conteúdo muda no painel ou uma vez por dia em horário ocioso,
+// evitando sessões de dias acumulando memória no navegador da TV.
+function startWatchdog() {
+  const refreshMs = Math.max(1, config.slidesRefreshMinutes) * 60000;
+  window.setInterval(async () => {
+    try {
+      const response = await fetchWithTimeout(`data/slides.json?ts=${Date.now()}`, { cache: "no-store" });
+      if (!response.ok) return;
+      const text = await response.text();
+      if (slidesEtag !== null && text !== slidesEtag) {
+        console.info("[SDX-TV][WATCHDOG] slides.json alterado, recarregando");
+        location.reload();
+      }
+    } catch (_) {}
+  }, refreshMs);
+
+  const bootDay = new Date().getDate();
+  window.setInterval(() => {
+    const now = new Date();
+    if (now.getHours() === config.dailyReloadHour && now.getDate() !== bootDay) {
+      console.info("[SDX-TV][WATCHDOG] reload diário");
+      location.reload();
+    }
+  }, 60000);
+}
+
+// Modo ?preview=<src>: usado pelo painel admin para mostrar um único item no palco real,
+// sem notícias nem watchdog (que recarregaria o iframe).
+function readPreviewSlide() {
+  let params;
+  try {
+    params = new URLSearchParams(location.search);
+  } catch (_) {
+    return null;
+  }
+  const src = params.get("preview");
+  if (!src) return null;
+  const type = params.get("type") === "video" || VIDEO_EXT.test(src) ? "video" : "image";
+  const item = {
+    type,
+    title: params.get("title") || "Pré-visualização",
+    subtitle: params.get("subtitle") || "",
+    src,
+    transition: params.get("transition") === "slide" ? "slide" : "fade",
+  };
+  if (type === "image" && params.get("kenburns") === "1") item.kenBurns = true;
+  return isPlayableSlide(item) ? { ...item, src: normalizeSrc(src) } : null;
+}
+
+function startPreview(item) {
+  slides = [item];
+  startClock();
+  startSlides();
+  setStatus("Modo pré-visualização", "pending");
+  const skeleton = newsStageEl.querySelector(".news-card.skeleton");
+  if (skeleton) {
+    skeleton.querySelector(".news-tag").textContent = "Preview";
+    skeleton.querySelector("h3").textContent = "Pré-visualização do painel";
+    skeleton.querySelector("p").textContent = "As notícias reais aparecem aqui na TV.";
   }
 }
 
 async function bootstrap() {
   await loadSlideConfig();
+
+  const preview = readPreviewSlide();
+  if (preview) {
+    startPreview(preview);
+    return;
+  }
+
   startClock();
-  preloadVideos();
   startSlides();
+  startWatchdog();
 
   const initialSkeleton = newsStageEl.querySelector(".news-card.skeleton");
   if (initialSkeleton) {

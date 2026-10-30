@@ -43,49 +43,11 @@ body {
   font-family: "IBM Plex Sans", sans-serif;
   font-size: clamp(14px, 1vw, 18px);
   background:
-    radial-gradient(40vw 50vh at 8% 18%, rgba(237, 0, 0, 0.1), transparent 60%),
-    radial-gradient(38vw 55vh at 92% 84%, rgba(40, 56, 150, 0.22), transparent 65%),
+    radial-gradient(40vw 50vh at 8% 18%, rgba(237, 0, 0, 0.14), transparent 60%),
+    radial-gradient(38vw 55vh at 92% 84%, rgba(40, 56, 150, 0.28), transparent 65%),
     linear-gradient(135deg, var(--bg-deep) 0%, var(--bg-0) 50%, var(--bg-1) 100%);
+  background-attachment: fixed;
   overflow: hidden;
-}
-
-body::before {
-  content: "";
-  position: fixed;
-  inset: 0;
-  background-image:
-    linear-gradient(rgba(255, 255, 255, 0.018) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255, 255, 255, 0.018) 1px, transparent 1px);
-  background-size: 64px 64px;
-  pointer-events: none;
-  z-index: 0;
-}
-
-.bg-glow {
-  position: fixed;
-  border-radius: 50%;
-  filter: blur(80px);
-  opacity: 0.32;
-  pointer-events: none;
-  z-index: 0;
-}
-
-.bg-glow-left {
-  width: 24rem;
-  height: 24rem;
-  background: var(--sodexo-red);
-  top: -10rem;
-  left: -8rem;
-  animation: floatGlow 14s ease-in-out infinite;
-}
-
-.bg-glow-right {
-  width: 28rem;
-  height: 28rem;
-  background: var(--sodexo-blue);
-  bottom: -12rem;
-  right: -10rem;
-  animation: floatGlow 16s ease-in-out infinite reverse;
 }
 
 .tv-shell {
@@ -109,7 +71,6 @@ body::before {
   background: linear-gradient(180deg, rgba(255, 255, 255, 0.035), rgba(255, 255, 255, 0)),
     var(--surface);
   padding: 1rem 1.4rem;
-  backdrop-filter: blur(14px);
   box-shadow: var(--shadow-card);
 }
 
@@ -257,7 +218,6 @@ body::before {
   border: 1px solid var(--line);
   border-radius: var(--radius-lg);
   background: var(--surface);
-  backdrop-filter: blur(14px);
   box-shadow: var(--shadow-card);
   min-height: 0;
   overflow: hidden;
@@ -278,15 +238,6 @@ body::before {
   background: var(--bg-deep);
 }
 
-.slide-stage::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  background: radial-gradient(at center, transparent 55%, rgba(0, 0, 0, 0.4) 100%);
-  z-index: 2;
-}
-
 .slide-stage img,
 .slide-stage video,
 .slide-message {
@@ -301,6 +252,7 @@ body::before {
   object-fit: contain;
   background: var(--bg-deep);
   z-index: 1;
+  backface-visibility: hidden;
 }
 
 .slide-stage.fade .active-slide {
@@ -311,8 +263,9 @@ body::before {
   animation: slideIn 600ms cubic-bezier(0.22, 0.7, 0.27, 1) forwards;
 }
 
-.ken-burns {
-  animation: kenBurns 12s ease-out forwards;
+.slide-stage .active-slide.ken-burns {
+  animation: fadeIn 780ms ease forwards, kenBurns 12s ease-out forwards;
+  will-change: transform;
 }
 
 .slide-message {
@@ -356,9 +309,10 @@ body::before {
 .slide-progress-bar {
   display: block;
   height: 100%;
-  width: 0%;
+  width: 100%;
+  transform: scaleX(0);
+  transform-origin: left center;
   background: linear-gradient(90deg, var(--sodexo-red), var(--sodexo-red-soft));
-  box-shadow: 0 0 12px rgba(237, 0, 0, 0.55);
 }
 
 .hero-meta {
@@ -658,17 +612,7 @@ body::before {
     transform: scale(1);
   }
   to {
-    transform: scale(1.06);
-  }
-}
-
-@keyframes floatGlow {
-  0%,
-  100% {
-    transform: translateY(0) scale(1);
-  }
-  50% {
-    transform: translateY(10px) scale(1.06);
+    transform: scale(1.03);
   }
 }
 
@@ -691,5 +635,48 @@ body::before {
   }
   50% {
     opacity: 0.5;
+  }
+}
+
+/* ========== MODO TV LEVE ========== */
+/* Ativado por UA de TV ou ?lite=1: sem animações decorativas nem sombras caras. */
+body.tv-lite {
+  background: linear-gradient(135deg, var(--bg-deep) 0%, var(--bg-0) 50%, var(--bg-1) 100%);
+  background-attachment: scroll;
+}
+
+body.tv-lite .topbar,
+body.tv-lite .hero,
+body.tv-lite .news,
+body.tv-lite .news-card {
+  box-shadow: none;
+}
+
+body.tv-lite .brand-bar,
+body.tv-lite .news-mark,
+body.tv-lite .news-card.safety::before,
+body.tv-lite .news-card.critical {
+  box-shadow: none;
+}
+
+body.tv-lite .status-dot,
+body.tv-lite .news-card.critical::before {
+  animation: none;
+}
+
+body.tv-lite .slide-stage.fade .active-slide,
+body.tv-lite .slide-stage.slide .active-slide {
+  animation: fadeIn 400ms ease forwards;
+}
+
+body.tv-lite .news-card {
+  transition-duration: 300ms;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ken-burns,
+  .status-dot,
+  .news-card.critical::before {
+    animation: none;
   }
 }

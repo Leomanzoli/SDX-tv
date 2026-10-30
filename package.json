@@ -3,11 +3,19 @@
   "version": "1.0.0",
   "private": true,
   "description": "Painel admin do SDX-tv: login + edição de slides + commit automático via GitHub API",
+  "scripts": {
+    "optimize-assets": "node scripts/optimize-assets.js",
+    "optimize-assets:dry": "node scripts/optimize-assets.js --dry-run",
+    "fetch-news": "node scripts/fetch-news.js"
+  },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.658.1",
     "@aws-sdk/s3-request-presigner": "^3.658.1",
     "@octokit/rest": "^19.0.13",
     "bcryptjs": "^2.4.3",
     "jsonwebtoken": "^9.0.2"
+  },
+  "devDependencies": {
+    "sharp": "^0.33.5"
   }
 }

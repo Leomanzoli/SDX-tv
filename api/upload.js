@@ -1,11 +1,27 @@
 const { requireAuth } = require("./_lib/auth");
 const { putFile, deleteFile, getFile } = require("./_lib/github");
 
+// Pastas mantêm o nome legível (sem barras); arquivos viram slug ASCII para URLs estáveis na TV.
 function sanitizeName(name) {
   return String(name)
     .replace(/[\\/]/g, "-")
     .replace(/\.{2,}/g, "")
     .trim();
+}
+
+function slugifyFilename(name) {
+  const clean = sanitizeName(name);
+  const dot = clean.lastIndexOf(".");
+  const base = dot > 0 ? clean.slice(0, dot) : clean;
+  const ext = dot > 0 ? clean.slice(dot + 1).toLowerCase().replace(/[^a-z0-9]/g, "") : "";
+  const slug =
+    base
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/^-+|-+$/g, "") || "arquivo";
+  return ext ? `${slug}.${ext}` : slug;
 }
 
 module.exports = async (req, res) => {
@@ -21,7 +37,7 @@ module.exports = async (req, res) => {
       return res.status(413).json({ error: "Arquivo muito grande (limite ~4 MB no Vercel Hobby). Use arquivos menores." });
     }
 
-    const path = `assets/${sanitizeName(folder)}/${sanitizeName(filename)}`;
+    const path = `assets/${sanitizeName(folder)}/${slugifyFilename(filename)}`;
     try {
       const result = await putFile({
         path,

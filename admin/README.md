@@ -12,7 +12,7 @@ Endereço do painel: **https://SEU-PROJETO.vercel.app/admin**
    - Vá em **Pastas & Mídia**.
    - Escolha a pasta no menu (ex: `CRM`, `Inspeções`).
    - Clique em **Upload de arquivos** e selecione um ou mais arquivos do computador.
-     - Imagens e arquivos pequenos: publicados na hora.
+     - Imagens: o painel redimensiona para no máximo 1920 px, converte para JPEG (PNG só se tiver transparência) e renomeia sem acentos/espaços antes de enviar — arquivos leves carregam sem travar na TV.
      - Vídeos grandes (acima de ~4 MB): o painel detecta sozinho e usa o "bucket de vídeos" — sem você precisar fazer nada diferente. Aparecem com a etiqueta **📦 vídeo grande**.
    - O status verde **Publicado ✓** confirma que foi.
 
@@ -20,13 +20,20 @@ Endereço do painel: **https://SEU-PROJETO.vercel.app/admin**
    - Ainda em **Pastas & Mídia**, clique em **+ Usar nos slides** no arquivo que você acabou de subir.
    - Vá na aba **Slides**, confira o slide que apareceu no fim da lista (pode arrastar pela alça `⋮⋮` para a posição que quiser).
    - Clique em **Salvar e publicar**.
-   - A TV atualiza em ~1–2 minutos.
+   - A TV detecta a mudança sozinha e recarrega em até 5 minutos (após o deploy da Vercel, ~1 min).
 
 4. **Criar uma pasta nova** (ex: para uma nova campanha)
    - Em **Pastas & Mídia**, clique em **+ Nova pasta**, digite o nome (ex: `SIPAT 2026`).
 
 5. **Apagar arquivo ou slide**
    - Botão vermelho **Apagar** ao lado do item. Pede confirmação.
+   - Para apagar vários de uma vez: marque as caixinhas (Shift+clique seleciona um intervalo) e use **Apagar selecionados** na barra azul. Se algum slide usar o arquivo, o painel avisa e oferece remover o slide também.
+
+7. **Ver como fica na TV**
+   - Botão **▶ Ver** em qualquer arquivo ou slide abre a própria SDX-tv em miniatura com aquele item no palco. Logo após um upload também aparece o atalho **Visualizar na TV**.
+
+8. **Lista ou Grid**
+   - As abas Slides e Mídia abrem em grade; o botão **Lista/Grid** no canto troca e o painel lembra sua escolha.
 
 6. **Editar texto de um slide**
    - Na aba **Slides**, botão **Editar** ao lado do slide.
@@ -36,7 +43,9 @@ Endereço do painel: **https://SEU-PROJETO.vercel.app/admin**
 
 - Tamanho máximo de vídeo: **2 GB** (mas vídeos curtos rodam melhor na TV).
 - A sessão expira em 12 h — depois disso é só logar de novo.
-- Mudanças aparecem na TV após o GitHub Pages reconstruir (~1–2 min).
+- Mudanças aparecem na TV em até ~5 min (deploy da Vercel + verificação automática do player).
+- O campo **Arquivo** do editor só aceita caminhos `assets/...` ou URLs `https://` com extensão de imagem/vídeo. Caminhos do Windows (`C:\...`) não funcionam na TV — envie o arquivo pela aba Mídia.
+- Para otimizar em lote as imagens já existentes no repositório: `npm install` e `npm run optimize-assets` (use `npm run optimize-assets:dry` para só visualizar).
 
 ---
 

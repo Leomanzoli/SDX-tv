@@ -23,9 +23,9 @@
     <header class="topbar">
       <strong>SDX-tv · Admin</strong>
       <nav>
-        <button data-tab="slides" class="active">Slides</button>
-        <button data-tab="media">Pastas &amp; Mídia</button>
-        <button data-tab="ticker">Textos</button>
+        <button data-tab="slides" class="active"><span class="tab-icon" aria-hidden="true">🎬</span>Slides</button>
+        <button data-tab="media"><span class="tab-icon" aria-hidden="true">📁</span>Mídia</button>
+        <button data-tab="ticker"><span class="tab-icon" aria-hidden="true">📝</span>Textos</button>
       </nav>
       <span id="user-label"></span>
       <button id="logout">Sair</button>
@@ -37,8 +37,8 @@
           <button id="add-slide">+ Adicionar slide</button>
           <button id="save-slides" class="primary">Salvar e publicar</button>
           <span class="layout-toggle" role="group" aria-label="Layout">
-            <button id="layout-list" class="active" type="button">Lista</button>
-            <button id="layout-grid" type="button">Grid</button>
+            <button id="layout-list" type="button">Lista</button>
+            <button id="layout-grid" class="active" type="button">Grid</button>
           </span>
           <span id="slides-status" class="hint"></span>
         </div>
@@ -54,9 +54,10 @@
             <button data-bulk="move-to" type="button">Aplicar</button>
           </label>
           <button data-bulk="clear" type="button">Limpar</button>
+          <button data-bulk="preview" type="button">▶ Visualizar</button>
           <button data-bulk="delete" class="danger" type="button">Apagar</button>
         </div>
-        <ul id="slides-list" class="slides-list"></ul>
+        <ul id="slides-list" class="slides-list media-list"></ul>
       </section>
 
       <section id="tab-media" class="tab">
@@ -68,9 +69,20 @@
             <input id="file-input" type="file" multiple hidden />
             <span>Upload de arquivos</span>
           </label>
+          <span class="layout-toggle" role="group" aria-label="Layout">
+            <button id="media-layout-list" type="button">Lista</button>
+            <button id="media-layout-grid" class="active" type="button">Grid</button>
+          </span>
           <span id="media-status" class="hint"></span>
         </div>
-        <ul id="files-list" class="files-list"></ul>
+        <div id="media-bulk-bar" class="bulk-bar" hidden>
+          <span id="media-bulk-count" class="hint"></span>
+          <button data-media-bulk="all" type="button">Selecionar todos</button>
+          <button data-media-bulk="use" type="button" class="primary">+ Usar nos slides</button>
+          <button data-media-bulk="clear" type="button">Limpar</button>
+          <button data-media-bulk="delete" type="button" class="danger">Apagar selecionados</button>
+        </div>
+        <ul id="files-list" class="files-list media-list"></ul>
       </section>
 
       <section id="tab-ticker" class="tab">
@@ -107,6 +119,17 @@
         <button value="save" class="primary">Aplicar</button>
       </div>
     </form>
+  </dialog>
+
+  <dialog id="preview-dialog" class="preview-dialog">
+    <div class="preview-head">
+      <strong>Pré-visualização na SDX-tv</strong>
+      <span id="preview-caption" class="hint"></span>
+      <button id="preview-close" type="button">Fechar</button>
+    </div>
+    <div class="preview-frame">
+      <iframe id="preview-iframe" title="Pré-visualização" width="1920" height="1080"></iframe>
+    </div>
   </dialog>
 </body>
 </html>
