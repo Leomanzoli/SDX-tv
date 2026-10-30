@@ -173,25 +173,81 @@
     },
     {
       "type": "image",
-      "title": "CAMPANHA DIA MUNDIAL DO MEIO AMBIENTE",
-      "subtitle": "Campanha dia 01",
-      "src": "assets/Campanhas/dia-mundial-ma-colag.jpg",
-      "transition": "fade",
-      "kenBurns": true
-    },
-    {
-      "type": "image",
-      "title": "CAMPANHA DIA MUNDIAL DO MEIO AMBIENTE",
-      "subtitle": "Campanha dia 02",
-      "src": "assets/Campanhas/dia-mundial-ma-colag-2.jpg",
-      "transition": "fade",
-      "kenBurns": true
-    },
-    {
-      "type": "image",
-      "title": "whatsapp-image-2026-10-29-at-11-36-12",
+      "title": "🔰VERIFICAÇÃO DE CRM ✅",
       "subtitle": "Gemba",
       "src": "assets/Gemba/whatsapp-image-2026-10-29-at-11-36-12.jpeg",
+      "transition": "fade",
+      "kenBurns": true
+    },
+    {
+      "type": "image",
+      "title": "🔰VERIFICAÇÃO DE CRM ✅",
+      "subtitle": "Gemba",
+      "src": "assets/Gemba/whatsapp-image-2026-10-26-at-14-10-09.jpeg",
+      "transition": "fade",
+      "kenBurns": true
+    },
+    {
+      "type": "image",
+      "title": "🔰VERIFICAÇÃO DE CRM ✅",
+      "subtitle": "Gemba",
+      "src": "assets/Gemba/whatsapp-image-2026-10-29-at-08-32-35.jpeg",
+      "transition": "fade",
+      "kenBurns": true
+    },
+    {
+      "type": "image",
+      "title": "🔰VERIFICAÇÃO DE CRM ✅",
+      "subtitle": "Gemba",
+      "src": "assets/Gemba/24fea8fa-2ca8-48a5-8d67-6ced0df9b16d.jpg",
+      "transition": "fade",
+      "kenBurns": true
+    },
+    {
+      "type": "image",
+      "title": "🔰VERIFICAÇÃO DE CRM ✅",
+      "subtitle": "Gemba",
+      "src": "assets/Gemba/9462e8c2-2368-48a9-8976-ac4f1e111384.jpg",
+      "transition": "fade",
+      "kenBurns": true
+    },
+    {
+      "type": "image",
+      "title": "Campanha Outubro Rosa",
+      "subtitle": "Equipe ADM e Letra C",
+      "src": "assets/Campanhas/whatsapp-image-2026-10-30-at-12-52-34.jpeg",
+      "transition": "fade",
+      "kenBurns": true
+    },
+    {
+      "type": "image",
+      "title": "Campanha Outubro Rosa",
+      "subtitle": "Equipe ADM Operacional e Letra B",
+      "src": "assets/Campanhas/whatsapp-image-2026-10-30-at-12-53-19.jpeg",
+      "transition": "fade",
+      "kenBurns": true
+    },
+    {
+      "type": "image",
+      "title": "Momento 5 min para as mãos🖐🏻",
+      "subtitle": "Campanhas",
+      "src": "assets/Campanhas/3b776496-0bc2-476a-a779-7a532e7cf18e.jpg",
+      "transition": "fade",
+      "kenBurns": true
+    },
+    {
+      "type": "image",
+      "title": "🏭 Fábrica de SMED 🏎‍🟀",
+      "subtitle": "Melhorias e ganhos pós aplicação de SMED na limpeza do DN04.",
+      "src": "assets/Campanhas/fabrica-smed.jpeg",
+      "transition": "fade",
+      "kenBurns": true
+    },
+    {
+      "type": "image",
+      "title": "📌 Campanha CRM",
+      "subtitle": "Riscos Críticos da Manutenção",
+      "src": "assets/Campanhas/whatsapp-image-2026-10-15-at-07-57-42.jpeg",
       "transition": "fade",
       "kenBurns": true
     }
