@@ -196,6 +196,7 @@ els.tabs.forEach((btn) => {
     els.tabs.forEach((b) => b.classList.toggle("active", b === btn));
     const target = btn.dataset.tab;
     els.panes.forEach((p) => p.classList.toggle("active", p.id === `tab-${target}`));
+    reserveBulkSpace();
   });
 });
 
@@ -240,7 +241,16 @@ function updateBulkBar() {
   els.bulkBar.hidden = n === 0;
   els.bulkCount.textContent = n > 0 ? `${n} selecionado${n > 1 ? "s" : ""}` : "";
   if (els.bulkPos) els.bulkPos.max = String(slidesState.data.slides.length);
+  reserveBulkSpace();
 }
+
+// No celular a bulk-bar é fixa; reserva a altura dela no fim do main para não cobrir os últimos cards.
+function reserveBulkSpace() {
+  const visible = [els.bulkBar, els.mediaBulkBar].find((bar) => bar && !bar.hidden && bar.offsetHeight > 0);
+  const fixed = visible && getComputedStyle(visible).position === "fixed";
+  document.documentElement.style.setProperty("--bulk-h", fixed ? `${visible.offsetHeight + 8}px` : "0px");
+}
+window.addEventListener("resize", reserveBulkSpace);
 
 function toggleSelect(index, event) {
   if (event && event.shiftKey && lastClickedIndex !== null) {
@@ -568,6 +578,7 @@ function updateMediaBulkBar() {
   const n = selectedMedia.size;
   els.mediaBulkBar.hidden = n === 0;
   els.mediaBulkCount.textContent = n > 0 ? `${n} selecionado${n > 1 ? "s" : ""}` : "";
+  reserveBulkSpace();
 }
 
 async function deleteMediaFile(f) {

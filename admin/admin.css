@@ -261,7 +261,7 @@ dialog::backdrop { background: rgba(0,0,0,0.6); }
   .upload-btn { display: block; }
   .upload-btn span { display: flex; align-items: center; justify-content: center; width: 100%; text-align: center; }
 
-  /* Barra de ações em lote fixa acima das abas (padrão de ação contextual). */
+  /* Barra de ações em lote: faixa compacta fixa acima das abas, com rolagem horizontal. */
   .bulk-bar {
     position: fixed;
     left: 8px; right: 8px;
@@ -271,15 +271,29 @@ dialog::backdrop { background: rgba(0,0,0,0.6); }
     margin: 0;
     padding: 8px;
     gap: 6px;
-    max-height: 45vh;
-    overflow: auto;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    overflow-y: hidden;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
   }
-  .bulk-bar .hint { width: 100%; font-weight: 600; color: #79c0ff; }
-  .bulk-bar button { flex: 1 1 calc(33% - 6px); min-height: 40px; padding: 6px 8px; font-size: 13px; white-space: nowrap; }
-  .bulk-bar .bulk-move { flex: 1 1 100%; justify-content: space-between; }
-  .bulk-bar .bulk-move input { flex: 1; width: auto; min-height: 40px; }
-  .bulk-bar .bulk-move button { flex: 0 0 auto; }
-  .bulk-bar .danger { flex-basis: 100%; }
+  .bulk-bar::-webkit-scrollbar { display: none; }
+  .bulk-bar > * { flex: 0 0 auto; }
+  .bulk-bar .hint {
+    position: sticky;
+    left: 0;
+    z-index: 1;
+    padding-right: 8px;
+    background: #161b22;
+    font-weight: 600;
+    color: #79c0ff;
+    white-space: nowrap;
+  }
+  .bulk-bar button { min-height: 40px; padding: 6px 10px; font-size: 13px; white-space: nowrap; }
+  .bulk-bar .bulk-move { gap: 4px; white-space: nowrap; }
+  .bulk-bar .bulk-move input { width: 60px; min-height: 40px; padding: 4px 6px; }
+  /* Espaço extra no fim da lista enquanto a barra está visível (altura medida em JS). */
+  main { padding-bottom: calc(var(--tabbar-h) + 16px + var(--bulk-h, 0px)); }
 
   /* Grid: 2 colunas no celular; ações em 3 botões iguais. */
   .media-list--grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
