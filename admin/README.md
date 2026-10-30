@@ -35,6 +35,11 @@ Endereço do painel: **https://SEU-PROJETO.vercel.app/admin**
 8. **Lista ou Grid**
    - As abas Slides e Mídia abrem em grade; o botão **Lista/Grid** no canto troca e o painel lembra sua escolha.
 
+9. **Slides separados por pasta de origem**
+   - Na aba Slides, cada sequência de slides da mesma pasta (RH, Saúde, Campanhas…) ganha um cabeçalho com contagem e posições. Clique no cabeçalho para recolher/expandir e use a caixinha dele para selecionar a pasta inteira.
+   - O seletor **Todas as pastas** filtra a lista para uma pasta só. **📁 Agrupar** liga/desliga os cabeçalhos.
+   - **⇅ Ordenar por pasta** reordena a playlist deixando cada pasta junta (a ordem dentro da pasta é mantida). Como qualquer mudança de ordem, só vale na TV após **Salvar e publicar**.
+
 6. **Editar texto de um slide**
    - Na aba **Slides**, botão **Editar** ao lado do slide.
    - Mude título/subtítulo, clique em **Aplicar**, depois **Salvar e publicar**.

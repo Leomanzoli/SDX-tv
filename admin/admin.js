@@ -16,6 +16,9 @@ const els = {
   saveSlides: document.getElementById("save-slides"),
   layoutList: document.getElementById("layout-list"),
   layoutGrid: document.getElementById("layout-grid"),
+  groupToggle: document.getElementById("group-toggle"),
+  folderFilter: document.getElementById("folder-filter"),
+  regroupSlides: document.getElementById("regroup-slides"),
   bulkBar: document.getElementById("bulk-bar"),
   bulkCount: document.getElementById("bulk-count"),
   bulkPos: document.getElementById("bulk-pos"),
@@ -47,6 +50,10 @@ let mediaLayout = localStorage.getItem(MEDIA_LAYOUT_KEY) === "list" ? "list" : "
 let selectedIndexes = new Set();
 let lastClickedIndex = null;
 let slidesSortable = null;
+const GROUP_KEY = "sdxtv-slides-group";
+let groupByFolder = localStorage.getItem(GROUP_KEY) !== "off";
+let folderFilter = "";
+const collapsedGroups = new Set();
 let mediaFiles = [];
 let mediaFolder = "";
 let selectedMedia = new Set();
@@ -228,6 +235,54 @@ function applyLayout() {
   els.slidesList.classList.toggle("media-list--grid", slidesLayout === "grid");
   els.layoutList.classList.toggle("active", slidesLayout === "list");
   els.layoutGrid.classList.toggle("active", slidesLayout === "grid");
+  els.groupToggle.classList.toggle("active", groupByFolder);
+}
+
+// Pasta de origem: assets/<pasta>/... no repo ou primeiro segmento do caminho no R2.
+function slideFolder(slide) {
+  const src = String(slide?.src || "");
+  let m = src.match(/^assets\/([^/]+)\//);
+  if (m) return safeDecode(m[1]);
+  if (/^https?:\/\//i.test(src)) {
+    try {
+      const seg = new URL(src).pathname.split("/").filter(Boolean);
+      if (seg.length > 1) return safeDecode(seg[0]);
+    } catch {}
+  }
+  return slide?.subtitle || "Outros";
+}
+
+function safeDecode(value) {
+  try { return decodeURIComponent(value); } catch { return value; }
+}
+
+function refreshFolderFilter() {
+  const folders = [...new Set(slidesState.data.slides.map(slideFolder))];
+  if (folderFilter && !folders.includes(folderFilter)) folderFilter = "";
+  els.folderFilter.innerHTML =
+    `<option value="">Todas as pastas (${slidesState.data.slides.length})</option>` +
+    folders.map((f) => {
+      const n = slidesState.data.slides.filter((s) => slideFolder(s) === f).length;
+      return `<option value="${escapeAttr(f)}">${escapeAttr(f)} (${n})</option>`;
+    }).join("");
+  els.folderFilter.value = folderFilter;
+}
+
+function escapeAttr(value) {
+  return String(value).replace(/&/g, "&amp;").replace(/"/g, "&quot;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+}
+
+// Reordena a playlist deixando cada pasta contígua (ordem das pastas = primeira aparição).
+function regroupSlidesByFolder() {
+  const slides = slidesState.data.slides;
+  const order = [];
+  const buckets = new Map();
+  slides.forEach((slide) => {
+    const f = slideFolder(slide);
+    if (!buckets.has(f)) { buckets.set(f, []); order.push(f); }
+    buckets.get(f).push(slide);
+  });
+  slidesState.data.slides = order.flatMap((f) => buckets.get(f));
 }
 
 function applyMediaLayout() {
@@ -281,8 +336,77 @@ async function loadSlides() {
 function renderSlides() {
   els.slidesList.innerHTML = "";
   applyLayout();
+  refreshFolderFilter();
   const total = slidesState.data.slides.length;
+
+  // Sequências contíguas da mesma pasta viram grupos; a ordem global (a que a TV toca) é preservada.
+  const runs = [];
   slidesState.data.slides.forEach((slide, index) => {
+    const folder = slideFolder(slide);
+    const last = runs[runs.length - 1];
+    if (last && last.folder === folder) last.indexes.push(index);
+    else runs.push({ folder, indexes: [index], key: `${folder}#${runs.length}` });
+  });
+
+  runs.forEach((run) => {
+    if (folderFilter && run.folder !== folderFilter) return;
+    const collapsed = groupByFolder && collapsedGroups.has(run.key);
+    if (groupByFolder) els.slidesList.appendChild(renderGroupHeader(run, collapsed));
+    if (collapsed) return;
+    run.indexes.forEach((index) => els.slidesList.appendChild(renderSlideItem(slidesState.data.slides[index], index, total)));
+  });
+
+  updateBulkBar();
+  if (window.Sortable) {
+    if (slidesSortable) slidesSortable.destroy();
+    slidesSortable = Sortable.create(els.slidesList, {
+      handle: ".handle",
+      draggable: ".slide-item",
+      filter: ".group-header",
+      animation: 150,
+      onEnd: () => {
+        // Permuta apenas os slides visíveis entre as posições que eles já ocupavam;
+        // itens filtrados/recolhidos mantêm o lugar.
+        const domOrder = [...els.slidesList.querySelectorAll(".slide-item")].map((li) => Number(li.dataset.index));
+        const slots = [...domOrder].sort((a, b) => a - b);
+        const old = slidesState.data.slides.slice();
+        domOrder.forEach((fromIndex, i) => { slidesState.data.slides[slots[i]] = old[fromIndex]; });
+        clearSelection();
+        renderSlides();
+      },
+    });
+  }
+}
+
+function renderGroupHeader(run, collapsed) {
+  const li = document.createElement("li");
+  li.className = "group-header";
+  const allSelected = run.indexes.every((i) => selectedIndexes.has(i));
+  const first = run.indexes[0] + 1;
+  const last = run.indexes[run.indexes.length - 1] + 1;
+  li.innerHTML = `
+    <input type="checkbox" class="group-select" title="Selecionar pasta inteira" ${allSelected ? "checked" : ""} />
+    <button type="button" class="group-toggle" aria-expanded="${!collapsed}">
+      <span class="chevron">${collapsed ? "▸" : "▾"}</span>
+      <span class="group-name"></span>
+      <span class="group-count">${run.indexes.length} slide${run.indexes.length > 1 ? "s" : ""} · ${first === last ? `#${first}` : `#${first}–${last}`}</span>
+    </button>
+  `;
+  li.querySelector(".group-name").textContent = `📁 ${run.folder}`;
+  li.querySelector(".group-select").addEventListener("change", (e) => {
+    run.indexes.forEach((i) => (e.target.checked ? selectedIndexes.add(i) : selectedIndexes.delete(i)));
+    lastClickedIndex = run.indexes[run.indexes.length - 1];
+    renderSlides();
+  });
+  li.querySelector(".group-toggle").addEventListener("click", () => {
+    if (collapsedGroups.has(run.key)) collapsedGroups.delete(run.key);
+    else collapsedGroups.add(run.key);
+    renderSlides();
+  });
+  return li;
+}
+
+function renderSlideItem(slide, index, total) {
     const li = document.createElement("li");
     li.className = "slide-item";
     li.dataset.index = String(index);
@@ -349,22 +473,7 @@ function renderSlides() {
       renderSlides();
       updateBulkBar();
     });
-    els.slidesList.appendChild(li);
-  });
-  updateBulkBar();
-  if (window.Sortable) {
-    if (slidesSortable) slidesSortable.destroy();
-    slidesSortable = Sortable.create(els.slidesList, {
-      handle: ".handle",
-      animation: 150,
-      onEnd: (evt) => {
-        if (evt.oldIndex === evt.newIndex) return;
-        moveSlide(evt.oldIndex, evt.newIndex);
-        clearSelection();
-        renderSlides();
-      },
-    });
-  }
+    return li;
 }
 
 function openEditor(index) {
@@ -433,6 +542,25 @@ els.layoutGrid.addEventListener("click", () => {
   slidesLayout = "grid";
   localStorage.setItem(LAYOUT_KEY, "grid");
   applyLayout();
+});
+
+els.groupToggle.addEventListener("click", () => {
+  groupByFolder = !groupByFolder;
+  localStorage.setItem(GROUP_KEY, groupByFolder ? "on" : "off");
+  renderSlides();
+});
+els.folderFilter.addEventListener("change", (e) => {
+  folderFilter = e.target.value;
+  clearSelection();
+  renderSlides();
+});
+els.regroupSlides.addEventListener("click", () => {
+  if (!confirm("Reordenar a playlist para que cada pasta fique junta? A ordem dentro de cada pasta é mantida. Depois clique em 'Salvar e publicar'.")) return;
+  regroupSlidesByFolder();
+  clearSelection();
+  collapsedGroups.clear();
+  renderSlides();
+  setStatus(els.slidesStatus, "Playlist agrupada por pasta. Salve e publique para aplicar na TV.", "ok");
 });
 
 els.bulkBar.addEventListener("click", (e) => {
