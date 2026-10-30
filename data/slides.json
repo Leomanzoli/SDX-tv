@@ -13,49 +13,9 @@
   "slides": [
     {
       "type": "image",
-      "title": "Pilula - Outubro Rosa 4",
-      "subtitle": "Saúde",
-      "src": "assets/Saúde/pilula-outubro-rosa-4.jpg",
-      "transition": "fade",
-      "kenBurns": true
-    },
-    {
-      "type": "image",
-      "title": "Pilula - Outubro Rosa 6",
-      "subtitle": "Saúde",
-      "src": "assets/Saúde/pilula-outubro-rosa-6.jpg",
-      "transition": "fade",
-      "kenBurns": true
-    },
-    {
-      "type": "image",
-      "title": "Saúde em Foco",
-      "subtitle": "Conteúdo de bem-estar ocupacional",
-      "src": "assets/Saúde/01.jpg",
-      "transition": "fade",
-      "kenBurns": true
-    },
-    {
-      "type": "image",
-      "title": "Pilula - Outubro Rosa 5",
-      "subtitle": "Saúde",
-      "src": "assets/Saúde/pilula-outubro-rosa-5.jpg",
-      "transition": "fade",
-      "kenBurns": true
-    },
-    {
-      "type": "image",
-      "title": "Vacina - Gripe",
-      "subtitle": "Saúde",
-      "src": "assets/Saúde/whatsapp-image-2026-06-03-at-11-33-56.jpg",
-      "transition": "fade",
-      "kenBurns": true
-    },
-    {
-      "type": "image",
-      "title": "Planfleto Importância da Vacina",
-      "subtitle": "Saúde",
-      "src": "assets/Saúde/planfleto-importancia-da-vacina.jpg",
+      "title": "RH",
+      "subtitle": "",
+      "src": "assets/RH/slide0.jpg",
       "transition": "fade",
       "kenBurns": true
     },
@@ -64,14 +24,6 @@
       "title": "RH",
       "subtitle": "",
       "src": "assets/RH/slide1.jpg",
-      "transition": "fade",
-      "kenBurns": true
-    },
-    {
-      "type": "image",
-      "title": "RH",
-      "subtitle": "",
-      "src": "assets/RH/slide0.jpg",
       "transition": "fade",
       "kenBurns": true
     },
@@ -152,6 +104,54 @@
       "title": "RH",
       "subtitle": "",
       "src": "assets/RH/slide13.jpg",
+      "transition": "fade",
+      "kenBurns": true
+    },
+    {
+      "type": "image",
+      "title": "Pilula - Outubro Rosa 4",
+      "subtitle": "Saúde",
+      "src": "assets/Saúde/pilula-outubro-rosa-4.jpg",
+      "transition": "fade",
+      "kenBurns": true
+    },
+    {
+      "type": "image",
+      "title": "Pilula - Outubro Rosa 6",
+      "subtitle": "Saúde",
+      "src": "assets/Saúde/pilula-outubro-rosa-6.jpg",
+      "transition": "fade",
+      "kenBurns": true
+    },
+    {
+      "type": "image",
+      "title": "Saúde em Foco",
+      "subtitle": "Conteúdo de bem-estar ocupacional",
+      "src": "assets/Saúde/01.jpg",
+      "transition": "fade",
+      "kenBurns": true
+    },
+    {
+      "type": "image",
+      "title": "Pilula - Outubro Rosa 5",
+      "subtitle": "Saúde",
+      "src": "assets/Saúde/pilula-outubro-rosa-5.jpg",
+      "transition": "fade",
+      "kenBurns": true
+    },
+    {
+      "type": "image",
+      "title": "Vacina - Gripe",
+      "subtitle": "Saúde",
+      "src": "assets/Saúde/whatsapp-image-2026-06-03-at-11-33-56.jpg",
+      "transition": "fade",
+      "kenBurns": true
+    },
+    {
+      "type": "image",
+      "title": "Planfleto Importância da Vacina",
+      "subtitle": "Saúde",
+      "src": "assets/Saúde/planfleto-importancia-da-vacina.jpg",
       "transition": "fade",
       "kenBurns": true
     },
