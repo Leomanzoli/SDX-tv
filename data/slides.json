@@ -101,17 +101,97 @@
     },
     {
       "type": "image",
-      "title": "RH",
-      "subtitle": "",
-      "src": "assets/RH/slide13.jpg",
+      "title": "💡 Vagas abertas",
+      "subtitle": "RH",
+      "src": "assets/RH/whatsapp-image-2026-10-30-at-14-48-41-1.jpg",
       "transition": "fade",
       "kenBurns": true
     },
     {
       "type": "image",
-      "title": "Pilula - Outubro Rosa 4",
-      "subtitle": "Saúde",
-      "src": "assets/Saúde/pilula-outubro-rosa-4.jpg",
+      "title": "💡 Vagas abertas",
+      "subtitle": "RH",
+      "src": "assets/RH/whatsapp-image-2026-10-30-at-14-48-41-2.jpg",
+      "transition": "fade",
+      "kenBurns": true
+    },
+    {
+      "type": "image",
+      "title": "💡 Vagas abertas",
+      "subtitle": "RH",
+      "src": "assets/RH/whatsapp-image-2026-10-30-at-14-48-41-3.jpg",
+      "transition": "fade",
+      "kenBurns": true
+    },
+    {
+      "type": "image",
+      "title": "💡 Vagas abertas",
+      "subtitle": "RH",
+      "src": "assets/RH/whatsapp-image-2026-10-30-at-14-48-41.jpg",
+      "transition": "fade",
+      "kenBurns": true
+    },
+    {
+      "type": "image",
+      "title": "💡 Vagas abertas",
+      "subtitle": "RH",
+      "src": "assets/RH/whatsapp-image-2026-10-30-at-14-48-42-2.jpg",
+      "transition": "fade",
+      "kenBurns": true
+    },
+    {
+      "type": "image",
+      "title": "💡 Vagas abertas",
+      "subtitle": "RH",
+      "src": "assets/RH/whatsapp-image-2026-10-30-at-14-48-42-3.jpg",
+      "transition": "fade",
+      "kenBurns": true
+    },
+    {
+      "type": "image",
+      "title": "💡 Vagas abertas",
+      "subtitle": "RH",
+      "src": "assets/RH/whatsapp-image-2026-10-30-at-14-48-43-2.jpg",
+      "transition": "fade",
+      "kenBurns": true
+    },
+    {
+      "type": "image",
+      "title": "💡 Vagas abertas",
+      "subtitle": "RH",
+      "src": "assets/RH/whatsapp-image-2026-10-30-at-14-48-43.jpg",
+      "transition": "fade",
+      "kenBurns": true
+    },
+    {
+      "type": "image",
+      "title": "💡 Vagas abertas",
+      "subtitle": "RH",
+      "src": "assets/RH/whatsapp-image-2026-10-30-at-14-48-42-1.jpg",
+      "transition": "fade",
+      "kenBurns": true
+    },
+    {
+      "type": "image",
+      "title": "💡 Vagas abertas",
+      "subtitle": "RH",
+      "src": "assets/RH/whatsapp-image-2026-10-30-at-14-48-43-1.jpg",
+      "transition": "fade",
+      "kenBurns": true
+    },
+    {
+      "type": "image",
+      "title": "💡 Vagas abertas",
+      "subtitle": "RH",
+      "src": "assets/RH/whatsapp-image-2026-10-30-at-14-48-42.jpg",
+      "transition": "fade",
+      "kenBurns": true
+    },
+    {
+      "type": "image",
+      "title": "RH",
+      "subtitle": "",
+      "src": "assets/RH/slide13.jpg",
       "transition": "fade",
       "kenBurns": true
     },
