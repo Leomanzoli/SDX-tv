@@ -186,6 +186,14 @@
       "src": "assets/Campanhas/dia-mundial-ma-colag-2.jpg",
       "transition": "fade",
       "kenBurns": true
+    },
+    {
+      "type": "image",
+      "title": "whatsapp-image-2026-10-29-at-11-36-12",
+      "subtitle": "Gemba",
+      "src": "assets/Gemba/whatsapp-image-2026-10-29-at-11-36-12.jpeg",
+      "transition": "fade",
+      "kenBurns": true
     }
   ],
   "ticker": []
