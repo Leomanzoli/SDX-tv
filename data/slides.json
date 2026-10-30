@@ -213,6 +213,78 @@
     },
     {
       "type": "image",
+      "title": "🛡️ INSPEÇÃO DE SEGURANÇA",
+      "subtitle": "Gemba",
+      "src": "assets/Gemba/9f30c1bc-c1fa-49d3-b981-15c8081ed15e.jpg",
+      "transition": "fade",
+      "kenBurns": true
+    },
+    {
+      "type": "image",
+      "title": "🛡️ INSPEÇÃO DE SEGURANÇA",
+      "subtitle": "Gemba",
+      "src": "assets/Gemba/whatsapp-image-2026-10-25-at-10-26-37.jpeg",
+      "transition": "fade",
+      "kenBurns": true
+    },
+    {
+      "type": "image",
+      "title": "🛡️ INSPEÇÃO DE SEGURANÇA",
+      "subtitle": "Gemba",
+      "src": "assets/Gemba/whatsapp-image-2026-10-14-at-13-26-31.jpeg",
+      "transition": "fade",
+      "kenBurns": true
+    },
+    {
+      "type": "image",
+      "title": "🛡️ INSPEÇÃO DE SEGURANÇA",
+      "subtitle": "Gemba",
+      "src": "assets/Gemba/whatsapp-image-2026-10-29-at-06-11-02.jpeg",
+      "transition": "fade",
+      "kenBurns": true
+    },
+    {
+      "type": "image",
+      "title": "🛡️ INSPEÇÃO DE SEGURANÇA",
+      "subtitle": "Gemba",
+      "src": "assets/Gemba/whatsapp-image-2026-10-08-at-14-26-33.jpeg",
+      "transition": "fade",
+      "kenBurns": true
+    },
+    {
+      "type": "image",
+      "title": "📌 BOA JORNADA",
+      "subtitle": "Gemba",
+      "src": "assets/Gemba/6220614e-2a66-4093-8e44-3a64b3561fdd.jpg",
+      "transition": "fade",
+      "kenBurns": true
+    },
+    {
+      "type": "image",
+      "title": "📌 BOA JORNADA",
+      "subtitle": "Gemba",
+      "src": "assets/Gemba/eb01782c-6568-46ef-8eb8-92451a1ed18e.jpg",
+      "transition": "fade",
+      "kenBurns": true
+    },
+    {
+      "type": "image",
+      "title": "📌 BOA JORNADA",
+      "subtitle": "Gemba",
+      "src": "assets/Gemba/e54ee30d-c651-4c84-9ded-03eb852dc0af.jpg",
+      "transition": "fade",
+      "kenBurns": true
+    },
+    {
+      "type": "image",
+      "title": "📌 BOA JORNADA",
+      "subtitle": "Gemba",
+      "src": "assets/Gemba/whatsapp-image-2026-10-14-at-20-58-35.jpeg",
+      "transition": "fade",
+      "kenBurns": true
+    },
+    {
+      "type": "image",
       "title": "Campanha Outubro Rosa",
       "subtitle": "Equipe ADM e Letra C",
       "src": "assets/Campanhas/whatsapp-image-2026-10-30-at-12-52-34.jpeg",
@@ -245,9 +317,9 @@
     },
     {
       "type": "image",
-      "title": "📌 Campanha CRM",
-      "subtitle": "Riscos Críticos da Manutenção",
-      "src": "assets/Campanhas/whatsapp-image-2026-10-15-at-07-57-42.jpeg",
+      "title": "whatsapp-image-2026-10-13-at-19-15-22",
+      "subtitle": "Gemba",
+      "src": "assets/Gemba/whatsapp-image-2026-10-13-at-19-15-22.jpeg",
       "transition": "fade",
       "kenBurns": true
     }
