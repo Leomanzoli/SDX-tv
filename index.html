@@ -10,7 +10,7 @@
       href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="styles.css?v=20261030-1" />
+    <link rel="stylesheet" href="styles.css?v=20261105-1" />
   </head>
   <body>
     <div class="tv-shell">
@@ -72,5 +72,110 @@
 
     <!-- Versão no query param para evitar cache antigo do JavaScript -->
     <script src="app.js?v=20261029-2"></script>
+
+    <!--
+      Keep Awake (TV LG / webOS): vídeo real em loop impede o protetor de tela.
+      Não usar Base64 nem 1x1px/opacity 0 — o webOS pausa esses vídeos por otimização de hardware.
+    -->
+    <video id="keep-awake-video" autoplay loop muted playsinline preload="auto" aria-hidden="true" tabindex="-1">
+      <source src="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4" type="video/mp4" />
+    </video>
+
+    <script>
+      (function keepAwake() {
+        var RETRY_PLAY_MS = 2000;
+        var WATCHDOG_MS = 15000;
+        var AUTO_RELOAD_MS = 14400000; // 4 horas: evita travamento do navegador da TV por falta de RAM
+        var retryTimer = null;
+        var wakeLock = null;
+
+        function getVideo() {
+          return document.getElementById("keep-awake-video");
+        }
+
+        function forcePlay() {
+          var video = getVideo();
+          if (!video) return;
+
+          // webOS só libera autoplay sem interação do controle remoto se o vídeo for mudo e inline.
+          video.muted = true;
+          video.defaultMuted = true;
+          video.setAttribute("muted", "");
+          video.setAttribute("playsinline", "");
+
+          var result;
+          try {
+            result = video.play();
+          } catch (err) {
+            scheduleRetry();
+            return;
+          }
+
+          if (result && typeof result.catch === "function") {
+            result.catch(function () {
+              scheduleRetry();
+            });
+          }
+        }
+
+        function scheduleRetry() {
+          if (retryTimer) return;
+          retryTimer = window.setTimeout(function () {
+            retryTimer = null;
+            forcePlay();
+          }, RETRY_PLAY_MS);
+        }
+
+        function startWatchdog() {
+          window.setInterval(function () {
+            var video = getVideo();
+            if (video && (video.paused || video.ended)) forcePlay();
+          }, WATCHDOG_MS);
+        }
+
+        async function requestWakeLock() {
+          try {
+            if (!("wakeLock" in navigator)) return;
+            wakeLock = await navigator.wakeLock.request("screen");
+            wakeLock.addEventListener("release", function () {
+              wakeLock = null;
+            });
+          } catch (_) {
+            wakeLock = null;
+          }
+        }
+
+        function onVisibilityChange() {
+          if (document.visibilityState === "visible") {
+            requestWakeLock();
+            forcePlay();
+          }
+        }
+
+        function scheduleAutoReload() {
+          window.setTimeout(function () {
+            window.location.reload();
+          }, AUTO_RELOAD_MS);
+        }
+
+        var booted = false;
+        function boot() {
+          forcePlay();
+          if (booted) return;
+          booted = true;
+          startWatchdog();
+          requestWakeLock();
+          document.addEventListener("visibilitychange", onVisibilityChange);
+          scheduleAutoReload();
+        }
+
+        if (document.readyState === "loading") {
+          document.addEventListener("DOMContentLoaded", boot);
+        } else {
+          boot();
+        }
+        window.addEventListener("load", boot);
+      })();
+    </script>
   </body>
 </html>
