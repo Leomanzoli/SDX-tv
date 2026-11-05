@@ -189,6 +189,30 @@
     },
     {
       "type": "image",
+      "title": "whatsapp-image-2026-10-30-at-14-48-43",
+      "subtitle": "RH",
+      "src": "assets/RH/whatsapp-image-2026-10-30-at-14-48-43.jpg",
+      "transition": "fade",
+      "kenBurns": true
+    },
+    {
+      "type": "image",
+      "title": "whatsapp-image-2026-10-30-at-14-48-43",
+      "subtitle": "RH",
+      "src": "assets/RH/whatsapp-image-2026-10-30-at-14-48-43.jpg",
+      "transition": "fade",
+      "kenBurns": true
+    },
+    {
+      "type": "image",
+      "title": "captura-de-tela-2026-11-05-092529",
+      "subtitle": "RH",
+      "src": "assets/RH/captura-de-tela-2026-11-05-092529.jpg",
+      "transition": "fade",
+      "kenBurns": true
+    },
+    {
+      "type": "image",
       "title": "RH",
       "subtitle": "",
       "src": "assets/RH/slide13.jpg",
