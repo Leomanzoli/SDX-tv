@@ -10,7 +10,7 @@
       href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="styles.css?v=20261106-2" />
+    <link rel="stylesheet" href="styles.css?v=20261106-3" />
   </head>
   <body>
     <div class="tv-shell">
@@ -74,34 +74,83 @@
     <script src="app.js?v=20261029-2"></script>
 
     <!--
-      Keep Awake (TV LG / webOS): vídeo real em loop impede o protetor de tela.
-      Não usar Base64 nem 1x1px/opacity 0 — o webOS pausa esses vídeos por otimização de hardware.
-      O vídeo é hospedado no próprio projeto (keep-awake-360.mp4, H.264 Main 640x360 25fps + AAC, validado na TV em /keep-awake-test): a URL externa
-      usada antes passou a responder 403, e o arquivo 320x180/12fps não decodificava em TVs LG NetCast (tempo preso em 0).
-      Script em ES5 por causa do NetCast. A TV tem poucos decodificadores de hardware e só os libera com
-      removeAttribute("src") + load(): por isso o keep awake solta o decodificador enquanto um slide de vídeo toca
-      e o retoma sozinho depois.
-      Diagnóstico na TV: ?debug=1 mostra o estado no canto da tela; /keep-awake-test compara variantes de codificação.
+      Keep Awake (TV LG NetCast/Colt): um vídeo real em reprodução é o que impede o protetor de tela/espera.
+      Aprendido com /keep-awake-test nesta TV (2026-11-06):
+      - só há um canal de vídeo e ele é instável: às vezes o <video> fica "tocando" com o tempo preso em 0;
+      - o único arquivo que tocou sempre que estava sozinho foi keep-awake.mp4 (320x180, 12fps, baseline + AAC);
+      - vídeo totalmente coberto pelo conteúdo não anda: por isso ele fica POR CIMA, com opacidade mínima.
+      Estratégia: elemento criado pelo script; se o tempo não avançar, o elemento é destruído e recriado após uma
+      pausa. Um registro em localStorage guarda início/último sinal da sessão e se o vídeo andava, para diagnóstico
+      (?debug=1 mostra a sessão anterior: serve para saber se a TV dormiu com o vídeo andando).
     -->
-    <video id="keep-awake-video" autoplay loop muted playsinline preload="auto" aria-hidden="true" tabindex="-1">
-      <source src="keep-awake-360.mp4?v=20261106-2" type="video/mp4" />
-    </video>
 
     <script>
       (function keepAwake() {
-        var RETRY_PLAY_MS = 2000;
-        var WATCHDOG_MS = 15000;
-        var AUTO_RELOAD_MS = 14400000; // 4 horas: evita travamento do navegador da TV por falta de RAM
-        var retryTimer = null;
-        var wakeLock = null;
-        var lastError = "";
-        var pausedForSlide = false;
+        var SRC = "keep-awake.mp4?v=20261106-1";
+        var CHECK_MS = 10000;        // verificação de progresso
+        var RECREATE_GAP_MS = 5000;  // pausa entre destruir e recriar (a TV demora a soltar o canal de vídeo)
+        var HEARTBEAT_MS = 5000;
+        var AUTO_RELOAD_MS = 14400000; // 4 horas
+        var HB_KEY = "sdx-keepawake-hb";
 
-        function getVideo() {
-          return document.getElementById("keep-awake-video");
+        var video = null;
+        var released = false;      // solto de propósito (slide em vídeo tocando)
+        var recreating = false;
+        var recreates = 0;
+        var lastTime = 0;
+        var stuckChecks = 0;
+        var advancing = false;
+        var lastError = "";
+        var sessionStart = new Date().getTime();
+        var prevSession = null;
+
+        function now() { return new Date().getTime(); }
+        function hhmm(ms) { var d = new Date(ms); return ("0" + d.getHours()).slice(-2) + ":" + ("0" + d.getMinutes()).slice(-2); }
+
+        function createVideo() {
+          if (video) return;
+          var v = document.createElement("video");
+          v.id = "keep-awake-video";
+          v.setAttribute("muted", ""); v.setAttribute("playsinline", ""); v.setAttribute("autoplay", ""); v.setAttribute("loop", "");
+          v.setAttribute("aria-hidden", "true"); v.tabIndex = -1;
+          v.muted = true; v.defaultMuted = true; v.loop = true; v.autoplay = true; v.preload = "auto";
+          v.addEventListener("error", function () {
+            lastError = "error " + (v.error ? v.error.code : "?") + " @" + hhmm(now());
+            scheduleRecreate();
+          });
+          v.src = SRC;
+          document.body.appendChild(v);
+          video = v;
+          lastTime = 0; stuckChecks = 0;
+          play();
         }
 
-        // Outro <video> da página (slide) em reprodução? Em TVs antigas só há um decodificador.
+        function destroyVideo() {
+          if (!video) return;
+          var v = video; video = null;
+          try { v.pause(); } catch (_) {}
+          try { v.removeAttribute("src"); v.load(); } catch (_) {}
+          if (v.parentNode) v.parentNode.removeChild(v);
+        }
+
+        function play() {
+          if (!video) return;
+          var r;
+          try { r = video.play(); } catch (_) { return; }
+          if (r && typeof r.catch === "function") r.catch(function () {});
+        }
+
+        function scheduleRecreate() {
+          if (recreating || released) return;
+          recreating = true;
+          destroyVideo();
+          window.setTimeout(function () {
+            recreating = false;
+            if (!released) { recreates++; createVideo(); }
+          }, RECREATE_GAP_MS);
+        }
+
+        // Outro <video> da página (slide) em reprodução? Só há um canal de vídeo na TV.
         function slideVideoActive() {
           var all = document.getElementsByTagName("video");
           for (var i = 0; i < all.length; i++) {
@@ -110,178 +159,83 @@
           return false;
         }
 
-        // Libera de fato o decodificador (pausar não basta nessas TVs) e recoloca a fonte quando for retomar.
-        // O <video> usa um filho <source>: para soltar o decodificador sem disparar "error", o <source> é
-        // retirado e load() é chamado (sem fonte, o elemento esvazia). Para retomar, o <source> volta e load() de novo.
-        var released = false;
-        var parkedSource = null;
-        function releaseDecoder() {
-          var video = getVideo();
-          if (!video || released) return;
-          released = true;
-          pausedForSlide = true;
-          try { video.pause(); } catch (_) {}
-          try {
-            parkedSource = video.getElementsByTagName("source")[0] || null;
-            if (parkedSource) video.removeChild(parkedSource);
-            video.removeAttribute("src");
-            video.load();
-          } catch (_) {}
-        }
-        function ensureSource() {
-          var video = getVideo();
-          if (!video || !released) return;
-          released = false;
-          try {
-            if (parkedSource) video.appendChild(parkedSource);
-            video.load();
-          } catch (_) {}
-        }
-
-        function forcePlay() {
-          var video = getVideo();
-          if (!video) return;
-          if (slideVideoActive()) { releaseDecoder(); return; }
-          pausedForSlide = false;
-          ensureSource();
-
-          // TVs só liberam autoplay sem interação do controle remoto se o vídeo for mudo e inline.
-          video.muted = true;
-          video.defaultMuted = true;
-          video.setAttribute("muted", "");
-          video.setAttribute("playsinline", "");
-
-          var result;
-          try {
-            result = video.play();
-          } catch (err) {
-            scheduleRetry();
+        function check() {
+          if (slideVideoActive()) {
+            if (!released) { released = true; destroyVideo(); }
+            advancing = false;
             return;
           }
-          if (result && typeof result.catch === "function") {
-            result.catch(function () { scheduleRetry(); });
+          if (released) {
+            released = false;
+            window.setTimeout(function () { if (!released && !video) createVideo(); }, RECREATE_GAP_MS);
+            return;
+          }
+          if (!video) { if (!recreating) createVideo(); return; }
+          if (video.paused || video.ended) play();
+          var t = video.currentTime || 0;
+          var progressed = (t - lastTime) > 1 || (lastTime > t && t > 1); // avanço normal ou loop reiniciado
+          advancing = progressed;
+          lastTime = t;
+          if (progressed) { stuckChecks = 0; return; }
+          stuckChecks++;
+          if (stuckChecks >= 2) {
+            lastError = "tempo parado, recriando @" + hhmm(now());
+            stuckChecks = 0;
+            scheduleRecreate();
           }
         }
 
-        function scheduleRetry() {
-          if (retryTimer) return;
-          retryTimer = window.setTimeout(function () {
-            retryTimer = null;
-            forcePlay();
-          }, RETRY_PLAY_MS);
-        }
-
-        // Detecta vídeo "tocando" com o tempo parado (decodificador travado) e reinicia o elemento.
-        var lastTime = -1;
-        var stuckCount = 0;
-        function startWatchdog() {
-          window.setInterval(function () {
-            var video = getVideo();
-            if (!video) return;
-            if (slideVideoActive()) { releaseDecoder(); return; }
-            if (video.paused || video.ended) { forcePlay(); return; }
-            if (video.currentTime === lastTime) {
-              stuckCount++;
-              if (stuckCount >= 2) {
-                lastError = "tempo parado, recarregando @" + new Date().toLocaleTimeString();
-                stuckCount = 0;
-                try { video.load(); } catch (_) {}
-                forcePlay();
-              }
-            } else {
-              stuckCount = 0;
-            }
-            lastTime = video.currentTime;
-          }, WATCHDOG_MS);
-        }
-
-        function requestWakeLock() {
+        function heartbeat() {
           try {
-            if (!("wakeLock" in navigator)) return;
-            navigator.wakeLock.request("screen").then(function (lock) {
-              wakeLock = lock;
-              lock.addEventListener("release", function () { wakeLock = null; });
-            }, function () { wakeLock = null; });
-          } catch (_) {
-            wakeLock = null;
-          }
+            localStorage.setItem(HB_KEY, JSON.stringify({
+              start: sessionStart, last: now(), advancing: advancing, recreates: recreates, src: SRC
+            }));
+          } catch (_) {}
+        }
+        function readPrevSession() {
+          try { var raw = localStorage.getItem(HB_KEY); if (raw) prevSession = JSON.parse(raw); } catch (_) {}
         }
 
-        function onVisibilityChange() {
-          if (document.visibilityState === "visible") {
-            requestWakeLock();
-            forcePlay();
-          }
-        }
-
-        function scheduleAutoReload() {
-          window.setTimeout(function () { window.location.reload(); }, AUTO_RELOAD_MS);
-        }
-
-        // Se o arquivo falhar (rede, decodificação), recarrega o elemento e tenta de novo.
-        function attachRecovery() {
-          var video = getVideo();
-          if (!video) return;
-          video.addEventListener("error", function () {
-            var code = video.error && video.error.code;
-            lastError = "error code " + code + " @" + new Date().toLocaleTimeString();
-            window.setTimeout(function () {
-              try { video.load(); } catch (_) {}
-              forcePlay();
-            }, RETRY_PLAY_MS);
-          });
-          video.addEventListener("stalled", function () { lastError = "stalled @" + new Date().toLocaleTimeString(); });
-          video.addEventListener("pause", function () { if (!released) scheduleRetry(); });
-          video.addEventListener("ended", function () { forcePlay(); });
-
-          // Eventos de mídia não borbulham, mas chegam ao document na fase de captura.
-          document.addEventListener("play", function (ev) {
-            var t = ev.target;
-            if (t && t.tagName === "VIDEO" && t.id !== "keep-awake-video") releaseDecoder();
-          }, true);
-          function onSlideVideoDone(ev) {
-            var t = ev.target;
-            if (t && t.tagName === "VIDEO" && t.id !== "keep-awake-video") scheduleRetry();
-          }
-          document.addEventListener("ended", onSlideVideoDone, true);
-          document.addEventListener("pause", onSlideVideoDone, true);
-          document.addEventListener("emptied", onSlideVideoDone, true);
-        }
-
-        // Painel de diagnóstico: index.html?debug=1
+        // Painel de diagnóstico: ?debug=1
         function startDebugPanel() {
           if (!/[?&]debug=1/.test(window.location.search)) return;
           var box = document.createElement("div");
           box.id = "keep-awake-debug";
           box.style.cssText =
-            "position:fixed;left:8px;bottom:8px;z-index:99999;padding:6px 10px;font:12px/1.4 monospace;" +
+            "position:fixed;left:8px;bottom:8px;z-index:2147483647;padding:6px 10px;font:12px/1.4 monospace;" +
             "color:#0f0;background:rgba(0,0,0,.75);border:1px solid #0f0;white-space:pre;pointer-events:none";
           document.body.appendChild(box);
-          var started = new Date().getTime();
           window.setInterval(function () {
-            var v = getVideo();
+            var v = video;
+            var prev = "nenhuma";
+            if (prevSession && prevSession.start && prevSession.last) {
+              prev = hhmm(prevSession.start) + " até " + hhmm(prevSession.last) +
+                " (" + Math.round((prevSession.last - prevSession.start) / 60000) + " min), vídeo andava: " +
+                (prevSession.advancing ? "SIM" : "NÃO") + ", recriações: " + (prevSession.recreates || 0);
+            }
             box.textContent =
-              "keep-awake  up " + Math.round((new Date().getTime() - started) / 1000) + "s\n" +
-              "video: " + (v ? (v.paused ? (pausedForSlide ? "pausado p/ slide" : "PAUSADO") : "tocando") +
-                " t=" + v.currentTime.toFixed(1) + " ready=" + v.readyState + " net=" + v.networkState : "sem elemento") + "\n" +
-              "src: " + (v && v.currentSrc ? v.currentSrc.replace(/^.*\//, "") : "-") + "\n" +
-              "slide em vídeo: " + (slideVideoActive() ? "sim" : "não") + "\n" +
-              "wakeLock: " + (wakeLock ? "ativo" : ("wakeLock" in navigator ? "inativo" : "não suportado")) + "\n" +
-              "último erro: " + (lastError || "nenhum") + "\n" +
-              "UA: " + navigator.userAgent.slice(0, 60);
+              "keep-awake v3  up " + Math.round((now() - sessionStart) / 1000) + "s  início " + hhmm(sessionStart) + "\n" +
+              "video: " + (v ? (v.paused ? "PAUSADO" : "tocando") + " t=" + (v.currentTime || 0).toFixed(1) +
+                " ready=" + v.readyState + (advancing ? "  ANDANDO" : "  parado") : (released ? "solto p/ slide" : "recriando…")) + "\n" +
+              "recriações: " + recreates + "   último evento: " + (lastError || "nenhum") + "\n" +
+              "sessão anterior: " + prev + "\n" +
+              "UA: " + navigator.userAgent.slice(0, 70);
           }, 1000);
         }
 
         var booted = false;
         function boot() {
-          forcePlay();
           if (booted) return;
           booted = true;
-          attachRecovery();
-          startWatchdog();
-          requestWakeLock();
-          document.addEventListener("visibilitychange", onVisibilityChange);
-          scheduleAutoReload();
+          readPrevSession();
+          createVideo();
+          window.setInterval(check, CHECK_MS);
+          window.setInterval(heartbeat, HEARTBEAT_MS);
+          heartbeat();
+          document.addEventListener("visibilitychange", function () {
+            if (document.visibilityState === "visible") play();
+          });
+          window.setTimeout(function () { window.location.reload(); }, AUTO_RELOAD_MS);
           startDebugPanel();
         }
 
@@ -290,7 +244,6 @@
         } else {
           boot();
         }
-        window.addEventListener("load", boot);
       })();
     </script>
   </body>

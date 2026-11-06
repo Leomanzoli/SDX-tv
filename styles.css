@@ -740,8 +740,9 @@ body.tv-lite .news-card {
   }
 }
 
-/* Keep Awake (webOS/NetCast): vídeo real em loop para impedir o protetor de tela da TV.
-   Manter tamanho "de verdade" (160x90) e opacity 0.02 — as TVs pausam ou não decodificam vídeos 1x1px/opacity 0. */
+/* Keep Awake (TV LG NetCast/Colt): vídeo real em loop para impedir o protetor de tela/espera.
+   Fica POR CIMA do conteúdo (vídeo coberto não anda nessa TV), pequeno e quase transparente.
+   Não usar 1x1px nem opacity 0: as TVs pausam ou não decodificam. */
 #keep-awake-video {
   position: fixed;
   bottom: 0;
@@ -750,5 +751,5 @@ body.tv-lite .news-card {
   height: 90px;
   opacity: 0.02;
   pointer-events: none;
-  z-index: -9999;
+  z-index: 2147483000;
 }
