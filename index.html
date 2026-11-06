@@ -76,14 +76,15 @@
     <!--
       Keep Awake (TV LG / webOS): vídeo real em loop impede o protetor de tela.
       Não usar Base64 nem 1x1px/opacity 0 — o webOS pausa esses vídeos por otimização de hardware.
-      O vídeo é hospedado no próprio projeto (keep-awake-720.mp4, H.264 High 1280x720 25fps + AAC): a URL externa
+      O vídeo é hospedado no próprio projeto (keep-awake-360.mp4, H.264 Main 640x360 25fps + AAC, validado na TV em /keep-awake-test): a URL externa
       usada antes passou a responder 403, e o arquivo 320x180/12fps não decodificava em TVs LG NetCast (tempo preso em 0).
-      Script em ES5 por causa do NetCast. Em TVs com um único decodificador, o keep awake pausa enquanto um slide de
-      vídeo toca e volta sozinho depois.
+      Script em ES5 por causa do NetCast. A TV tem poucos decodificadores de hardware e só os libera com
+      removeAttribute("src") + load(): por isso o keep awake solta o decodificador enquanto um slide de vídeo toca
+      e o retoma sozinho depois.
       Diagnóstico na TV: ?debug=1 mostra o estado no canto da tela; /keep-awake-test compara variantes de codificação.
     -->
     <video id="keep-awake-video" autoplay loop muted playsinline preload="auto" aria-hidden="true" tabindex="-1">
-      <source src="keep-awake-720.mp4?v=20261106-2" type="video/mp4" />
+      <source src="keep-awake-360.mp4?v=20261106-2" type="video/mp4" />
     </video>
 
     <script>
@@ -109,11 +110,40 @@
           return false;
         }
 
+        // Libera de fato o decodificador (pausar não basta nessas TVs) e recoloca a fonte quando for retomar.
+        // O <video> usa um filho <source>: para soltar o decodificador sem disparar "error", o <source> é
+        // retirado e load() é chamado (sem fonte, o elemento esvazia). Para retomar, o <source> volta e load() de novo.
+        var released = false;
+        var parkedSource = null;
+        function releaseDecoder() {
+          var video = getVideo();
+          if (!video || released) return;
+          released = true;
+          pausedForSlide = true;
+          try { video.pause(); } catch (_) {}
+          try {
+            parkedSource = video.getElementsByTagName("source")[0] || null;
+            if (parkedSource) video.removeChild(parkedSource);
+            video.removeAttribute("src");
+            video.load();
+          } catch (_) {}
+        }
+        function ensureSource() {
+          var video = getVideo();
+          if (!video || !released) return;
+          released = false;
+          try {
+            if (parkedSource) video.appendChild(parkedSource);
+            video.load();
+          } catch (_) {}
+        }
+
         function forcePlay() {
           var video = getVideo();
           if (!video) return;
-          if (slideVideoActive()) { pausedForSlide = true; return; }
+          if (slideVideoActive()) { releaseDecoder(); return; }
           pausedForSlide = false;
+          ensureSource();
 
           // TVs só liberam autoplay sem interação do controle remoto se o vídeo for mudo e inline.
           video.muted = true;
@@ -148,7 +178,7 @@
           window.setInterval(function () {
             var video = getVideo();
             if (!video) return;
-            if (slideVideoActive()) { if (!video.paused) video.pause(); pausedForSlide = true; return; }
+            if (slideVideoActive()) { releaseDecoder(); return; }
             if (video.paused || video.ended) { forcePlay(); return; }
             if (video.currentTime === lastTime) {
               stuckCount++;
@@ -201,17 +231,13 @@
             }, RETRY_PLAY_MS);
           });
           video.addEventListener("stalled", function () { lastError = "stalled @" + new Date().toLocaleTimeString(); });
-          video.addEventListener("pause", function () { scheduleRetry(); });
+          video.addEventListener("pause", function () { if (!released) scheduleRetry(); });
           video.addEventListener("ended", function () { forcePlay(); });
 
           // Eventos de mídia não borbulham, mas chegam ao document na fase de captura.
           document.addEventListener("play", function (ev) {
             var t = ev.target;
-            if (t && t.tagName === "VIDEO" && t.id !== "keep-awake-video") {
-              var v = getVideo();
-              if (v && !v.paused) v.pause();
-              pausedForSlide = true;
-            }
+            if (t && t.tagName === "VIDEO" && t.id !== "keep-awake-video") releaseDecoder();
           }, true);
           function onSlideVideoDone(ev) {
             var t = ev.target;

@@ -15,7 +15,7 @@
   </head>
   <body>
     <div id="log">
-      <h1>Teste keep awake · fotografe quando aparecer RESULTADO</h1>
+      <h1>Teste keep awake v2 · fotografe quando aparecer RESULTADO (≈2,5 min)</h1>
       <div id="ua"></div>
       <ol id="items"></ol>
       <div id="summary" style="display:none"></div>
@@ -24,14 +24,23 @@
     <script>
       (function () {
         var TEST_MS = 12000;
+        var GAP_MS = 2500; // tempo para a TV liberar o decodificador entre os testes
+        var A = "keep-awake.mp4?v=20261106-1";
+        var B = "keep-awake-360.mp4?v=20261106-2";
+        var C = "keep-awake-360-noaudio.mp4?v=20261106-2";
+        var D = "keep-awake-720.mp4?v=20261106-2";
+        var G = "assets/Pilulas/principios-de-incendios-em-correias-horizontal.mp4";
         var CANDIDATES = [
-          { label: "A 320x180 12fps baseline (atual)", src: "keep-awake.mp4?v=20261106-1", w: 320, h: 180, op: 1 },
-          { label: "B 640x360 25fps main + áudio", src: "keep-awake-360.mp4?v=20261106-2", w: 320, h: 180, op: 1 },
-          { label: "C 640x360 25fps main sem áudio", src: "keep-awake-360-noaudio.mp4?v=20261106-2", w: 320, h: 180, op: 1 },
-          { label: "D 1280x720 25fps high + áudio", src: "keep-awake-720.mp4?v=20261106-2", w: 320, h: 180, op: 1 },
-          { label: "E 720p em 160x90 opacity .02", src: "keep-awake-720.mp4?v=20261106-2", w: 160, h: 90, op: 0.02 },
-          { label: "F 720p em 32x32 opacity .02", src: "keep-awake-720.mp4?v=20261106-2", w: 32, h: 32, op: 0.02 },
-          { label: "G controle: vídeo de slide (Pílulas)", src: "assets/Pilulas/principios-de-incendios-em-correias-horizontal.mp4", w: 320, h: 180, op: 1 }
+          { label: "A 320x180 12fps baseline", videos: [{ src: A, w: 320, h: 180, op: 1 }] },
+          { label: "B 640x360 25fps main + áudio", videos: [{ src: B, w: 320, h: 180, op: 1 }] },
+          { label: "C 640x360 sem áudio", videos: [{ src: C, w: 320, h: 180, op: 1 }] },
+          { label: "D 1280x720 high + áudio", videos: [{ src: D, w: 320, h: 180, op: 1 }] },
+          { label: "E B em 160x90 opacity .02", videos: [{ src: B, w: 160, h: 90, op: 0.02 }] },
+          { label: "F B em 32x32 opacity .02", videos: [{ src: B, w: 32, h: 32, op: 0.02 }] },
+          { label: "G controle: slide Pílulas", videos: [{ src: G, w: 320, h: 180, op: 1 }] },
+          { label: "H dois ao mesmo tempo (A+B)", videos: [{ src: A, w: 200, h: 112, op: 1 }, { src: B, w: 200, h: 112, op: 1 }] },
+          { label: "I três ao mesmo tempo (A+B+C)", videos: [{ src: A, w: 160, h: 90, op: 1 }, { src: B, w: 160, h: 90, op: 1 }, { src: C, w: 160, h: 90, op: 1 }] },
+          { label: "J A de novo (liberação ok?)", videos: [{ src: A, w: 320, h: 180, op: 1 }] }
         ];
         var items = document.getElementById("items");
         var stage = document.getElementById("stage");
@@ -39,49 +48,66 @@
         document.getElementById("ua").textContent = "UA: " + navigator.userAgent;
         var results = [];
 
+        function release(v) {
+          try { v.pause(); } catch (e) {}
+          try { v.removeAttribute("src"); v.load(); } catch (e) {}
+          if (v.parentNode) v.parentNode.removeChild(v);
+        }
+
+        function makeVideo(spec) {
+          var v = document.createElement("video");
+          v.muted = true; v.defaultMuted = true; v.loop = true; v.autoplay = true;
+          v.setAttribute("muted", ""); v.setAttribute("playsinline", ""); v.setAttribute("autoplay", "");
+          v.preload = "auto";
+          v.style.width = spec.w + "px"; v.style.height = spec.h + "px"; v.style.opacity = spec.op;
+          v.style.background = "#000"; v.style.border = "1px solid #666"; v.style.display = "block"; v.style.marginBottom = "6px";
+          v.errCode = null;
+          v.addEventListener("error", function () { v.errCode = v.error ? v.error.code : "?"; });
+          v.src = spec.src;
+          stage.appendChild(v);
+          try { var pr = v.play(); if (pr && pr.catch) pr.catch(function () {}); } catch (e) {}
+          return v;
+        }
+
         function runCandidate(i) {
           if (i >= CANDIDATES.length) return finish();
           var c = CANDIDATES[i];
           var li = document.createElement("li");
           li.className = "run";
-          li.textContent = c.label + " … carregando";
+          li.textContent = c.label + " … testando";
           items.appendChild(li);
 
-          stage.innerHTML = "";
-          var v = document.createElement("video");
-          v.muted = true; v.defaultMuted = true; v.loop = true; v.autoplay = true;
-          v.setAttribute("muted", ""); v.setAttribute("playsinline", ""); v.setAttribute("autoplay", "");
-          v.preload = "auto";
-          v.style.width = c.w + "px"; v.style.height = c.h + "px"; v.style.opacity = c.op;
-          v.style.background = "#000"; v.style.border = "1px solid #666";
-          var errCode = null;
-          v.addEventListener("error", function () { errCode = v.error ? v.error.code : "?"; });
-          v.src = c.src;
-          stage.appendChild(v);
-          try { var p = v.play(); if (p && p.catch) p.catch(function () {}); } catch (e) {}
-
-          var t2 = null;
-          setTimeout(function () { t2 = v.currentTime; }, 2000);
+          var vids = [];
+          for (var k = 0; k < c.videos.length; k++) vids.push(makeVideo(c.videos[k]));
+          var t2 = [];
+          setTimeout(function () { for (var k = 0; k < vids.length; k++) t2[k] = vids[k].currentTime; }, 2000);
           setTimeout(function () {
-            var t10 = v.currentTime;
-            var delta = (t2 === null) ? t10 : t10 - t2;
-            var advanced = delta > 1;
-            var text = c.label + "  t=" + t10.toFixed(1) + "s  avançou=" + delta.toFixed(1) + "s  ready=" + v.readyState +
-              "  paused=" + v.paused + (errCode !== null ? "  ERRO " + errCode : "");
-            li.textContent = (advanced ? "OK   " : "FALHA ") + text;
-            li.className = advanced ? "ok" : "fail";
-            results.push({ label: c.label, ok: advanced });
-            try { v.pause(); } catch (e) {}
-            stage.innerHTML = "";
-            runCandidate(i + 1);
+            var okCount = 0, parts = [];
+            for (var k = 0; k < vids.length; k++) {
+              var v = vids[k];
+              var delta = v.currentTime - (t2[k] || 0);
+              var ok = delta > 1;
+              if (ok) okCount++;
+              parts.push("avançou=" + delta.toFixed(1) + "s ready=" + v.readyState + (v.errCode !== null ? " ERRO " + v.errCode : ""));
+            }
+            var allOk = okCount === vids.length;
+            li.textContent = (allOk ? "OK    " : "FALHA ") + c.label + "  [" + okCount + "/" + vids.length + "]  " + parts.join(" | ");
+            li.className = allOk ? "ok" : "fail";
+            results.push({ label: c.label, ok: allOk, count: okCount, total: vids.length });
+            for (var k2 = 0; k2 < vids.length; k2++) release(vids[k2]);
+            setTimeout(function () { runCandidate(i + 1); }, GAP_MS);
           }, TEST_MS);
         }
 
         function finish() {
           var ok = [], fail = [];
-          for (var i = 0; i < results.length; i++) (results[i].ok ? ok : fail).push(results[i].label.charAt(0));
+          for (var i = 0; i < results.length; i++) {
+            var r = results[i];
+            var tag = r.label.charAt(0) + (r.total > 1 ? "(" + r.count + "/" + r.total + ")" : "");
+            (r.ok ? ok : fail).push(tag);
+          }
           summary.style.display = "block";
-          summary.textContent = "RESULTADO\nfuncionam: " + (ok.join(", ") || "nenhum") + "\nfalham:    " + (fail.join(", ") || "nenhum");
+          summary.textContent = "RESULTADO v2\nfuncionam: " + (ok.join(", ") || "nenhum") + "\nfalham:    " + (fail.join(", ") || "nenhum");
         }
 
         runCandidate(0);
