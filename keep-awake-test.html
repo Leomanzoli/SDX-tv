@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <title>SDX TV · teste keep awake</title>
+    <style>
+      html, body { margin: 0; background: #111; color: #eee; font: 16px/1.4 monospace; }
+      #stage { position: fixed; right: 16px; top: 16px; }
+      #log { padding: 16px; max-width: 60%; }
+      .ok { color: #4f4; } .fail { color: #f55; } .run { color: #ff4; }
+      h1 { font-size: 20px; margin: 0 0 8px; }
+      li { margin: 2px 0; white-space: pre; }
+      #summary { margin-top: 12px; padding: 8px; border: 2px solid #4f4; font-size: 20px; white-space: pre; }
+    </style>
+  </head>
+  <body>
+    <div id="log">
+      <h1>Teste keep awake · fotografe quando aparecer RESULTADO</h1>
+      <div id="ua"></div>
+      <ol id="items"></ol>
+      <div id="summary" style="display:none"></div>
+    </div>
+    <div id="stage"></div>
+    <script>
+      (function () {
+        var TEST_MS = 12000;
+        var CANDIDATES = [
+          { label: "A 320x180 12fps baseline (atual)", src: "keep-awake.mp4?v=20261106-1", w: 320, h: 180, op: 1 },
+          { label: "B 640x360 25fps main + áudio", src: "keep-awake-360.mp4?v=20261106-2", w: 320, h: 180, op: 1 },
+          { label: "C 640x360 25fps main sem áudio", src: "keep-awake-360-noaudio.mp4?v=20261106-2", w: 320, h: 180, op: 1 },
+          { label: "D 1280x720 25fps high + áudio", src: "keep-awake-720.mp4?v=20261106-2", w: 320, h: 180, op: 1 },
+          { label: "E 720p em 160x90 opacity .02", src: "keep-awake-720.mp4?v=20261106-2", w: 160, h: 90, op: 0.02 },
+          { label: "F 720p em 32x32 opacity .02", src: "keep-awake-720.mp4?v=20261106-2", w: 32, h: 32, op: 0.02 },
+          { label: "G controle: vídeo de slide (Pílulas)", src: "assets/Pilulas/principios-de-incendios-em-correias-horizontal.mp4", w: 320, h: 180, op: 1 }
+        ];
+        var items = document.getElementById("items");
+        var stage = document.getElementById("stage");
+        var summary = document.getElementById("summary");
+        document.getElementById("ua").textContent = "UA: " + navigator.userAgent;
+        var results = [];
+
+        function runCandidate(i) {
+          if (i >= CANDIDATES.length) return finish();
+          var c = CANDIDATES[i];
+          var li = document.createElement("li");
+          li.className = "run";
+          li.textContent = c.label + " … carregando";
+          items.appendChild(li);
+
+          stage.innerHTML = "";
+          var v = document.createElement("video");
+          v.muted = true; v.defaultMuted = true; v.loop = true; v.autoplay = true;
+          v.setAttribute("muted", ""); v.setAttribute("playsinline", ""); v.setAttribute("autoplay", "");
+          v.preload = "auto";
+          v.style.width = c.w + "px"; v.style.height = c.h + "px"; v.style.opacity = c.op;
+          v.style.background = "#000"; v.style.border = "1px solid #666";
+          var errCode = null;
+          v.addEventListener("error", function () { errCode = v.error ? v.error.code : "?"; });
+          v.src = c.src;
+          stage.appendChild(v);
+          try { var p = v.play(); if (p && p.catch) p.catch(function () {}); } catch (e) {}
+
+          var t2 = null;
+          setTimeout(function () { t2 = v.currentTime; }, 2000);
+          setTimeout(function () {
+            var t10 = v.currentTime;
+            var delta = (t2 === null) ? t10 : t10 - t2;
+            var advanced = delta > 1;
+            var text = c.label + "  t=" + t10.toFixed(1) + "s  avançou=" + delta.toFixed(1) + "s  ready=" + v.readyState +
+              "  paused=" + v.paused + (errCode !== null ? "  ERRO " + errCode : "");
+            li.textContent = (advanced ? "OK   " : "FALHA ") + text;
+            li.className = advanced ? "ok" : "fail";
+            results.push({ label: c.label, ok: advanced });
+            try { v.pause(); } catch (e) {}
+            stage.innerHTML = "";
+            runCandidate(i + 1);
+          }, TEST_MS);
+        }
+
+        function finish() {
+          var ok = [], fail = [];
+          for (var i = 0; i < results.length; i++) (results[i].ok ? ok : fail).push(results[i].label.charAt(0));
+          summary.style.display = "block";
+          summary.textContent = "RESULTADO\nfuncionam: " + (ok.join(", ") || "nenhum") + "\nfalham:    " + (fail.join(", ") || "nenhum");
+        }
+
+        runCandidate(0);
+      })();
+    </script>
+  </body>
+</html>

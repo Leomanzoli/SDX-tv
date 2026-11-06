@@ -10,7 +10,7 @@
       href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="styles.css?v=20261105-1" />
+    <link rel="stylesheet" href="styles.css?v=20261106-2" />
   </head>
   <body>
     <div class="tv-shell">
@@ -76,11 +76,14 @@
     <!--
       Keep Awake (TV LG / webOS): vídeo real em loop impede o protetor de tela.
       Não usar Base64 nem 1x1px/opacity 0 — o webOS pausa esses vídeos por otimização de hardware.
-      O vídeo é hospedado no próprio projeto (keep-awake.mp4): a URL externa usada antes passou a responder 403.
-      Diagnóstico na TV: abrir a página com ?debug=1 para ver o estado do vídeo/wake lock no canto da tela.
+      O vídeo é hospedado no próprio projeto (keep-awake-720.mp4, H.264 High 1280x720 25fps + AAC): a URL externa
+      usada antes passou a responder 403, e o arquivo 320x180/12fps não decodificava em TVs LG NetCast (tempo preso em 0).
+      Script em ES5 por causa do NetCast. Em TVs com um único decodificador, o keep awake pausa enquanto um slide de
+      vídeo toca e volta sozinho depois.
+      Diagnóstico na TV: ?debug=1 mostra o estado no canto da tela; /keep-awake-test compara variantes de codificação.
     -->
     <video id="keep-awake-video" autoplay loop muted playsinline preload="auto" aria-hidden="true" tabindex="-1">
-      <source src="keep-awake.mp4?v=20261106-1" type="video/mp4" />
+      <source src="keep-awake-720.mp4?v=20261106-2" type="video/mp4" />
     </video>
 
     <script>
@@ -90,16 +93,29 @@
         var AUTO_RELOAD_MS = 14400000; // 4 horas: evita travamento do navegador da TV por falta de RAM
         var retryTimer = null;
         var wakeLock = null;
+        var lastError = "";
+        var pausedForSlide = false;
 
         function getVideo() {
           return document.getElementById("keep-awake-video");
         }
 
+        // Outro <video> da página (slide) em reprodução? Em TVs antigas só há um decodificador.
+        function slideVideoActive() {
+          var all = document.getElementsByTagName("video");
+          for (var i = 0; i < all.length; i++) {
+            if (all[i].id !== "keep-awake-video" && !all[i].paused && !all[i].ended) return true;
+          }
+          return false;
+        }
+
         function forcePlay() {
           var video = getVideo();
           if (!video) return;
+          if (slideVideoActive()) { pausedForSlide = true; return; }
+          pausedForSlide = false;
 
-          // webOS só libera autoplay sem interação do controle remoto se o vídeo for mudo e inline.
+          // TVs só liberam autoplay sem interação do controle remoto se o vídeo for mudo e inline.
           video.muted = true;
           video.defaultMuted = true;
           video.setAttribute("muted", "");
@@ -112,11 +128,8 @@
             scheduleRetry();
             return;
           }
-
           if (result && typeof result.catch === "function") {
-            result.catch(function () {
-              scheduleRetry();
-            });
+            result.catch(function () { scheduleRetry(); });
           }
         }
 
@@ -128,20 +141,37 @@
           }, RETRY_PLAY_MS);
         }
 
+        // Detecta vídeo "tocando" com o tempo parado (decodificador travado) e reinicia o elemento.
+        var lastTime = -1;
+        var stuckCount = 0;
         function startWatchdog() {
           window.setInterval(function () {
             var video = getVideo();
-            if (video && (video.paused || video.ended)) forcePlay();
+            if (!video) return;
+            if (slideVideoActive()) { if (!video.paused) video.pause(); pausedForSlide = true; return; }
+            if (video.paused || video.ended) { forcePlay(); return; }
+            if (video.currentTime === lastTime) {
+              stuckCount++;
+              if (stuckCount >= 2) {
+                lastError = "tempo parado, recarregando @" + new Date().toLocaleTimeString();
+                stuckCount = 0;
+                try { video.load(); } catch (_) {}
+                forcePlay();
+              }
+            } else {
+              stuckCount = 0;
+            }
+            lastTime = video.currentTime;
           }, WATCHDOG_MS);
         }
 
-        async function requestWakeLock() {
+        function requestWakeLock() {
           try {
             if (!("wakeLock" in navigator)) return;
-            wakeLock = await navigator.wakeLock.request("screen");
-            wakeLock.addEventListener("release", function () {
-              wakeLock = null;
-            });
+            navigator.wakeLock.request("screen").then(function (lock) {
+              wakeLock = lock;
+              lock.addEventListener("release", function () { wakeLock = null; });
+            }, function () { wakeLock = null; });
           } catch (_) {
             wakeLock = null;
           }
@@ -155,13 +185,10 @@
         }
 
         function scheduleAutoReload() {
-          window.setTimeout(function () {
-            window.location.reload();
-          }, AUTO_RELOAD_MS);
+          window.setTimeout(function () { window.location.reload(); }, AUTO_RELOAD_MS);
         }
 
-        // Se o arquivo falhar (rede, 403, decodificação), recarrega o elemento e tenta de novo.
-        var lastError = "";
+        // Se o arquivo falhar (rede, decodificação), recarrega o elemento e tenta de novo.
         function attachRecovery() {
           var video = getVideo();
           if (!video) return;
@@ -176,6 +203,23 @@
           video.addEventListener("stalled", function () { lastError = "stalled @" + new Date().toLocaleTimeString(); });
           video.addEventListener("pause", function () { scheduleRetry(); });
           video.addEventListener("ended", function () { forcePlay(); });
+
+          // Eventos de mídia não borbulham, mas chegam ao document na fase de captura.
+          document.addEventListener("play", function (ev) {
+            var t = ev.target;
+            if (t && t.tagName === "VIDEO" && t.id !== "keep-awake-video") {
+              var v = getVideo();
+              if (v && !v.paused) v.pause();
+              pausedForSlide = true;
+            }
+          }, true);
+          function onSlideVideoDone(ev) {
+            var t = ev.target;
+            if (t && t.tagName === "VIDEO" && t.id !== "keep-awake-video") scheduleRetry();
+          }
+          document.addEventListener("ended", onSlideVideoDone, true);
+          document.addEventListener("pause", onSlideVideoDone, true);
+          document.addEventListener("emptied", onSlideVideoDone, true);
         }
 
         // Painel de diagnóstico: index.html?debug=1
@@ -187,14 +231,15 @@
             "position:fixed;left:8px;bottom:8px;z-index:99999;padding:6px 10px;font:12px/1.4 monospace;" +
             "color:#0f0;background:rgba(0,0,0,.75);border:1px solid #0f0;white-space:pre;pointer-events:none";
           document.body.appendChild(box);
-          var started = Date.now();
+          var started = new Date().getTime();
           window.setInterval(function () {
             var v = getVideo();
             box.textContent =
-              "keep-awake  up " + Math.round((Date.now() - started) / 1000) + "s\n" +
-              "video: " + (v ? (v.paused ? "PAUSADO" : "tocando") + " t=" + v.currentTime.toFixed(1) +
-                " ready=" + v.readyState + " net=" + v.networkState : "sem elemento") + "\n" +
+              "keep-awake  up " + Math.round((new Date().getTime() - started) / 1000) + "s\n" +
+              "video: " + (v ? (v.paused ? (pausedForSlide ? "pausado p/ slide" : "PAUSADO") : "tocando") +
+                " t=" + v.currentTime.toFixed(1) + " ready=" + v.readyState + " net=" + v.networkState : "sem elemento") + "\n" +
               "src: " + (v && v.currentSrc ? v.currentSrc.replace(/^.*\//, "") : "-") + "\n" +
+              "slide em vídeo: " + (slideVideoActive() ? "sim" : "não") + "\n" +
               "wakeLock: " + (wakeLock ? "ativo" : ("wakeLock" in navigator ? "inativo" : "não suportado")) + "\n" +
               "último erro: " + (lastError || "nenhum") + "\n" +
               "UA: " + navigator.userAgent.slice(0, 60);

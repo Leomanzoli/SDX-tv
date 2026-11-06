@@ -24,7 +24,7 @@
       ]
     },
     {
-      "source": "/keep-awake.mp4",
+      "source": "/keep-awake(-[a-z0-9-]+)?\\.mp4",
       "headers": [
         { "key": "Cache-Control", "value": "public, max-age=604800, immutable" }
       ]

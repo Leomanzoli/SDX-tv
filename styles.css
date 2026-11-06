@@ -740,14 +740,14 @@ body.tv-lite .news-card {
   }
 }
 
-/* Keep Awake (webOS): vídeo real em loop para impedir o protetor de tela da TV.
-   Manter 32x32px e opacity 0.02 — o webOS pausa vídeos 1x1px ou com opacity 0. */
+/* Keep Awake (webOS/NetCast): vídeo real em loop para impedir o protetor de tela da TV.
+   Manter tamanho "de verdade" (160x90) e opacity 0.02 — as TVs pausam ou não decodificam vídeos 1x1px/opacity 0. */
 #keep-awake-video {
   position: fixed;
   bottom: 0;
   right: 0;
-  width: 32px;
-  height: 32px;
+  width: 160px;
+  height: 90px;
   opacity: 0.02;
   pointer-events: none;
   z-index: -9999;
