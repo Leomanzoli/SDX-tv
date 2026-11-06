@@ -6,6 +6,9 @@ const defaultConfig = {
   fetchTimeoutMs: 10000,
   slidesRefreshMinutes: 5,
   dailyReloadHour: 3,
+  // Em TVs (tv-lite) a página é recarregada periodicamente: o navegador da LG NetCast ficou com a tela preta
+  // após ~45 min com o vídeo ainda tocando, sinal de que o renderizador morreu (memória). 0 desativa.
+  tvReloadMinutes: 30,
   maxConsecutiveMediaErrors: 8,
   newsCardMs: 10000,
   alertPriorityMs: 45000,
@@ -781,13 +784,29 @@ function registerMediaError(item, reason) {
   }
 }
 
+// O índice do slide sobrevive a reloads (watchdog, reload periódico da TV): a apresentação continua de onde parou.
+const SLIDE_INDEX_KEY = "sdx-tv-slide-index";
+function restoreSlideIndex() {
+  try {
+    const saved = Number(sessionStorage.getItem(SLIDE_INDEX_KEY));
+    if (Number.isInteger(saved) && saved >= 0 && saved < slides.length) slideIndex = saved;
+  } catch (_) {}
+}
+function persistSlideIndex() {
+  try {
+    sessionStorage.setItem(SLIDE_INDEX_KEY, String(slideIndex));
+  } catch (_) {}
+}
+
 function startSlides() {
   let generation = 0;
+  restoreSlideIndex();
 
   const showNext = async () => {
     const myGeneration = ++generation;
     const current = slides[slideIndex];
     if (!current) return;
+    persistSlideIndex();
 
     // Guarda de idempotência: garante que `advance` execute apenas uma vez
     // por slide, independente da origem (timer, evento `ended`, erro).
@@ -979,6 +998,14 @@ function startWatchdog() {
       location.reload();
     }
   }, 60000);
+
+  const tvReloadMs = Number(config.tvReloadMinutes) * 60000;
+  if (isTvLite && tvReloadMs > 0) {
+    window.setTimeout(() => {
+      console.info("[SDX-TV][WATCHDOG] reload periódico da TV");
+      location.reload();
+    }, tvReloadMs);
+  }
 }
 
 // Modo ?preview=<src>: usado pelo painel admin para mostrar um único item no palco real,

@@ -71,14 +71,17 @@
     </div>
 
     <!-- Versão no query param para evitar cache antigo do JavaScript -->
-    <script src="app.js?v=20261029-2"></script>
+    <script src="app.js?v=20261106-3"></script>
 
     <!--
       Keep Awake (TV LG NetCast/Colt): um vídeo real em reprodução é o que impede o protetor de tela/espera.
       Aprendido com /keep-awake-test nesta TV (2026-11-06):
       - só há um canal de vídeo e ele é instável: às vezes o <video> fica "tocando" com o tempo preso em 0;
       - o único arquivo que tocou sempre que estava sozinho foi keep-awake.mp4 (320x180, 12fps, baseline + AAC);
-      - vídeo totalmente coberto pelo conteúdo não anda: por isso ele fica POR CIMA, com opacidade mínima.
+      - vídeo totalmente coberto pelo conteúdo não anda: por isso ele fica POR CIMA;
+      - a TV ignora opacity no vídeo (plano de hardware): por isso o arquivo é quase preto (keep-awake-dark.mp4,
+        mesmo formato do que tocou sempre: 320x180, 12fps, baseline + AAC 22 kHz), na cor do fundo da página;
+      - após ~45 min a página ficou preta com o vídeo ainda tocando: o app.js recarrega a página a cada 30 min na TV.
       Estratégia: elemento criado pelo script; se o tempo não avançar, o elemento é destruído e recriado após uma
       pausa. Um registro em localStorage guarda início/último sinal da sessão e se o vídeo andava, para diagnóstico
       (?debug=1 mostra a sessão anterior: serve para saber se a TV dormiu com o vídeo andando).
@@ -86,7 +89,7 @@
 
     <script>
       (function keepAwake() {
-        var SRC = "keep-awake.mp4?v=20261106-1";
+        var SRC = "keep-awake-dark.mp4?v=20261106-3";
         var CHECK_MS = 10000;        // verificação de progresso
         var RECREATE_GAP_MS = 5000;  // pausa entre destruir e recriar (a TV demora a soltar o canal de vídeo)
         var HEARTBEAT_MS = 5000;
@@ -185,10 +188,16 @@
           }
         }
 
+        function memMb() {
+          try {
+            var m = window.performance && performance.memory;
+            return m && m.usedJSHeapSize ? Math.round(m.usedJSHeapSize / 1048576) : null;
+          } catch (_) { return null; }
+        }
         function heartbeat() {
           try {
             localStorage.setItem(HB_KEY, JSON.stringify({
-              start: sessionStart, last: now(), advancing: advancing, recreates: recreates, src: SRC
+              start: sessionStart, last: now(), advancing: advancing, recreates: recreates, src: SRC, mem: memMb()
             }));
           } catch (_) {}
         }
@@ -211,13 +220,15 @@
             if (prevSession && prevSession.start && prevSession.last) {
               prev = hhmm(prevSession.start) + " até " + hhmm(prevSession.last) +
                 " (" + Math.round((prevSession.last - prevSession.start) / 60000) + " min), vídeo andava: " +
-                (prevSession.advancing ? "SIM" : "NÃO") + ", recriações: " + (prevSession.recreates || 0);
+                (prevSession.advancing ? "SIM" : "NÃO") + ", recriações: " + (prevSession.recreates || 0) +
+                (prevSession.mem ? ", mem " + prevSession.mem + " MB" : "");
             }
             box.textContent =
               "keep-awake v3  up " + Math.round((now() - sessionStart) / 1000) + "s  início " + hhmm(sessionStart) + "\n" +
               "video: " + (v ? (v.paused ? "PAUSADO" : "tocando") + " t=" + (v.currentTime || 0).toFixed(1) +
                 " ready=" + v.readyState + (advancing ? "  ANDANDO" : "  parado") : (released ? "solto p/ slide" : "recriando…")) + "\n" +
-              "recriações: " + recreates + "   último evento: " + (lastError || "nenhum") + "\n" +
+              "recriações: " + recreates + "   mem: " + (memMb() === null ? "n/d" : memMb() + " MB") +
+                "   último evento: " + (lastError || "nenhum") + "\n" +
               "sessão anterior: " + prev + "\n" +
               "UA: " + navigator.userAgent.slice(0, 70);
           }, 1000);
